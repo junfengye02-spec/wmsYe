@@ -1,4 +1,4 @@
-# QMS Ye · 成品仓 WMS
+# wmsYe · 成品仓 WMS
 
 基于 InvenTree 1.5.1 二次开发的仓库管理系统，面向设备/成品的入库、出库、审批、项目归属、合同质保和标签打印。仓库包含应用源码、容器部署配置及中文业务文档，可从一次普通 Git clone 开始构建。
 
@@ -18,7 +18,7 @@
 浏览器中的 React / TypeScript 工作台通过 Django REST API 访问业务服务；PostgreSQL 17 保存库存和审批数据，Redis 7 提供缓存，Django-Q2 worker 处理异步任务，Caddy 提供 HTTPS 和静态资源。
 
 ```text
-qms-ye/
+wmsYe/
 ├── InvenTree/          # Django 后端、React 前端、数据库迁移与测试
 ├── inventree-deploy/   # Compose、Caddy、环境变量模板与运维手册
 └── docs/               # 二开方案、操作指南和历史验收记录
@@ -31,8 +31,8 @@ qms-ye/
 需要 Git、Docker Engine / Docker Desktop（含 Compose v2）、Node.js 24 和 Corepack。先在本机配置能访问目标仓库的 SSH key。
 
 ```bash
-git clone git@github.com:junfengye02-spec/qms-ye.git
-cd qms-ye
+git clone git@github.com:junfengye02-spec/wmsYe.git
+cd wmsYe
 cp inventree-deploy/.env.example inventree-deploy/.env
 ```
 

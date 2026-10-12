@@ -1,6 +1,6 @@
 # 部署与运维
 
-本目录通过 Docker Compose 运行 QMS Ye 成品仓 WMS：自定义 InvenTree Web、异步 worker、PostgreSQL 17、Redis 7 和 Caddy。源代码位于同级 `InvenTree/`，基础镜像版本为 InvenTree 1.5.1。
+本目录通过 Docker Compose 运行 wmsYe 成品仓 WMS：自定义 InvenTree Web、异步 worker、PostgreSQL 17、Redis 7 和 Caddy。源代码位于同级 `InvenTree/`，基础镜像版本为 InvenTree 1.5.1。
 
 ## 首次部署
 

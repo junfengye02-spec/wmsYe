@@ -1,6 +1,6 @@
 # 合同、质保及完整标签使用与维护说明
 
-更新日期：2026-10-10。代码目录：`InvenTree/`。本说明对应本次实现，实际发布及真实打印机验收另行记录。
+更新日期：2026-10-13。代码目录：`InvenTree/`。本说明对应本次实现，实际发布及真实打印机验收另行记录。
 
 ## 操作员入库
 
@@ -68,6 +68,10 @@
 
 ## 完整码协议与接口
 
+库存项工具栏的“打印标签”会先核对所选库存，显示每条库存的项目、合同及标签类型，并分别设置打印数量。已关联来源明细的库存复用原完整标签模板和同一个 `WMS1:` 二维码，与入库前打印、库存“合同与验收 → 打印完整标签”保持一致；移库或拆分产生的库存行仍使用对应来源明细的原码。未关联合同的旧库存明确显示“基础设备标签（未关联合同）”，继续打印原设备编号码，不猜测合同。两类库存可以混合选中一次打印，数量按各行合计，不增加库存。来源归属或标签版本在任务创建后改变时，原任务会被拒绝，须重新核对并创建新任务。
+
+工具栏打印不需要重新创建入库单。设备基础资料页仍使用设备基本码；库存补录合同后，库存工具栏会自动使用完整码。最近任务按当前打印类型显示，避免选到另一种标签任务。
+
 新打印的完整码使用紧凑格式，仅保存 `WMS1:` 前缀、32 位大写十六进制明细 UUID 和标签版本。例如：
 
 ```text
@@ -95,7 +99,8 @@ WMS1:47F10C0F07774F8595DDCE0A81592994:1
 | `GET /api/stock/wms/changes/` | 按 contract、receipt 或 detail 查询操作人、时间、原因及前后值 |
 | `POST /api/stock/scan/inbound/` | 复用原审批链，完整码入库带 receipt_id；实际数量不同带 quantity_confirmed=true |
 | `POST /api/stock/scan/outbound/` | 完整码出库，带实际 source_location、数量与用途 |
-| `POST /api/label/local/jobs/` | 原本地打印接口支持 model_type=wmsreceiptdetail；独立数量传 copies=1 和 item_copies（明细 ID → 数量），返回 total；重试和补打保留原数量映射 |
+| `POST /api/label/local/jobs/` | 原本地打印接口支持 wmsreceiptdetail 和 stockitem；独立数量传 copies=1 和 item_copies（对应明细或库存 ID → 数量），返回 total；库存自动选择完整/基础标签，重试和补打保留原数量映射 |
+| `POST /api/label/local/stock-labels/` | 只读核对库存工具栏所选 items，返回完整/基础标签类型及设备、项目、合同；不创建打印任务或改变库存 |
 
 业务维护继续要求库存变更权限，基础资料权限不增加；创建审批草稿要求原库存角色和库位权限。OAuth 写操作要求 `stock` 的 change scope；完整码解析为只读请求，接受现有 read/view scope。
 
@@ -108,7 +113,7 @@ WMS1:47F10C0F07774F8595DDCE0A81592994:1
 1. 备份目标数据库、media 中的标签模板、当前镜像与前端构建版本。导出迁移前库存数量、项目及审批状态作为对比基线。
 2. 在目标库的隔离副本演练迁移，比较上述基线。已有自动化新库迁移演练不能替代目标库备份副本演练。
 3. 在维护窗口停止业务写入，先部署后端代码并运行 `python manage.py migrate --noinput`，再重启后端及打印 worker。挂载新代码而未迁移时，应用的启动检查会提示缺少迁移并拒绝启动。
-4. 确认存在唯一、启用的 `WMS Complete Receipt Label` 模板，模型为 `wmsreceiptdetail`，默认尺寸为 50 × 30 mm。已注册模板文件存于 media，须在备份后同步最新 `wms_complete_receipt.html`，仅替换源代码中的模板不会更新已注册文件。原本地打印配置、QZ 证书和队列沿用现有部署配置。
+4. 确认存在唯一、启用的 `WMS Complete Receipt Label` 模板（`wmsreceiptdetail`）和库存 `Product IPN QR Code Label` 模板（`stockitem`），尺寸均为 50 × 30 mm。已注册模板文件存于 media，须在备份后分别同步源文件 `report/templates/label/wms_complete_receipt.html` 和 `report/templates/label/product_ipn_qr.html` 到各自注册文件。库存文件默认为 `report/label/product_ipn_qr_stockitem.html`，实际名称可能因定制或重命名不同，应以该模板记录的文件路径为准，仅更新库存模板，不覆盖同名 `part` 模板或其他自定义模板。仅替换源代码、运行迁移或 `configure_local_print_templates` 不会更新已存在的注册文件；漏同步库存模板会导致窗口显示完整标签而 PDF 仍打印基础设备码。同步后从库存工具栏混合选择有来源和无来源库存，下载 PDF，确认前者二维码与来源明细的 `WMS1:` 码一致、后者仍为设备码，页数与逐项打印数量合计一致。原本地打印配置、QZ 证书和队列沿用现有部署配置。
 5. 部署新前端构建，确认扫码审批开关启用。使用操作员和独立审批人完成填单、打印、扫码入库、部分出库、驳回及修改换标。
 6. 使用真实打印机和扫码枪验收中文、最长常用编号、打印缩放、二维码密度与连续扫码焦点。超长编号会缩小字号，须确认现场可读性后上线。
 7. 完成库存、项目、审批对比后开放写入，保存发布版本和验收记录。

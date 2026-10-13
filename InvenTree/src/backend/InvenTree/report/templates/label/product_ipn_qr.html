@@ -1,7 +1,10 @@
-{% extends "label/label_base.html" %}
+{% extends complete_label_parent|default:"label/label_base.html" %}
 {% load l10n i18n barcode %}
 
 {% block style %}
+{% if complete_label_parent %}
+{{ block.super }}
+{% else %}
 .product-label {
     position: relative;
     box-sizing: border-box;
@@ -57,9 +60,13 @@
     font-size: 5.5pt;
     margin-bottom: 0.4mm;
 }
+{% endif %}
 {% endblock style %}
 
 {% block content %}
+{% if complete_label_parent %}
+{{ block.super }}
+{% else %}
 <div class='product-label'>
     <div class='product-company'>广州南沙智慧城市大数据有限公司</div>
     <img class='product-qr' alt="{% trans 'Product IPN QR Code' %}" src='{% qrcode product_ipn border=4 error_correction="M" %}'>
@@ -71,4 +78,5 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock content %}

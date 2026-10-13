@@ -103,6 +103,27 @@ class JobResponse(serializers.ModelSerializer):
         ]
 
 
+class StockLabelRequest(serializers.Serializer):
+    """Inventory IDs to preview before selecting individual print counts."""
+
+    items = serializers.ListField(
+        child=serializers.IntegerField(min_value=1),
+        allow_empty=False,
+        max_length=MAX_LABELS_PER_PRINT,
+    )
+
+
+class StockLabelResponse(serializers.Serializer):
+    """Operator-visible source information for the selected label type."""
+
+    id = serializers.IntegerField()
+    equipment = serializers.CharField(allow_blank=True)
+    name = serializers.CharField()
+    project = serializers.CharField(allow_blank=True)
+    contract_number = serializers.CharField(allow_blank=True)
+    label_kind = serializers.ChoiceField(choices=['complete', 'basic'])
+
+
 class SignRequest(serializers.Serializer):
     """Full SDK message is validated before its hash is signed."""
 
@@ -178,6 +199,19 @@ class CertificateView(LocalPrintView):
         service.require_enabled()
         certificate, _ = service.credentials()
         return HttpResponse(certificate, content_type='text/plain')
+
+
+class StockLabelsView(LocalPrintView):
+    """Prepare the toolbar's exact stock rows without silently dropping selections."""
+
+    @extend_schema(request=StockLabelRequest, responses=StockLabelResponse(many=True))
+    def post(self, request):
+        """Reuse stock view permissions and actual template/source validation."""
+        serializer = StockLabelRequest(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            service.stock_label_rows(request.user, serializer.validated_data['items'])
+        )
 
 
 class JobsView(LocalPrintView):
@@ -288,6 +322,7 @@ urlpatterns = [
     path('config/', ConfigView.as_view()),
     path('certificate/', CertificateView.as_view()),
     path('sign/', SignView.as_view()),
+    path('stock-labels/', StockLabelsView.as_view()),
     path('jobs/', JobsView.as_view()),
     path('jobs/<uuid:pk>/', JobView.as_view()),
     path('jobs/<uuid:pk>/pdf/', PdfView.as_view()),

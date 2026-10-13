@@ -790,8 +790,22 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             return
 
         missing_ipn = []
+        complete_template = None
 
         for item in items:
+            detail = getattr(item, 'source_detail', None)
+            if detail:
+                if detail.receipt.cancelled or detail.part_id != item.part_id:
+                    raise ValidationError(
+                        'Invalid complete label source for stock item'
+                    )
+                if complete_template is None:
+                    from report.local_print_templates import (
+                        resolve_local_print_template,
+                    )
+
+                    complete_template = resolve_local_print_template('wmsreceiptdetail')
+                continue
             part = getattr(item, 'part', item)
             ipn = str(getattr(part, 'IPN', '') or '').strip()
 
@@ -832,6 +846,17 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             context['product_revision'] = str(
                 getattr(part, 'revision', '') or ''
             ).strip()
+            detail = getattr(instance, 'source_detail', None)
+            if detail:
+                from report.local_print_templates import resolve_local_print_template
+
+                complete_template = resolve_local_print_template('wmsreceiptdetail')
+                context.update(
+                    detail=detail,
+                    part=detail.part,
+                    complete_barcode=detail.complete_barcode,
+                    complete_label_parent=complete_template.template_name,
+                )
 
         if kwargs.pop('insert_page_style', True):
             context['page_style'] = self.generate_page_style()

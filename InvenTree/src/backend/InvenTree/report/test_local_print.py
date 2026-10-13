@@ -33,7 +33,14 @@ from part.models import Part
 from plugin.registry import registry
 from report import local_print as service
 from report.models import LocalPrintJob
-from stock.models import StockItem
+from stock.models import (
+    StockItem,
+    StockLocation,
+    WmsBusinessChange,
+    WmsContract,
+    WmsReceipt,
+    WmsReceiptDetail,
+)
 
 BASE = '/api/label/local/'
 
@@ -501,5 +508,132 @@ class LocalPrintTests(TestCase):
             patterns=[path('api/label/local/', include('report.local_print_api'))]
         ).get_schema(request=None, public=True)
         validate_schema(schema)
-        self.assertEqual(len(schema['paths']), 8)
+        self.assertEqual(len(schema['paths']), 9)
         self.assertIn('/api/label/local/sign/', schema['paths'])
+        self.assertIn('/api/label/local/stock-labels/', schema['paths'])
+
+    def stock_source(self):
+        """Create a receipt source already linked to inventory without using scan writes."""
+        contract = WmsContract.objects.create(number='库存合同01')
+        receipt = WmsReceipt.objects.create(
+            project='库存项目01',
+            contract=contract,
+            operator=self.user,
+            location=StockLocation.objects.create(name='打印测试库位'),
+        )
+        detail = WmsReceiptDetail.objects.create(
+            receipt=receipt,
+            part=self.part,
+            project=receipt.project,
+            contract=contract,
+            prepared_quantity=3,
+        )
+        item = StockItem.objects.create(
+            part=self.part, quantity=3, batch=detail.project, source_detail=detail
+        )
+        return detail, item
+
+    def test_stock_label_preview_keeps_exact_rows_and_permissions(self):
+        """Mixed inventory selections reveal label type without writing jobs or inventory."""
+        detail, linked = self.stock_source()
+        legacy = StockItem.objects.create(part=self.part, quantity=2, batch='旧项目')
+        selected = [linked.pk, legacy.pk]
+        before = list(
+            StockItem.objects.values_list('pk', 'quantity', 'source_detail_id')
+        )
+        response = self.client.post(
+            BASE + 'stock-labels/', {'items': selected}, format='json'
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual([row['id'] for row in response.data], selected)
+        self.assertEqual(
+            [row['label_kind'] for row in response.data], ['complete', 'basic']
+        )
+        self.assertEqual(response.data[0]['contract_number'], detail.contract.number)
+        self.assertEqual(response.data[1]['contract_number'], '')
+        self.assertEqual(LocalPrintJob.objects.count(), 0)
+        self.assertEqual(
+            before,
+            list(StockItem.objects.values_list('pk', 'quantity', 'source_detail_id')),
+        )
+        for ids in ([], [linked.pk, linked.pk], [linked.pk, 99999]):
+            self.assertEqual(
+                self.client.post(
+                    BASE + 'stock-labels/', {'items': ids}, format='json'
+                ).status_code,
+                400,
+            )
+        self.user.is_superuser = False
+        self.user.save()
+        self.assertEqual(
+            self.client.post(
+                BASE + 'stock-labels/', {'items': selected}, format='json'
+            ).status_code,
+            403,
+        )
+
+    def test_stock_toolbar_pdf_reuses_receipt_code_and_supports_mixed_labels(self):
+        """Real PDFs preserve the source code and independent counts for full/basic rows."""
+        registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+        detail, linked = self.stock_source()
+        basic_part = Part.objects.create(name='旧设备', IPN='BASIC-001')
+        legacy = StockItem.objects.create(part=basic_part, quantity=6, batch='旧项目')
+        before = list(
+            StockItem.objects.values_list('pk', 'quantity', 'source_detail_id')
+        )
+        values = {
+            **self.values,
+            'model_type': 'stockitem',
+            'items': [linked.pk, legacy.pk],
+            'item_copies': {str(linked.pk): 2, str(legacy.pk): 5},
+        }
+        job, calls = self.create(values)
+        retry, retry_calls = self.create(values)
+        self.assertEqual((job.pk, calls, retry_calls), (retry.pk, 1, 0))
+        template = service.job_access(self.user, job)
+        context = template.get_context(linked, user=self.user)
+        self.assertEqual(context['complete_barcode'], detail.complete_barcode)
+        self.assertEqual(context['detail'].pk, detail.pk)
+        self.assertEqual(job.item_versions[str(linked.pk)], detail.complete_barcode)
+        service.generate_job(str(job.pk))
+        job.refresh_from_db()
+        self.assertEqual(job.state, 'ready', job.detail)
+        pages = PdfReader(io.BytesIO(service.read_pdf(job))).pages
+        self.assertEqual(len(pages), 7)
+        for page in pages[:2]:
+            self.assertIn(detail.contract.number, page.extract_text())
+            self.assertIn(detail.project, page.extract_text())
+            self.assertNotIn('标签版本', page.extract_text())
+        for page in pages[2:]:
+            self.assertIn(basic_part.IPN, page.extract_text())
+            self.assertNotIn(detail.contract.number, page.extract_text())
+        audit = WmsBusinessChange.objects.get(detail=detail, action='label_print')
+        self.assertEqual(
+            (audit.after['copies'], audit.after['stock_item']), (2, linked.pk)
+        )
+        self.assertEqual(
+            before,
+            list(StockItem.objects.values_list('pk', 'quantity', 'source_detail_id')),
+        )
+
+    def test_split_stock_rows_keep_one_source_code_and_reject_changed_labels(self):
+        """Two rows may share a QR source while retaining counts; stale jobs cannot print."""
+        detail, first = self.stock_source()
+        second = StockItem.objects.create(
+            part=self.part, quantity=2, batch=detail.project, source_detail=detail
+        )
+        job, _ = self.create(
+            {
+                **self.values,
+                'model_type': 'stockitem',
+                'items': [first.pk, second.pk],
+                'item_copies': {str(first.pk): 2, str(second.pk): 5},
+            }
+        )
+        self.assertEqual(job.total_labels, 7)
+        self.assertEqual(set(job.item_versions.values()), {detail.complete_barcode})
+        WmsReceiptDetail.objects.filter(pk=detail.pk).update(label_version=2)
+        self.assertEqual(self.client.get(BASE + f'jobs/{job.pk}/').status_code, 400)
+        WmsReceiptDetail.objects.filter(pk=detail.pk).update(label_version=1)
+        StockItem.objects.filter(pk=first.pk).update(source_detail=None)
+        self.assertEqual(self.client.get(BASE + f'jobs/{job.pk}/').status_code, 400)

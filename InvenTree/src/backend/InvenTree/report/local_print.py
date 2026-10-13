@@ -30,6 +30,71 @@ MAX_PDF_BYTES = 8 * 1024 * 1024
 logger = logging.getLogger(__name__)
 
 
+def label_sources(model_type, item_ids):
+    """Return stable stock IDs, source details and the exact QR values to print."""
+    from stock.models import StockItem, WmsReceiptDetail
+
+    if model_type == 'wmsreceiptdetail':
+        rows = [
+            (detail.pk, detail.part_id, detail, detail.complete_barcode)
+            for detail in WmsReceiptDetail.objects.filter(
+                pk__in=item_ids
+            ).select_related('part', 'contract', 'receipt')
+        ]
+    elif model_type == 'stockitem':
+        rows = [
+            (
+                item.pk,
+                item.part_id,
+                item.source_detail,
+                item.source_detail.complete_barcode
+                if item.source_detail_id
+                else (item.part.IPN or '').strip(),
+            )
+            for item in StockItem.objects.filter(pk__in=item_ids).select_related(
+                'part',
+                'source_detail__part',
+                'source_detail__contract',
+                'source_detail__receipt',
+            )
+        ]
+    else:
+        return []
+    indexed = {row[0]: row for row in rows}
+    return [indexed[pk] for pk in item_ids if pk in indexed]
+
+
+def stock_label_rows(user, item_ids):
+    """Preview selected inventory labels without creating jobs or stock changes."""
+    from stock.models import StockItem
+
+    require_enabled()
+    validate_items(user, 'stockitem', item_ids, 1)
+    records = {
+        item.pk: item
+        for item in StockItem.objects.filter(pk__in=item_ids).select_related(
+            'part', 'source_detail__contract'
+        )
+    }
+    if set(records) != set(item_ids):
+        raise ValidationError('Selected stock items changed; select them again')
+    return [
+        {
+            'id': pk,
+            'equipment': records[pk].part.IPN or '',
+            'name': records[pk].part.name,
+            'project': records[pk].source_detail.project
+            if records[pk].source_detail_id
+            else (records[pk].batch or ''),
+            'contract_number': records[pk].source_detail.contract.number
+            if records[pk].source_detail_id
+            else '',
+            'label_kind': 'complete' if records[pk].source_detail_id else 'basic',
+        }
+        for pk in item_ids
+    ]
+
+
 def require_enabled():
     """Disabling the feature also stops signing outstanding jobs."""
     if not settings.LOCAL_PRINT_ENABLED or not get_global_setting('LABEL_ENABLE'):
@@ -60,9 +125,14 @@ def validate_items(user, model_type, item_ids, copies, item_copies=None):
             and not check_user_permission(user, StockItem, 'change')
         ):
             raise PermissionDenied('You cannot print this model type')
-        items = list(
-            model.objects.filter(pk__in=item_ids).filter(**template.get_filters())
-        )
+        query = model.objects.filter(pk__in=item_ids).filter(**template.get_filters())
+        if model_type == 'stockitem':
+            query = query.select_related(
+                'part', 'source_detail__part', 'source_detail__receipt'
+            )
+        elif model_type == 'wmsreceiptdetail':
+            query = query.select_related('part', 'receipt')
+        items = list(query)
         if len(items) != len(item_ids) or len(set(item_ids)) != len(item_ids):
             raise ValidationError('Items must exist, be unique and match the template')
         if model_type == 'wmsreceiptdetail':
@@ -92,6 +162,14 @@ def job_access(user, job):
             for d in details
         ):
             raise ValidationError('Label attribution changed; create a new print task')
+    elif job.model_type == 'stockitem' and job.item_versions:
+        current = {
+            str(pk): code for pk, _, _, code in label_sources(job.model_type, job.items)
+        }
+        if current != job.item_versions:
+            raise ValidationError(
+                'Stock label attribution changed; create a new print task'
+            )
     return template
 
 
@@ -135,26 +213,38 @@ def create_job(user, values, original=None):
                 'This request key was already used for different parameters'
             )
         if created:
-            if job.model_type == 'wmsreceiptdetail':
+            if job.model_type in ('wmsreceiptdetail', 'stockitem'):
                 from stock.contract_api import audit, lock_parts
-                from stock.models import WmsReceiptDetail
 
-                details = list(WmsReceiptDetail.objects.filter(pk__in=job.items))
-                lock_parts([d.part_id for d in details])
-                details = list(WmsReceiptDetail.objects.filter(pk__in=job.items))
-                if any(d.receipt.cancelled for d in details):
+                sources = label_sources(job.model_type, job.items)
+                lock_parts([part_id for _, part_id, _, _ in sources])
+                sources = label_sources(job.model_type, job.items)
+                if len(sources) != len(job.items):
+                    raise ValidationError(
+                        'Selected label items changed; select them again'
+                    )
+                if any(
+                    detail and detail.receipt.cancelled for _, _, detail, _ in sources
+                ):
                     raise ValidationError('Cancelled preparation cannot be printed')
-                job.item_versions = {str(d.pk): d.complete_barcode for d in details}
+                job.item_versions = {str(pk): code for pk, _, _, code in sources}
                 job.save(update_fields=['item_versions'])
-                for detail in details:
+                for pk, _, detail, _ in sources:
+                    if detail is None:
+                        continue
                     audit(
                         user,
                         'label_reprint' if original else 'label_print',
                         detail=detail,
                         after={
                             'job': str(job.pk),
-                            'copies': job.copies_for(detail.pk),
+                            'copies': job.copies_for(pk),
                             'version': detail.label_version,
+                            **(
+                                {'stock_item': pk}
+                                if job.model_type == 'stockitem'
+                                else {}
+                            ),
                         },
                         reason='Local print replacement'
                         if original

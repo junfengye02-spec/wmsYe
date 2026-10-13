@@ -71,12 +71,19 @@ function errorText(error: unknown) {
 export function LocalPrintModal({
   items,
   itemDetails,
+  labelNotice,
   modelType,
   config,
   onClose
 }: {
   items: number[];
-  itemDetails?: Array<{ id: number; label: string; copies: number | string }>;
+  itemDetails?: Array<{
+    id: number;
+    label: string;
+    description?: string;
+    copies: number | string;
+  }>;
+  labelNotice?: string;
   modelType: string;
   config: LocalPrintConfig;
   onClose: () => void;
@@ -293,6 +300,9 @@ export function LocalPrintModal({
           Number(itemCopies[String(id)]) < 1
       ));
   const total = job?.total ?? selectedTotal;
+  const recentJobs = (recent.data ?? []).filter(
+    (entry) => entry.model_type === modelType
+  );
   const installerUrl = /^https:\/\//.test(config.download_url)
     ? config.download_url
     : undefined;
@@ -313,12 +323,15 @@ export function LocalPrintModal({
         <Text fw={600}>
           {modelType === 'wmsreceiptdetail'
             ? t`完整设备标签 · 50 × 30 mm`
-            : t`商品 IPN 标签 · 50 × 30 mm`}
+            : modelType === 'stockitem'
+              ? t`库存标签 · 50 × 30 mm`
+              : t`商品 IPN 标签 · 50 × 30 mm`}
         </Text>
         <Text
           size='sm'
           c='dimmed'
         >{t`标签已按份数生成。提交成功只表示进入本机队列，请检查实际出纸。`}</Text>
+        {labelNotice && <Alert color='blue'>{labelNotice}</Alert>}
         {error && <Alert color='red'>{error}</Alert>}
         <Group>
           <Button
@@ -394,10 +407,17 @@ export function LocalPrintModal({
             <Text size='sm' fw={600}>{t`每台设备的打印数量`}</Text>
             {(job?.items ?? items).map((id) => (
               <Group key={id} wrap='nowrap'>
-                <Text size='sm' style={{ flex: 1, overflowWrap: 'anywhere' }}>
-                  {itemDetails.find((item) => item.id === id)?.label ??
-                    `#${id}`}
-                </Text>
+                <Stack gap={2} style={{ flex: 1, overflowWrap: 'anywhere' }}>
+                  <Text size='sm'>
+                    {itemDetails.find((item) => item.id === id)?.label ??
+                      `#${id}`}
+                  </Text>
+                  {itemDetails.find((item) => item.id === id)?.description && (
+                    <Text size='sm'>
+                      {itemDetails.find((item) => item.id === id)?.description}
+                    </Text>
+                  )}
+                </Stack>
                 <NumberInput
                   aria-label={`${t`打印数量`} · ${itemDetails.find((item) => item.id === id)?.label ?? `#${id}`}`}
                   w={95}
@@ -497,17 +517,17 @@ export function LocalPrintModal({
             }}
           >{t`新建标签任务`}</Button>
         </Group>
-        {recent.data && recent.data.length > 0 && (
+        {recentJobs.length > 0 && (
           <Select
             label={t`最近任务（选择后不会自动发送）`}
             value={job?.id ?? null}
             disabled={busy}
-            data={recent.data.map((value) => ({
+            data={recentJobs.map((value) => ({
               value: value.id,
               label: `${statusText(value.state)} · ${value.queue} · ${value.total} · ${value.id.slice(0, 8)}`
             }))}
             onChange={(value) => {
-              setJob(recent.data.find((item) => item.id === value));
+              setJob(recentJobs.find((item) => item.id === value));
               setConfirmed(false);
             }}
           />

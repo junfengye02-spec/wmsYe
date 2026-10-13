@@ -1,5 +1,104 @@
 import { type Page, expect, test } from '@playwright/test';
 
+test('stock toolbar prepares full and basic rows and sends independent counts', async ({
+  page
+}) => {
+  const { requests } = await setup(page, false, false, false, true);
+  await expect(
+    page.getByText('完整标签 · 项目：项目A · 合同：合同A', { exact: true })
+  ).toHaveCount(2);
+  await expect(
+    page.getByText('基础设备标签（未关联合同） · 项目：旧项目', { exact: true })
+  ).toBeVisible();
+  await page
+    .getByRole('textbox', {
+      name: '打印数量 · 设备01 · 设备一 · #1',
+      exact: true
+    })
+    .fill('2');
+  await page
+    .getByRole('textbox', {
+      name: '打印数量 · 设备02 · 设备二 · #2',
+      exact: true
+    })
+    .fill('5');
+  await expect(page.getByText('总张数：8', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '下载 PDF', exact: true }).click();
+  await expect
+    .poll(
+      () =>
+        requests.filter(
+          (request) => request.path.endsWith('/jobs/') && request.body
+        ).length
+    )
+    .toBe(1);
+  const created = requests.find(
+    (request) => request.path.endsWith('/jobs/') && request.body
+  ).body;
+  expect(created).toMatchObject({
+    model_type: 'stockitem',
+    items: [1, 2, 3],
+    copies: 1,
+    item_copies: { '1': 2, '2': 5, '3': 1 }
+  });
+});
+
+test('stock toolbar does not create a print task when source preview fails', async ({
+  page
+}) => {
+  const { requests } = await setup(page, false, false, false, true, true);
+  await expect(
+    page.getByText('所选库存标签已变化，请重新选择', { exact: true })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: '下载 PDF', exact: true })
+  ).toHaveCount(0);
+  expect(
+    requests.some((request) => request.path.endsWith('/jobs/') && request.body)
+  ).toBe(false);
+  await page.getByRole('button', { name: '重试', exact: true }).click();
+  await expect(
+    page.getByText('库存标签 · 50 × 30 mm', { exact: true })
+  ).toBeVisible();
+});
+
+test('stock toolbar blocks cached labels when validation fails after reopening', async ({
+  page
+}) => {
+  const { requests } = await setup(page, false, false, false, true);
+  await expect(
+    page.getByRole('button', { name: '下载 PDF', exact: true })
+  ).toBeVisible();
+  await page.getByRole('dialog').locator('button').first().click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.route(
+    '**/api/label/local/stock-labels/',
+    (route) =>
+      route.fulfill({
+        status: 403,
+        json: { detail: '库存查看权限已撤销' }
+      }),
+    { times: 1 }
+  );
+  await page.getByRole('button', { name: '打开库存标签打印' }).click();
+  await expect(
+    page.getByText('库存查看权限已撤销', { exact: true })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: '下载 PDF', exact: true })
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: '打印', exact: true })
+  ).toHaveCount(0);
+  expect(
+    requests.some((request) => request.path.endsWith('/jobs/') && request.body)
+  ).toBe(false);
+  await page.getByRole('button', { name: '重试', exact: true }).click();
+  await expect(
+    page.getByRole('button', { name: '下载 PDF', exact: true })
+  ).toBeVisible();
+});
+
 test('independent device counts reject invalid totals and survive response loss and reload', async ({
   page
 }) => {
@@ -113,7 +212,9 @@ async function setup(
   page: Page,
   failPrint = false,
   loseCreateResponse = false,
-  perItem = false
+  perItem = false,
+  stockMode = false,
+  failStockPreview = false
 ) {
   const jobs: any[] = [];
   const requests: any[] = [];
@@ -178,6 +279,25 @@ async function setup(
     requests.push({ path, body });
     let response: any = {};
     const job = jobs.find((entry) => path.includes(entry.id));
+    if (path.endsWith('/stock-labels/')) {
+      if (failStockPreview) {
+        failStockPreview = false;
+        return route.fulfill({
+          status: 400,
+          json: { detail: '所选库存标签已变化，请重新选择' }
+        });
+      }
+      return route.fulfill({
+        json: [1, 2, 3].map((id) => ({
+          id,
+          equipment: `设备0${id}`,
+          name: ['设备一', '设备二', '设备三'][id - 1],
+          project: id === 2 ? '旧项目' : '项目A',
+          contract_number: id === 2 ? '' : '合同A',
+          label_kind: id === 2 ? 'basic' : 'complete'
+        }))
+      });
+    }
     if (path.endsWith('/certificate/')) {
       return route.fulfill({
         contentType: 'text/plain',
@@ -227,7 +347,7 @@ async function setup(
     return route.fulfill({ json: response });
   });
   await page.goto(
-    `/tests/fixtures/local-print/index.html${perItem ? '?perItem=1' : ''}`
+    `/tests/fixtures/local-print/index.html${stockMode ? '?stock=1' : perItem ? '?perItem=1' : ''}`
   );
   await expect(page.getByRole('dialog')).toBeVisible();
   return { jobs, requests };

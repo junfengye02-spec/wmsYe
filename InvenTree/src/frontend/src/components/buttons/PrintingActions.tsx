@@ -23,6 +23,7 @@ import {
   type LocalPrintConfig,
   LocalPrintModal
 } from '../printing/LocalPrintModal';
+import { StockLabelPrintModal } from '../printing/StockLabelPrintModal';
 
 export function PrintingActions({
   items,
@@ -264,7 +265,16 @@ export function PrintingActions({
       <>
         {reportModal.modal}
         {labelModal.modal}
-        {localPrintOpen && localPrintConfig.data && (
+        {localPrintOpen &&
+        localPrintConfig.data &&
+        modelType === 'stockitem' ? (
+          <StockLabelPrintModal
+            key={`${userId}-${modelType}`}
+            items={items}
+            config={localPrintConfig.data}
+            onClose={() => setLocalPrintOpen(false)}
+          />
+        ) : localPrintOpen && localPrintConfig.data ? (
           <LocalPrintModal
             key={`${userId}-${modelType}`}
             items={items}
@@ -272,7 +282,7 @@ export function PrintingActions({
             config={localPrintConfig.data}
             onClose={() => setLocalPrintOpen(false)}
           />
-        )}
+        ) : null}
         <ActionDropdown
           tooltip={t`Printing Actions`}
           icon={<IconPrinter />}

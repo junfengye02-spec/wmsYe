@@ -928,7 +928,7 @@ msgstr "Åbn i admin interface"
 #~ msgid "Copy to clipboard"
 #~ msgstr "Copy to clipboard"
 
-#: src/components/buttons/PrintingActions.tsx:70
+#: src/components/buttons/PrintingActions.tsx:71
 msgid "Open Print Report dialog"
 msgstr ""
 
@@ -940,7 +940,7 @@ msgstr ""
 #~ msgid "Printing completed successfully"
 #~ msgstr "Printing completed successfully"
 
-#: src/components/buttons/PrintingActions.tsx:82
+#: src/components/buttons/PrintingActions.tsx:83
 msgid "Open Print Label dialog"
 msgstr ""
 
@@ -948,7 +948,7 @@ msgstr ""
 #~ msgid "Label printing completed successfully"
 #~ msgstr "Label printing completed successfully"
 
-#: src/components/buttons/PrintingActions.tsx:117
+#: src/components/buttons/PrintingActions.tsx:118
 msgid "Printing Labels"
 msgstr "Udskriver Etiketter"
 
@@ -956,7 +956,7 @@ msgstr "Udskriver Etiketter"
 #~ msgid "The label could not be generated"
 #~ msgstr "The label could not be generated"
 
-#: src/components/buttons/PrintingActions.tsx:122
+#: src/components/buttons/PrintingActions.tsx:123
 msgid "Printing Reports"
 msgstr "Udskriver Rapporter"
 
@@ -968,28 +968,28 @@ msgstr "Udskriver Rapporter"
 #~ msgid "The report could not be generated"
 #~ msgstr "The report could not be generated"
 
-#: src/components/buttons/PrintingActions.tsx:195
+#: src/components/buttons/PrintingActions.tsx:196
 msgid "Print Label"
 msgstr "Udskriv Labels"
 
-#: src/components/buttons/PrintingActions.tsx:207
-#: src/components/buttons/PrintingActions.tsx:247
+#: src/components/buttons/PrintingActions.tsx:208
+#: src/components/buttons/PrintingActions.tsx:248
 msgid "Print"
 msgstr "Udskriv"
 
-#: src/components/buttons/PrintingActions.tsx:240
+#: src/components/buttons/PrintingActions.tsx:241
 msgid "Print Report"
 msgstr "Udskriv rapport"
 
-#: src/components/buttons/PrintingActions.tsx:277
+#: src/components/buttons/PrintingActions.tsx:287
 msgid "Printing Actions"
 msgstr "Udskriver Handlinger"
 
-#: src/components/buttons/PrintingActions.tsx:283
+#: src/components/buttons/PrintingActions.tsx:293
 msgid "Print Labels"
 msgstr "Udskriv labels"
 
-#: src/components/buttons/PrintingActions.tsx:289
+#: src/components/buttons/PrintingActions.tsx:299
 msgid "Print Reports"
 msgstr "Udskriv Rapporter"
 
@@ -3516,126 +3516,187 @@ msgstr ""
 msgid "操作未完成。请检查打印组件是否运行、登录权限和服务端配置。"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:306
+#: src/components/printing/LocalPrintModal.tsx:313
+#: src/components/printing/StockLabelPrintModal.tsx:47
 msgid "本机标签打印"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:315
+#: src/components/printing/LocalPrintModal.tsx:322
 msgid "完整设备标签 · 50 × 30 mm"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:316
+#: src/components/printing/LocalPrintModal.tsx:324
+msgid "库存标签 · 50 × 30 mm"
+msgstr ""
+
+#: src/components/printing/LocalPrintModal.tsx:325
 msgid "商品 IPN 标签 · 50 × 30 mm"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:321
+#: src/components/printing/LocalPrintModal.tsx:330
 msgid "标签已按份数生成。提交成功只表示进入本机队列，请检查实际出纸。"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:328
+#: src/components/printing/LocalPrintModal.tsx:338
 msgid "安装打印组件"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:334
+#: src/components/printing/LocalPrintModal.tsx:344
 msgid "刷新打印机"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:334
+#: src/components/printing/LocalPrintModal.tsx:344
 msgid "重新检测"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:340
+#: src/components/printing/LocalPrintModal.tsx:350
 msgid "下载 PDF"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:344
+#: src/components/printing/LocalPrintModal.tsx:354
 msgid "上次创建请求的结果尚未确认。先查询该请求，再决定是否提交，避免重复创建。"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:352
+#: src/components/printing/LocalPrintModal.tsx:362
 msgid "查询上次请求"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:356
+#: src/components/printing/LocalPrintModal.tsx:366
 msgid "Windows 安装说明"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:358
+#: src/components/printing/LocalPrintModal.tsx:368
 msgid "先安装打印机厂商驱动，并确认 Windows 测试页能打印。安装 QZ Tray，允许登录自启，完成管理员提供的本站信任设置，再返回此处重新检测。"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:360
+#: src/components/printing/LocalPrintModal.tsx:370
 msgid "要求组件版本："
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:368
+#: src/components/printing/LocalPrintModal.tsx:378
 msgid "下载管理员指定安装包"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:370
+#: src/components/printing/LocalPrintModal.tsx:380
 msgid "尚未配置经过验证的安装包，请联系管理员。当前可下载 PDF。"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:376
+#: src/components/printing/LocalPrintModal.tsx:386
 msgid "本机打印机"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:377
+#: src/components/printing/LocalPrintModal.tsx:387
 msgid "请选择打印机"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:377
+#: src/components/printing/LocalPrintModal.tsx:387
 msgid "请先检测打印组件"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:394
+#: src/components/printing/LocalPrintModal.tsx:404
 msgid "每台设备的打印数量"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:402
+#: src/components/printing/LocalPrintModal.tsx:419
 #: src/pages/stock/WmsReceiptWorkbench.tsx:401
 #: src/pages/stock/WmsReceiptWorkbench.tsx:432
 msgid "打印数量"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:425
+#: src/components/printing/LocalPrintModal.tsx:442
 msgid "每件份数"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:435
+#: src/components/printing/LocalPrintModal.tsx:452
 msgid "总张数："
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:450
+#: src/components/printing/LocalPrintModal.tsx:467
 msgid "任务："
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:454
+#: src/components/printing/LocalPrintModal.tsx:471
 msgid "目标队列："
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:463
+#: src/components/printing/LocalPrintModal.tsx:480
 msgid "我已检查系统队列和实际标签，确认需要重新打印这些标签"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:473
+#: src/components/printing/LocalPrintModal.tsx:490
 msgid "创建补打任务"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:488
+#: src/components/printing/LocalPrintModal.tsx:505
 msgid "继续提交"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:488
+#: src/components/printing/LocalPrintModal.tsx:505
 msgid "打印"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:498
+#: src/components/printing/LocalPrintModal.tsx:515
 msgid "新建标签任务"
 msgstr ""
 
-#: src/components/printing/LocalPrintModal.tsx:502
+#: src/components/printing/LocalPrintModal.tsx:519
 msgid "最近任务（选择后不会自动发送）"
+msgstr ""
+
+#: src/components/printing/StockLabelPrintModal.tsx:45
+msgid "无法读取所选库存的标签信息，请重试。"
+msgstr ""
+
+#: src/components/printing/StockLabelPrintModal.tsx:52
+msgid "重试"
+msgstr ""
+
+#: src/components/printing/StockLabelPrintModal.tsx:57
+msgid "正在核对所选库存的标签信息…"
+msgstr ""
+
+#: src/components/printing/StockLabelPrintModal.tsx:73
+msgid "完整标签"
+msgstr ""
+
+#: src/components/printing/StockLabelPrintModal.tsx:73
+#: src/components/printing/StockLabelPrintModal.tsx:74
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:480
+#: src/pages/stock/ScanStockEventTable.tsx:370
+#: src/pages/stock/ScanWorkPanel.tsx:936
+#: src/pages/stock/ScanWorkPanel.tsx:944
+#: src/pages/stock/ScanWorkPanel.tsx:955
+#: src/pages/stock/ScanWorkPanel.tsx:1303
+#: src/pages/stock/WmsCompleteScan.tsx:322
+#: src/pages/stock/WmsInventoryPanel.tsx:215
+#: src/pages/stock/WmsInventoryPanel.tsx:236
+#: src/pages/stock/WmsInventoryPanel.tsx:607
+#: src/pages/stock/WmsNativeTools.tsx:74
+#: src/pages/stock/WmsReceiptWorkbench.tsx:81
+#: src/tables/stock/StockItemTable.tsx:466
+msgid "项目"
+msgstr ""
+
+#: src/components/printing/StockLabelPrintModal.tsx:73
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:508
+#: src/pages/stock/ScanStockEventTable.tsx:370
+#: src/pages/stock/WmsReceiptWorkbench.tsx:84
+#: src/pages/stock/WmsReceiptWorkbench.tsx:577
+msgid "合同"
+msgstr ""
+
+#: src/components/printing/StockLabelPrintModal.tsx:74
+msgid "基础设备标签（未关联合同）"
+msgstr ""
+
+#: src/components/printing/StockLabelPrintModal.tsx:74
+#: src/pages/stock/ScanApprovalRequestList.tsx:158
+#: src/tables/stock/StockItemTable.tsx:452
+msgid "未填写"
+msgstr ""
+
+#: src/components/printing/StockLabelPrintModal.tsx:77
+msgid "已关联来源明细的库存打印原完整二维码；未关联合同的库存打印基础设备码。打印数量不会改变库存。"
 msgstr ""
 
 #: src/components/render/Instance.tsx:129
@@ -10440,22 +10501,6 @@ msgstr ""
 msgid "Stock item"
 msgstr "Stock item"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:480
-#: src/pages/stock/ScanStockEventTable.tsx:370
-#: src/pages/stock/ScanWorkPanel.tsx:936
-#: src/pages/stock/ScanWorkPanel.tsx:944
-#: src/pages/stock/ScanWorkPanel.tsx:955
-#: src/pages/stock/ScanWorkPanel.tsx:1303
-#: src/pages/stock/WmsCompleteScan.tsx:322
-#: src/pages/stock/WmsInventoryPanel.tsx:215
-#: src/pages/stock/WmsInventoryPanel.tsx:236
-#: src/pages/stock/WmsInventoryPanel.tsx:607
-#: src/pages/stock/WmsNativeTools.tsx:74
-#: src/pages/stock/WmsReceiptWorkbench.tsx:81
-#: src/tables/stock/StockItemTable.tsx:466
-msgid "项目"
-msgstr ""
-
 #: src/pages/stock/ScanApprovalRequestDetails.tsx:481
 #: src/pages/stock/ScanWorkPanel.tsx:1378
 #: src/pages/stock/WmsInventoryPanel.tsx:45
@@ -10490,13 +10535,6 @@ msgstr ""
 #: src/pages/stock/ScanApprovalRequestDetails.tsx:606
 #: src/pages/stock/ScanStockEventTable.tsx:286
 msgid "Reason"
-msgstr ""
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:508
-#: src/pages/stock/ScanStockEventTable.tsx:370
-#: src/pages/stock/WmsReceiptWorkbench.tsx:84
-#: src/pages/stock/WmsReceiptWorkbench.tsx:577
-msgid "合同"
 msgstr ""
 
 #: src/pages/stock/ScanApprovalRequestDetails.tsx:509
@@ -10615,11 +10653,6 @@ msgstr ""
 
 #: src/pages/stock/ScanApprovalRequestList.tsx:131
 msgid "Lines"
-msgstr ""
-
-#: src/pages/stock/ScanApprovalRequestList.tsx:158
-#: src/tables/stock/StockItemTable.tsx:452
-msgid "未填写"
 msgstr ""
 
 #: src/pages/stock/ScanApprovalRequestList.tsx:182
@@ -12378,13 +12411,13 @@ msgid "新增设备"
 msgstr ""
 
 #: src/pages/stock/WmsInventoryPanel.tsx:473
-#: src/pages/stock/WmsNativeTools.tsx:34
-msgid "设备种类数"
+#: src/pages/stock/WmsNativeTools.tsx:226
+msgid "成功记录数"
 msgstr ""
 
 #: src/pages/stock/WmsInventoryPanel.tsx:473
-#: src/pages/stock/WmsNativeTools.tsx:226
-msgid "成功记录数"
+#: src/pages/stock/WmsNativeTools.tsx:34
+msgid "设备种类数"
 msgstr ""
 
 #: src/pages/stock/WmsInventoryPanel.tsx:474

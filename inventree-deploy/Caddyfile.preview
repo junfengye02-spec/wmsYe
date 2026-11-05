@@ -4,6 +4,12 @@
 }
 
 (wms-preview-app) {
+	# Vite assets stay available while the application service restarts.
+	handle_path /static/web/* {
+		root * /var/www/frontend
+		header X-Content-Type-Options nosniff
+		file_server
+	}
 	handle_path /local-print-setup/* {
 		root * /var/www/ca/local-print-setup
 		header Cache-Control "no-store"
@@ -22,6 +28,11 @@
 		root * /var/www/media
 		header Content-Disposition attachment
 		file_server
+	}
+	# Cloudflare terminates public HTTPS before forwarding over the local tunnel.
+	@public_wms host wms.0000238.xyz
+	reverse_proxy @public_wms http://wms-preview:8000 {
+		header_up X-Forwarded-Proto https
 	}
 	reverse_proxy http://wms-preview:8000
 }

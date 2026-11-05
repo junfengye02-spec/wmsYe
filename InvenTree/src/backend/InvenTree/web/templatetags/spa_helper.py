@@ -6,6 +6,7 @@ from pathlib import Path
 
 from django import template
 from django.conf import settings
+from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 
 import structlog
@@ -41,24 +42,56 @@ def spa_bundle(manifest_path: str | Path = '', app: str = 'web'):
             return 'NOT_FOUND'
 
     try:
-        manifest_data = json.load(manifest.open())
+        with manifest.open() as manifest_file:
+            manifest_data = json.load(manifest_file)
     except (TypeError, json.decoder.JSONDecodeError):
         logger.exception('Failed to parse manifest file')
         return ''
 
-    return_string = ''
-    # JS (based on index.html file as entrypoint)
-    index = manifest_data.get('index.html')
-    dynamic_files = index.get('dynamicImports', [])
-    imports_files = ''.join([
-        f'<script type="module" src="{get_url(manifest_data[file]["file"])}"></script>'
-        for file in dynamic_files
-    ])
-    return_string += (
-        f'<script type="module" src="{get_url(index["file"])}"></script>{imports_files}'
-    )
+    # Follow Vite's backend integration contract: entry CSS, static dependency
+    # CSS, one executable entry, then optional static dependency preloads.
+    # dynamicImports belong to import() at runtime; executing them here bypasses
+    # lazy loading and omits Vite's CSS/dependency loading for those modules.
+    index = manifest_data.get('index.html') if isinstance(manifest_data, dict) else None
+    if not isinstance(index, dict) or not index.get('file'):
+        logger.error('Manifest entry index.html not found')
+        return ''
 
-    return mark_safe(return_string)
+    imported_chunks = []
+    seen = {'index.html'}
+
+    def collect_imports(chunk):
+        for key in chunk.get('imports', []):
+            if key in seen:
+                continue
+            seen.add(key)
+            imported = manifest_data[key]
+            collect_imports(imported)
+            imported_chunks.append(imported)
+
+    collect_imports(index)
+    css_files = dict.fromkeys(
+        css_file
+        for chunk in [index, *imported_chunks]
+        for css_file in chunk.get('css', [])
+    )
+    css = format_html_join(
+        '',
+        '<link rel="stylesheet" href="{}">',
+        ((get_url(file),) for file in css_files),
+    )
+    script = format_html(
+        '<script type="module" src="{}"></script>', get_url(index['file'])
+    )
+    preloads = format_html_join(
+        '',
+        '<link rel="modulepreload" href="{}">',
+        (
+            (get_url(file),)
+            for file in dict.fromkeys(chunk['file'] for chunk in imported_chunks)
+        ),
+    )
+    return format_html('{}{}{}', css, script, preloads)
 
 
 @register.simple_tag

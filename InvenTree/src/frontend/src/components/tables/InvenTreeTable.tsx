@@ -20,9 +20,10 @@ import type {
   TableState
 } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { ActionIcon, Box, Stack } from '@mantine/core';
+import { ActionIcon, Alert, Box, Button, Stack, Text } from '@mantine/core';
 import { IconArrowRight, IconClick } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import {
   type ContextMenuItemOptions,
   useContextMenu
@@ -44,6 +45,16 @@ import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { ColumnFilterPopover } from './FilterSelectDrawer';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
+
+// Transport failures are recoverable query state, not rendering failures.
+// Preserve the existing boundary behavior for HTTP/auth and programming errors.
+function isTableTransportError(error: unknown): boolean {
+  return (
+    isAxiosError(error) &&
+    !error.response &&
+    ['ERR_NETWORK', 'ECONNABORTED', 'ETIMEDOUT'].includes(error.code ?? '')
+  );
+}
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
@@ -165,6 +176,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     retry: 5,
     retryDelay: (attempt: number) => (1 + attempt) * 250,
     throwOnError: (error: any) => {
+      if (isTableTransportError(error)) return false;
       showApiErrorMessage({
         error: error,
         title: t`Error loading table options`
@@ -643,6 +655,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
 
   const {
     data: apiData,
+    error: tableDataError,
     isFetching,
     isLoading,
     refetch
@@ -662,6 +675,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     retry: 5,
     retryDelay: (attempt: number) => (1 + attempt) * 250,
     throwOnError: (error: any) => {
+      if (isTableTransportError(error)) return false;
       showApiErrorMessage({
         error: error,
         title: t`Error loading table data`
@@ -917,6 +931,24 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   return (
     <>
       <Stack gap='xs'>
+        {(isTableTransportError(tableDataError) ||
+          isTableTransportError(tableOptionQuery.error)) && (
+          <Alert color='orange' title={t`表格网络请求失败`}>
+            <Stack gap='xs'>
+              <Text size='sm'>{t`未能连接服务器或请求超时，请检查连接后重试。已有数据可能不是最新结果。`}</Text>
+              <Button
+                variant='light'
+                size='xs'
+                loading={isFetching || tableOptionQuery.isFetching}
+                style={{ alignSelf: 'flex-start' }}
+                onClick={() => {
+                  void refetch();
+                  if (tableOptionQuery.isError) void tableOptionQuery.refetch();
+                }}
+              >{t`重试加载表格`}</Button>
+            </Stack>
+          </Alert>
+        )}
         {!tableProps.noHeader && (
           <Boundary label={`InvenTreeTableHeader-${cacheKey}`}>
             <InvenTreeTableHeader

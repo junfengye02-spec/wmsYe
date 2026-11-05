@@ -3,15 +3,17 @@
 import json
 import os
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest import mock
 
+from django.test import SimpleTestCase, override_settings
+
 from InvenTree.config import get_frontend_settings
-from InvenTree.unit_test import InvenTreeTestCase
 
 from .templatetags import spa_helper
 
 
-class TemplateTagTest(InvenTreeTestCase):
+class TemplateTagTest(SimpleTestCase):
     """Tests for the template tag code."""
 
     def assertSettings(self, settings_data):
@@ -21,35 +23,82 @@ class TemplateTagTest(InvenTreeTestCase):
         self.assertIn('show_server_selector', settings_data)
         self.assertIn('environment', settings_data)
 
+    @override_settings(STATIC_URL='/static/')
     def test_spa_bundle(self):
-        """Test the 'spa_bundle' template tag."""
-        resp = spa_helper.spa_bundle()
-        if resp == 'NOT_FOUND':
-            # No Vite, no test
-            return  # pragma: no cover
+        """Render CSS/static preloads once, leaving lazy modules to runtime."""
+        manifest_data = {
+            'index.html': {
+                'file': 'assets/index.js',
+                'css': ['assets/index.css'],
+                'imports': ['shared', 'other'],
+                'dynamicImports': ['lazy'],
+            },
+            'shared': {
+                'file': 'assets/shared.js',
+                'css': ['assets/shared.css'],
+                'imports': ['deep'],
+            },
+            'deep': {
+                'file': 'assets/deep.js',
+                'css': ['assets/deep.css', 'assets/index.css'],
+                'imports': ['shared'],
+            },
+            'other': {'file': 'assets/other.js', 'imports': ['deep']},
+            'lazy': {'file': 'assets/lazy.js', 'css': ['assets/lazy.css']},
+        }
+        with TemporaryDirectory() as directory:
+            manifest = Path(directory) / 'manifest.json'
+            manifest.write_text(json.dumps(manifest_data))
+            resp = spa_helper.spa_bundle(manifest)
+        self.assertEqual(resp.count('<script '), 1)
+        self.assertIn(
+            '<script type="module" src="/static/web/assets/index.js"></script>', resp
+        )
+        for filename in ['index.css', 'deep.css', 'shared.css']:
+            self.assertEqual(resp.count(f'/static/web/assets/{filename}'), 1)
+        for filename in ['deep.js', 'shared.js', 'other.js']:
+            self.assertIn(
+                f'<link rel="modulepreload" href="/static/web/assets/{filename}">', resp
+            )
+            self.assertEqual(resp.count(f'/static/web/assets/{filename}'), 1)
+        self.assertNotIn('lazy', resp)
+        self.assertLess(resp.index('index.css'), resp.index('deep.css'))
+        self.assertLess(resp.index('shared.css'), resp.index('<script '))
 
-        shipped_js = resp.split('<script type="module" src="')[1:]
-        self.assertGreater(len(shipped_js), 0)
-        self.assertGreater(len(shipped_js), 2)
+    @override_settings(STATIC_URL='/static/')
+    def test_spa_bundle_entry_without_imports(self):
+        """An entry alone still includes its stylesheet and app prefix."""
+        with TemporaryDirectory() as directory:
+            manifest = Path(directory) / 'manifest.json'
+            manifest.write_text(
+                json.dumps(
+                    {
+                        'index.html': {
+                            'file': 'assets/index.js',
+                            'css': ['assets/index.css'],
+                        }
+                    }
+                )
+            )
+            resp = spa_helper.spa_bundle(manifest, app='plugin')
+        self.assertEqual(
+            resp,
+            '<link rel="stylesheet" href="/static/plugin/assets/index.css">'
+            '<script type="module" src="/static/plugin/assets/index.js"></script>',
+        )
 
-        manifest_file = Path(__file__).parent.joinpath('static/web/.vite/manifest.json')
-        # Try with removed manifest file
-        new_name = manifest_file.rename(
-            manifest_file.with_suffix('.json.bak')
-        )  # Rename
-        resp = spa_helper.spa_bundle()
-        self.assertEqual(resp, 'NOT_FOUND')
+    def test_spa_bundle_invalid_manifest(self):
+        """Invalid input is handled without touching the deployed manifest."""
+        with TemporaryDirectory() as directory:
+            manifest = Path(directory) / 'manifest.json'
+            for contents in ['broken', '{}', '[]']:
+                manifest.write_text(contents)
+                self.assertEqual(spa_helper.spa_bundle(manifest), '')
 
-        # Try with differing name
-        resp = spa_helper.spa_bundle(new_name)
-        self.assertIsNotNone(resp)
-
-        # Broken manifest file
-        manifest_file.write_text('broken')
-        resp = spa_helper.spa_bundle(manifest_file)
-        self.assertEqual(resp, '')
-
-        new_name.rename(manifest_file.with_suffix('.json'))  # Name back
+    def test_spa_bundle_missing_manifest(self):
+        """The missing frontend marker is retained without renaming real assets."""
+        with mock.patch.object(Path, 'exists', return_value=False):
+            self.assertEqual(spa_helper.spa_bundle(), 'NOT_FOUND')
 
     def test_spa_settings(self):
         """Test the 'spa_settings' template tag."""

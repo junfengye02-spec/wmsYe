@@ -31,7 +31,15 @@ export type WmsOptions = {
   locations: { value: string; label: string }[];
   categories: { value: string; label: string }[];
   projects: string[];
-  scanned_part?: { pk: number; IPN: string; name: string } | null;
+  scanned_part?: {
+    pk: number;
+    IPN: string;
+    name: string;
+    brand?: string;
+    specification?: string;
+    model_number?: string;
+    units?: string;
+  } | null;
   stock_status?: ScanStockStatus;
 };
 type Row = Record<string, any>;
@@ -89,14 +97,20 @@ export function wmsError(error: any): string {
   return t`操作失败，请核对填写内容后重试`;
 }
 export async function wmsDownload(resource: string, params: Row) {
+  const equipment =
+    resource === 'parts' || (resource === 'imports' && params.kind === 'parts');
   const response = await api.get(wmsUrl(resource), {
-    params,
+    params: equipment ? { ...params, export: 'xlsx' } : params,
     responseType: 'blob'
   });
   const url = URL.createObjectURL(response.data);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `wms-${resource}-${params.kind ?? 'export'}.csv`;
+  link.download = equipment
+    ? resource === 'imports'
+      ? '设备基础资料模板.xlsx'
+      : '设备基础资料.xlsx'
+    : `wms-${resource}-${params.kind ?? 'export'}.csv`;
   link.click();
   URL.revokeObjectURL(url);
 }
@@ -641,7 +655,7 @@ export function WmsImportPanel({
       <Alert color='blue'>
         {kind === 'count'
           ? t`库存明细导出与本模板使用相同的列名和顺序，可直接导入。盘点数量填写当前实盘总数，不是增量；仅调整表内指定项目和实际地点。上传前请核实最新出入库变化。`
-          : t`设备ID用于匹配已有设备；新增设备可留空，系统会自动生成内部ID。空白可选资料保留旧值；有错误时整批不能提交。`}
+          : t`设备列表导出与本模板使用相同的列名和顺序，导出的Excel可修改后直接导入。设备ID用于匹配已有设备；新增设备可留空。空白可选资料保留旧值，仅更新设备资料，不改变库存数量；有错误时整批不能提交。`}
       </Alert>
       <Group>
         <Button
@@ -651,7 +665,9 @@ export function WmsImportPanel({
               setError(wmsError(e))
             )
           }
-        >{t`下载专用模板`}</Button>
+        >
+          {kind === 'parts' ? t`下载统一模板` : t`下载专用模板`}
+        </Button>
         <FileButton onChange={(file) => void upload(file)} accept='.xlsx,.csv'>
           {(props) => (
             <Button {...props} loading={busy}>{t`上传Excel／CSV并预览`}</Button>

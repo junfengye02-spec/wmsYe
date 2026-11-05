@@ -1,6 +1,9 @@
 export type WmsContract = {
+  project_id?: number | null;
+  project?: string;
   pk: number;
   number: string;
+  active?: boolean;
   acceptance_date: string | null;
   warranty_months: number;
   updated_at: string;
@@ -14,6 +17,11 @@ export type WmsReceiptDetail = {
   receipt_location: number;
   part: number;
   equipment: string;
+  brand?: string;
+  specification?: string;
+  model_number?: string;
+  units?: string;
+  label_font_size?: number;
   name: string;
   project: string;
   project_id?: number | null;
@@ -29,6 +37,8 @@ export type WmsReceiptDetail = {
   state: 'READY' | 'IN_REQUEST' | 'RECEIVED' | 'CANCELLED';
   active_request: number | null;
   actual_quantity: string | null;
+  received_quantity?: string;
+  pending_quantity?: string;
   stock?: Array<{
     pk: number;
     location: number;
@@ -41,6 +51,11 @@ export type WmsReceiptDetail = {
 };
 
 export type WmsReceipt = {
+  updated_at?: string;
+  created_at?: string;
+  contract_number?: string;
+  location_name?: string;
+  status?: string;
   pk: number;
   project: string;
   project_id?: number | null;

@@ -39,6 +39,9 @@ export function usePartFields({
       },
       name: {},
       IPN: {},
+      brand: { label: t`品牌` },
+      specification: { label: t`规格` },
+      model_number: { label: t`型号` },
       description: {},
       revision: {},
       revision_of: {

@@ -20,7 +20,7 @@ import {
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import QRCode from 'qrcode';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import {
@@ -38,6 +38,7 @@ import type {
 import { wmsError, wmsUrl } from './WmsInventoryPanel';
 import labelStyles from './WmsLabelPreview.module.css';
 import { WmsProjectSelect } from './WmsProjectSelect';
+import { WmsReceiptLineEditor } from './WmsReceiptLineEditor';
 
 function LabelPreview({ detail }: { detail: WmsReceiptDetail }) {
   const qr = useQuery({
@@ -49,20 +50,6 @@ function LabelPreview({ detail }: { detail: WmsReceiptDetail }) {
         width: 300
       })
   });
-  const longestField = Math.max(
-    ...[
-      detail.name,
-      detail.equipment,
-      detail.project,
-      detail.contract_number
-    ].map((value) => value.length)
-  );
-  const textSize =
-    longestField > 70
-      ? labelStyles.extended
-      : longestField > 30
-        ? labelStyles.long
-        : '';
   return (
     <Paper withBorder radius={0} className={labelStyles.label}>
       {qr.data && (
@@ -72,16 +59,19 @@ function LabelPreview({ detail }: { detail: WmsReceiptDetail }) {
           alt={t`完整二维码预览`}
         />
       )}
-      <Box className={`${labelStyles.body} ${textSize}`}>
+      <Box
+        className={labelStyles.body}
+        style={{ fontSize: `${(detail.label_font_size ?? 6) * 0.70556}cqw` }}
+      >
         <Text className={labelStyles.name}>{detail.name}</Text>
         <Text className={labelStyles.field}>
-          {t`设备编号`}：{detail.equipment}
+          {t`品牌`}：{detail.brand || '—'}
         </Text>
         <Text className={labelStyles.field}>
-          {t`项目`}：{detail.project}
+          {t`规格`}：{detail.specification || '—'}
         </Text>
         <Text className={labelStyles.field}>
-          {t`合同`}：{detail.contract_number}
+          {t`型号`}：{detail.model_number || '—'}
         </Text>
       </Box>
       <Text className={labelStyles.company}>
@@ -91,11 +81,20 @@ function LabelPreview({ detail }: { detail: WmsReceiptDetail }) {
   );
 }
 
-export function WmsReceiptWorkbench() {
+export function WmsReceiptWorkbench({
+  initialReceiptId = null
+}: {
+  initialReceiptId?: number | null;
+} = {}) {
   const navigate = useNavigate();
   const receipts = useQuery<{ results: WmsReceipt[] }>({
-    queryKey: ['wms-receipts'],
-    queryFn: async () => (await api.get(wmsUrl('receipts'))).data
+    queryKey: ['wms-receipts', initialReceiptId],
+    queryFn: async () =>
+      (
+        await api.get(wmsUrl('receipts'), {
+          params: initialReceiptId ? { pk: initialReceiptId } : {}
+        })
+      ).data
   });
   const contracts = useQuery<{ results: WmsContract[] }>({
     queryKey: ['wms-contracts'],
@@ -116,7 +115,9 @@ export function WmsReceiptWorkbench() {
     queryKey: ['local-print-config'],
     queryFn: async () => (await api.get(`${LOCAL_PRINT_URL}config/`)).data
   });
-  const [receiptId, setReceiptId] = useState<string | null>(null);
+  const [receiptId, setReceiptId] = useState<string | null>(
+    initialReceiptId ? String(initialReceiptId) : null
+  );
   const receipt = receipts.data?.results.find(
     (r) => String(r.pk) === receiptId
   );
@@ -128,6 +129,25 @@ export function WmsReceiptWorkbench() {
   const [location, setLocation] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [partId, setPartId] = useState<string | null>(null);
+  const [confirmedLocation, setConfirmedLocation] = useState(false);
+  const [splitNotice, setSplitNotice] = useState(false);
+  const [historyOpened, setHistoryOpened] = useState(false);
+  const history = useQuery<{
+    results: Array<{
+      pk: number;
+      action: string;
+      actor: string;
+      created_at: string;
+      reason: string;
+    }>;
+  }>({
+    queryKey: ['wms-receipt-history', receiptId],
+    enabled: historyOpened && !!receiptId,
+    queryFn: async () =>
+      (await api.get(wmsUrl('changes'), { params: { receipt: receiptId } }))
+        .data
+  });
+  const [linesEditing, setLinesEditing] = useState(false);
   const [quantity, setQuantity] = useState<number | string>(1);
   const [lines, setLines] = useState<
     Array<{
@@ -157,7 +177,12 @@ export function WmsReceiptWorkbench() {
     null
   );
   const parts = useQuery<{
-    results: Array<{ pk: number; IPN: string; name: string }>;
+    results: Array<{
+      pk: number;
+      IPN: string;
+      name: string;
+      default_location?: number | null;
+    }>;
   }>({
     queryKey: ['wms-receipt-parts', search],
     queryFn: async ({ signal }) =>
@@ -183,10 +208,39 @@ export function WmsReceiptWorkbench() {
   const chooseContract = (value: string | null) => {
     setContractId(value);
   };
-  const contractOptions = (contracts.data?.results ?? []).map((c) => ({
-    value: String(c.pk),
-    label: c.number
-  }));
+  const selectedPart = parts.data?.results.find((p) => String(p.pk) === partId);
+  useEffect(() => {
+    const defaultId = selectedPart?.default_location;
+    if (
+      !location &&
+      defaultId &&
+      locations.data?.results.some((l) => l.pk === defaultId)
+    )
+      setLocation(String(defaultId));
+  }, [selectedPart?.pk, selectedPart?.default_location, locations.data]);
+  const locationConflict =
+    !!selectedPart?.default_location &&
+    !!location &&
+    String(selectedPart.default_location) !== location;
+  const contractOptionsFor = (projectCode: string, selectedId: string | null) =>
+    (contracts.data?.results ?? [])
+      .filter(
+        (c) =>
+          c.project === projectCode ||
+          !c.project_id ||
+          String(c.pk) === selectedId
+      )
+      .filter(
+        (c) =>
+          c.active !== false ||
+          String(c.pk) === contractId ||
+          (!!editing && String(c.pk) === editContract)
+      )
+      .map((c) => ({
+        value: String(c.pk),
+        label: c.project_id ? c.number : `${c.number} · ${t`待关联项目`}`
+      }));
+  const contractOptions = contractOptionsFor(project, contractId);
   function newReceipt() {
     setReceiptId(null);
     setProject('');
@@ -195,6 +249,8 @@ export function WmsReceiptWorkbench() {
     setSearch('');
     setPartId(null);
     setQuantity(1);
+    setConfirmedLocation(false);
+    setSplitNotice(false);
     setLines([]);
     setPrintIds([]);
     setPrintCopies({});
@@ -209,7 +265,9 @@ export function WmsReceiptWorkbench() {
   }
   return (
     <Stack>
-      {error && <Alert color='red'>{error}</Alert>}
+      {(error || receipts.isError) && (
+        <Alert color='red'>{error || t`入库单加载失败，请重试`}</Alert>
+      )}
       <Group align='end'>
         <Select
           style={{ flex: 1 }}
@@ -249,6 +307,7 @@ export function WmsReceiptWorkbench() {
               value={project}
               onChange={(value) => {
                 setProject(value);
+                setContractId(null);
                 setKey(createUuid());
               }}
             />
@@ -283,7 +342,10 @@ export function WmsReceiptWorkbench() {
                 value: String(l.pk),
                 label: l.pathstring
               }))}
-              onChange={setLocation}
+              onChange={(v) => {
+                setLocation(v);
+                setConfirmedLocation(false);
+              }}
             />
             <TextInput
               label={t`搜索设备编号或名称`}
@@ -299,7 +361,21 @@ export function WmsReceiptWorkbench() {
                   value: String(p.pk),
                   label: `${p.IPN} · ${p.name}`
                 }))}
-                onChange={setPartId}
+                onChange={(v) => {
+                  setPartId(v);
+                  setConfirmedLocation(false);
+                  setSplitNotice(false);
+                  const device = parts.data?.results.find(
+                    (p) => String(p.pk) === v
+                  );
+                  const defaultId = device?.default_location;
+                  if (
+                    !location &&
+                    defaultId &&
+                    locations.data?.results.some((l) => l.pk === defaultId)
+                  )
+                    setLocation(String(defaultId));
+                }}
               />
               <NumberInput
                 label={t`准备数量`}
@@ -309,9 +385,37 @@ export function WmsReceiptWorkbench() {
                 onChange={setQuantity}
               />
             </Group>
+            {locationConflict && (
+              <Alert color='yellow'>
+                {t`该设备默认库位与本单库位不同，请确认处理方式。`}
+                <Group>
+                  <Checkbox
+                    label={t`统一使用本单库位`}
+                    checked={confirmedLocation}
+                    onChange={(e) =>
+                      setConfirmedLocation(e.currentTarget.checked)
+                    }
+                  />
+                  <Button
+                    variant='subtle'
+                    onClick={() => {
+                      setPartId(null);
+                      setSplitNotice(true);
+                    }}
+                  >{t`分开填单`}</Button>
+                </Group>
+              </Alert>
+            )}
+            {splitNotice && (
+              <Alert>{t`已保留本单内容。请先保存本单，再新建入库单添加刚才的设备。`}</Alert>
+            )}
             <Button
               variant='light'
-              disabled={!partId || Number(quantity) <= 0}
+              disabled={
+                !partId ||
+                Number(quantity) <= 0 ||
+                (locationConflict && !confirmedLocation)
+              }
               onClick={() => {
                 const part = parts.data?.results.find(
                   (p) => String(p.pk) === partId
@@ -400,7 +504,7 @@ export function WmsReceiptWorkbench() {
                     <Table.Th>{t`设备`}</Table.Th>
                     <Table.Th>{t`打印数量`}</Table.Th>
                     <Table.Th>{t`项目 / 合同`}</Table.Th>
-                    <Table.Th>{t`准备 / 实际数量`}</Table.Th>
+                    <Table.Th>{t`单次准备 / 累计入库`}</Table.Th>
                     <Table.Th>{t`验收 / 质保 / 到期`}</Table.Th>
                     <Table.Th>{t`状态`}</Table.Th>
                     <Table.Th>{t`操作`}</Table.Th>
@@ -450,7 +554,14 @@ export function WmsReceiptWorkbench() {
                       </Table.Td>
                       <Table.Td>
                         {detail.prepared_quantity} /{' '}
-                        {detail.actual_quantity ?? '—'}
+                        {detail.received_quantity ??
+                          detail.actual_quantity ??
+                          '—'}
+                        {Number(detail.pending_quantity) > 0 && (
+                          <Text size='xs'>
+                            {t`待入库数量`}：{detail.pending_quantity}
+                          </Text>
+                        )}
                       </Table.Td>
                       <Table.Td>
                         {detail.acceptance_date || t`待验收`}
@@ -508,6 +619,18 @@ export function WmsReceiptWorkbench() {
             </Table.ScrollContainer>
             <Group>
               <Button
+                variant='subtle'
+                onClick={() => setHistoryOpened(true)}
+              >{t`修改记录`}</Button>
+              <Button
+                variant='light'
+                disabled={
+                  receipt.cancelled ||
+                  receipt.details.some((d) => d.state !== 'READY')
+                }
+                onClick={() => setLinesEditing(true)}
+              >{t`增删设备明细`}</Button>
+              <Button
                 disabled={
                   receipt.cancelled || !printIds.length || !config.data?.enabled
                 }
@@ -516,11 +639,7 @@ export function WmsReceiptWorkbench() {
               <Button
                 variant='light'
                 disabled={receipt.cancelled}
-                onClick={() =>
-                  navigate('/stock/scan/inbound/', {
-                    state: { wmsReceiptId: receipt.pk }
-                  })
-                }
+                onClick={() => navigate('/stock/scan/inbound/')}
               >{t`转到实物扫码核对`}</Button>
               <Button
                 variant='subtle'
@@ -571,12 +690,15 @@ export function WmsReceiptWorkbench() {
           <WmsProjectSelect
             label={t`项目号`}
             value={editProject}
-            onChange={setEditProject}
+            onChange={(value) => {
+              setEditProject(value);
+              setEditContract(null);
+            }}
           />
           <Select
             label={t`合同`}
             value={editContract}
-            data={contractOptions}
+            data={contractOptionsFor(editProject, editContract)}
             onChange={setEditContract}
           />
           <NumberInput
@@ -621,10 +743,14 @@ export function WmsReceiptWorkbench() {
       >
         <Stack>
           {error && <Alert color='red'>{error}</Alert>}
+          <Alert>{t`仅改变项目或关联合同时需要更换标签；修改实际库位不改变二维码。`}</Alert>
           <WmsProjectSelect
             label={t`项目号`}
             value={project}
-            onChange={setProject}
+            onChange={(value) => {
+              setProject(value);
+              setContractId(null);
+            }}
           />
           <Select
             label={t`合同号`}
@@ -658,6 +784,7 @@ export function WmsReceiptWorkbench() {
                   project,
                   contract: Number(contractId),
                   location: Number(location),
+                  expected_updated_at: receipt.updated_at,
                   reason
                 });
                 setHeaderEditing(false);
@@ -665,7 +792,7 @@ export function WmsReceiptWorkbench() {
                 await receipts.refetch();
               })
             }
-          >{t`保存并更换归属标签`}</Button>
+          >{t`保存公共信息`}</Button>
         </Stack>
       </Modal>
       <Modal
@@ -696,8 +823,67 @@ export function WmsReceiptWorkbench() {
           >{t`确认取消`}</Button>
         </Stack>
       </Modal>
+      <Modal
+        opened={historyOpened}
+        onClose={() => setHistoryOpened(false)}
+        title={t`修改记录`}
+        size='lg'
+      >
+        <Stack>
+          {history.isError && <Alert color='red'>{t`记录加载失败`}</Alert>}
+          <Table>
+            <Table.Thead>
+              <Table.Tr>
+                {[t`时间`, t`操作人`, t`操作`, t`原因`].map((v) => (
+                  <Table.Th key={v}>{v}</Table.Th>
+                ))}
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {(history.data?.results ?? []).map((h) => (
+                <Table.Tr key={h.pk}>
+                  <Table.Td>
+                    {new Date(h.created_at).toLocaleString('zh-CN', {
+                      timeZone: 'Asia/Shanghai'
+                    })}
+                  </Table.Td>
+                  <Table.Td>{h.actor}</Table.Td>
+                  <Table.Td>
+                    {{
+                      receipt_create: t`新建入库单`,
+                      receipt_update: t`修改公共信息`,
+                      receipt_lines_update: t`修改设备明细`,
+                      receipt_cancel: t`作废入库单`,
+                      detail_update: t`修改明细`
+                    }[h.action] ?? t`其他操作`}
+                  </Table.Td>
+                  <Table.Td>{h.reason || '—'}</Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </Stack>
+      </Modal>
+      <Modal
+        opened={linesEditing}
+        onClose={() => setLinesEditing(false)}
+        title={t`增删设备明细`}
+        size='xl'
+      >
+        {linesEditing && receipt && (
+          <WmsReceiptLineEditor
+            receipt={receipt}
+            onSaved={() => {
+              setLinesEditing(false);
+              setPrintIds([]);
+              void receipts.refetch();
+            }}
+          />
+        )}
+      </Modal>
       <WmsContractEditor
         opened={contractOpen}
+        initialProject={project}
         contract={editingContract}
         onClose={() => setContractOpen(false)}
         onSaved={(value) => setContractId(String(value.pk))}

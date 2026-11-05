@@ -1,11 +1,13 @@
 import { t } from '@lingui/core/macro';
 import {
   Alert,
+  Badge,
   Button,
   Group,
   Modal,
   Select,
   Stack,
+  Switch,
   Table,
   Text,
   TextInput
@@ -25,7 +27,8 @@ export type WmsProject = {
 function useProjects() {
   return useQuery<{ results: WmsProject[] }>({
     queryKey: ['wms-projects'],
-    queryFn: async () => (await api.get(wmsUrl('projects'))).data
+    queryFn: async () =>
+      (await api.get(wmsUrl('projects'), { params: { all: true } })).data
   });
 }
 
@@ -95,10 +98,12 @@ export function WmsProjectSelect({
           label={label}
           placeholder={t`选择已有项目，没有对应项目时先新建`}
           value={value || null}
-          data={(projects.data?.results ?? []).map((item) => ({
-            value: item.code,
-            label: item.code
-          }))}
+          data={(projects.data?.results ?? [])
+            .filter((item) => item.active || item.code === value)
+            .map((item) => ({
+              value: item.code,
+              label: item.code
+            }))}
           onChange={(next) =>
             onChange(
               next ?? '',
@@ -158,33 +163,148 @@ export function WmsProjectSelect({
 
 export function WmsProjectManager() {
   const projects = useProjects();
+  const queryClient = useQueryClient();
   const [selected, setSelected] = useState('');
+  const [search, setSearch] = useState('');
+  const [editing, setEditing] = useState<WmsProject | null>(null);
+  const [deleting, setDeleting] = useState<WmsProject | null>(null);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  async function save(remove = false) {
+    setBusy(true);
+    setError('');
+    try {
+      await api.post(
+        wmsUrl('projects'),
+        remove ? { pk: deleting?.pk, action: 'delete' } : editing
+      );
+      await queryClient.invalidateQueries({ queryKey: ['wms-projects'] });
+      setEditing(null);
+      setDeleting(null);
+    } catch (e) {
+      setError(wmsError(e));
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <Stack>
-      <Text size='sm'>{t`项目号统一管理，每个编号仅保存一份。填写入库单时选择已有项目；同一项目可以使用多个合同。`}</Text>
+      <Text size='sm'>{t`项目号统一管理；已被使用的项目号不能改名或删除，可以修改说明或停用。`}</Text>
+      {projects.isError && <Alert color='red'>{t`项目加载失败，请重试`}</Alert>}
       <WmsProjectSelect
         value={selected}
         onChange={setSelected}
         required={false}
       />
+      <TextInput
+        label={t`搜索项目号或说明`}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
       <Table>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>{t`项目号`}</Table.Th>
-            <Table.Th>{t`项目说明`}</Table.Th>
+            {[t`项目号`, t`项目说明`, t`状态`, t`操作`].map((v) => (
+              <Table.Th key={v}>{v}</Table.Th>
+            ))}
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
           {(projects.data?.results ?? [])
-            .filter((item) => !selected || item.code === selected)
+            .filter(
+              (item) =>
+                (!selected || item.code === selected) &&
+                (item.code.includes(search) ||
+                  item.description.includes(search))
+            )
             .map((item) => (
               <Table.Tr key={item.pk}>
                 <Table.Td>{item.code}</Table.Td>
                 <Table.Td>{item.description || '—'}</Table.Td>
+                <Table.Td>
+                  <Badge color={item.active ? 'blue' : 'gray'}>
+                    {item.active ? t`启用` : t`停用`}
+                  </Badge>
+                </Table.Td>
+                <Table.Td>
+                  <Group>
+                    <Button
+                      variant='light'
+                      size='xs'
+                      onClick={() => {
+                        setError('');
+                        setEditing({ ...item });
+                      }}
+                    >{t`编辑`}</Button>
+                    <Button
+                      color='red'
+                      variant='subtle'
+                      size='xs'
+                      onClick={() => {
+                        setError('');
+                        setDeleting(item);
+                      }}
+                    >{t`删除`}</Button>
+                  </Group>
+                </Table.Td>
               </Table.Tr>
             ))}
         </Table.Tbody>
       </Table>
+      <Modal
+        opened={!!editing}
+        onClose={() => setEditing(null)}
+        title={t`编辑项目`}
+      >
+        <Stack>
+          {error && <Alert color='red'>{error}</Alert>}
+          <TextInput
+            required
+            label={t`项目号`}
+            value={editing?.code ?? ''}
+            onChange={(e) =>
+              editing && setEditing({ ...editing, code: e.currentTarget.value })
+            }
+          />
+          <TextInput
+            label={t`项目说明`}
+            value={editing?.description ?? ''}
+            onChange={(e) =>
+              editing &&
+              setEditing({ ...editing, description: e.currentTarget.value })
+            }
+          />
+          <Switch
+            label={t`启用项目`}
+            checked={editing?.active ?? true}
+            onChange={(e) =>
+              editing &&
+              setEditing({ ...editing, active: e.currentTarget.checked })
+            }
+          />
+          <Button
+            loading={busy}
+            disabled={!editing?.code.trim()}
+            onClick={() => void save()}
+          >{t`保存修改`}</Button>
+        </Stack>
+      </Modal>
+      <Modal
+        opened={!!deleting}
+        onClose={() => setDeleting(null)}
+        title={t`删除未使用项目`}
+      >
+        <Stack>
+          <Text>{deleting?.code}</Text>
+          <Text>{t`仅未被单据或库存引用的项目可以删除，已使用的项目请停用。`}</Text>
+          {error && <Alert color='red'>{error}</Alert>}
+          <Button
+            color='red'
+            loading={busy}
+            onClick={() => void save(true)}
+          >{t`确认删除`}</Button>
+        </Stack>
+      </Modal>
     </Stack>
   );
 }

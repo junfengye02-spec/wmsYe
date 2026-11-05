@@ -114,16 +114,27 @@ export function WmsStockAttribution({
       <WmsProjectSelect
         label={t`项目号`}
         value={project}
-        onChange={setProject}
+        onChange={(value) => {
+          setProject(value);
+          setContract(null);
+        }}
       />
       <Select
         label={t`合同号`}
         searchable
         value={contract}
-        data={(contracts.data?.results ?? []).map((c) => ({
-          value: String(c.pk),
-          label: c.number
-        }))}
+        data={(contracts.data?.results ?? [])
+          .filter(
+            (c) =>
+              (!c.project_id ||
+                c.project === project ||
+                String(c.pk) === contract) &&
+              (c.active !== false || String(c.pk) === contract)
+          )
+          .map((c) => ({
+            value: String(c.pk),
+            label: c.project_id ? c.number : `${c.number} · ${t`待关联项目`}`
+          }))}
         onChange={setContract}
       />
       {!detail ? (

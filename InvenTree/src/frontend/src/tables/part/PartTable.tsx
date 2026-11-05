@@ -9,9 +9,9 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
-import type { TableColumn } from '@lib/types/Tables';
-import type { InvenTreeTableProps } from '@lib/types/Tables';
+import type { InvenTreeTableProps, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
+import { Alert } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
@@ -38,6 +38,8 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { wmsError } from '../../pages/stock/WmsInventoryPanel';
+import { nativeEquipmentDownload } from '../../pages/stock/WmsNativeTools';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { PartTableFilters } from './PartTableFilters';
@@ -55,6 +57,24 @@ function partTableColumns(): TableColumn[] {
     IPNColumn({
       accessor: 'IPN'
     }),
+    {
+      accessor: 'brand',
+      title: t`品牌`,
+      defaultVisible: true,
+      copyable: true
+    },
+    {
+      accessor: 'specification',
+      title: t`规格`,
+      defaultVisible: true,
+      copyable: true
+    },
+    {
+      accessor: 'model_number',
+      title: t`型号`,
+      defaultVisible: true,
+      copyable: true
+    },
     {
       accessor: 'revision',
       sortable: true
@@ -154,6 +174,7 @@ export function PartListTable({
   }, [defaultPartData, props?.params]);
 
   const [selectedPart, setSelectedPart] = useState<any>({});
+  const [exportError, setExportError] = useState('');
 
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,
@@ -290,6 +311,7 @@ export function PartListTable({
       {editPart.modal}
       {setCategory.modal}
       {orderPartsWizard.wizard}
+      {exportError && <Alert color='red'>{exportError}</Alert>}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_list)}
         tableState={table}
@@ -297,6 +319,12 @@ export function PartListTable({
         props={{
           ...props,
           enableDownload: true,
+          onDownload: (params) => {
+            setExportError('');
+            void nativeEquipmentDownload(params).catch((error) =>
+              setExportError(wmsError(error))
+            );
+          },
           modelType: ModelType.part,
           tableFilters: tableFilters,
           tableActions: tableActions,

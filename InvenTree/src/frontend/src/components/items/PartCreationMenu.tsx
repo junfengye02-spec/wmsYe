@@ -2,17 +2,17 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { t } from '@lingui/core/macro';
+import { Modal } from '@mantine/core';
 import {
   IconFileUpload,
   IconPackageImport,
   IconPlus
 } from '@tabler/icons-react';
-import { type RefObject, useMemo } from 'react';
-import { dataImporterSessionFields } from '../../forms/ImporterForms';
+import { type RefObject, useMemo, useState } from 'react';
 import { usePartFields } from '../../forms/PartForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { usePluginsWithMixin } from '../../hooks/UsePlugins';
-import { openGlobalImporter } from '../../states/ImporterState';
+import { WmsImportPanel } from '../../pages/stock/WmsInventoryPanel';
 import { useUserState } from '../../states/UserState';
 import ImportPartWizard from '../wizards/ImportPartWizard';
 import { ActionDropdown } from './ActionDropdown';
@@ -32,20 +32,7 @@ export function PartCreationMenu({
 }>) {
   const user = useUserState();
 
-  const importSessionFields = useMemo(() => {
-    const fields = dataImporterSessionFields({ modelType: ModelType.part });
-    fields.field_defaults.value = initialData ?? { category: categoryId };
-    return fields;
-  }, [categoryId, initialData]);
-
-  const importParts = useCreateApiFormModal({
-    url: ApiEndpoints.import_session_list,
-    title: t`Import Parts`,
-    fields: importSessionFields,
-    onFormSuccess: (response: any) => {
-      openGlobalImporter(response.pk, { onClose: refreshRef?.current });
-    }
-  });
+  const [importOpen, setImportOpen] = useState(false);
 
   const partInitialData = useMemo(
     () => initialData ?? { category: categoryId },
@@ -73,7 +60,17 @@ export function PartCreationMenu({
   return (
     <>
       {newPart.modal}
-      {importParts.modal}
+      <Modal
+        opened={importOpen}
+        onClose={() => setImportOpen(false)}
+        title={t`设备资料导入`}
+        size='xl'
+      >
+        <WmsImportPanel
+          initialKind='parts'
+          onCommitted={() => refreshRef?.current?.()}
+        />
+      </Modal>
       {importPartWizard.wizard}
       <ActionDropdown
         key='add-parts-actions'
@@ -92,7 +89,7 @@ export function PartCreationMenu({
             name: t`Import from File`,
             icon: <IconFileUpload />,
             tooltip: t`Import parts from a file`,
-            onClick: () => importParts.open(),
+            onClick: () => setImportOpen(true),
             hidden: !enableImport
           },
           {

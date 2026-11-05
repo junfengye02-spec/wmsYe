@@ -13,23 +13,39 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: lib/components/Boundary.tsx:16
-msgid "Error rendering component"
-msgstr "Error rendering component"
-
 #: lib/components/Boundary.tsx:18
 #~ msgid "An error occurred while rendering this component. Refer to the console for more information."
 #~ msgstr "An error occurred while rendering this component. Refer to the console for more information."
 
-#: lib/components/Boundary.tsx:20
+#: lib/components/Boundary.tsx:26
+msgid "Error rendering component"
+msgstr "Error rendering component"
+
+#: lib/components/Boundary.tsx:31
+msgid "页面资源加载失败，请确认网络连接后重新加载。"
+msgstr "页面资源加载失败，请确认网络连接后重新加载。"
+
+#: lib/components/Boundary.tsx:32
 msgid "An error occurred while rendering this component."
 msgstr "An error occurred while rendering this component."
 
-#: lib/components/Boundary.tsx:23
+#: lib/components/Boundary.tsx:36
+msgid "不会自动刷新页面。重新加载前，请先保存或复制尚未提交的内容。"
+msgstr "不会自动刷新页面。重新加载前，请先保存或复制尚未提交的内容。"
+
+#: lib/components/Boundary.tsx:37
 msgid "Try reloading the page, or contact your administrator if the problem persists."
 msgstr "Try reloading the page, or contact your administrator if the problem persists."
 
-#: lib/components/Boundary.tsx:28
+#: lib/components/Boundary.tsx:48
+msgid "重新加载将清除当前页面未提交的内容。确认已保存或复制后继续？"
+msgstr "重新加载将清除当前页面未提交的内容。确认已保存或复制后继续？"
+
+#: lib/components/Boundary.tsx:54
+msgid "重新加载页面资源"
+msgstr "重新加载页面资源"
+
+#: lib/components/Boundary.tsx:59
 #: src/tables/settings/ErrorTable.tsx:146
 #: src/tables/settings/FailedTasksTable.tsx:65
 msgid "Error Details"
@@ -77,13 +93,13 @@ msgstr "Delete"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:414
-#: src/pages/stock/ScanStockPage.tsx:336
+#: src/pages/stock/ScanStockPage.tsx:256
 #: src/tables/build/BuildOutputTable.tsx:665
 msgid "Cancel"
 msgstr "Cancel"
 
 #: lib/components/RowActions.tsx:146
-#: src/components/nav/NavigationDrawer.tsx:208
+#: src/components/nav/NavigationDrawer.tsx:215
 #: src/forms/PurchaseOrderForms.tsx:931
 #: src/forms/StockForms.tsx:911
 #: src/forms/StockForms.tsx:1478
@@ -93,7 +109,6 @@ msgstr "Cancel"
 #: src/forms/StockForms.tsx:1683
 #: src/forms/StockForms.tsx:1801
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:976
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:487
 msgid "Actions"
 msgstr "Actions"
 
@@ -103,7 +118,7 @@ msgstr "Actions"
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
 #: src/pages/Index/Settings/UserSettings.tsx:76
-#: src/pages/part/PartDetail.tsx:762
+#: src/pages/part/PartDetail.tsx:767
 msgid "Search"
 msgstr "Search"
 
@@ -165,28 +180,25 @@ msgstr "No"
 #: src/forms/StockForms.tsx:1888
 #: src/forms/TransferOrderForms.tsx:238
 #: src/pages/build/BuildOrderDetailsPanel.tsx:45
-#: src/pages/part/PartDetail.tsx:815
+#: src/pages/part/PartDetail.tsx:820
 #: src/pages/part/bom/BomCompare.tsx:203
 #: src/pages/stock/ScanResultList.tsx:32
 #: src/pages/stock/ScanStockEventTable.tsx:282
 #: src/tables/build/BuildOrderParametricTable.tsx:29
 #: src/tables/part/PartTestResultTable.tsx:251
 #: src/tables/part/RelatedPartTable.tsx:53
-#: src/tables/stock/StockTrackingTable.tsx:161
-#: src/tables/stock/StockTrackingTable.tsx:292
+#: src/tables/stock/StockTrackingTable.tsx:226
 msgid "Part"
 msgstr "Part"
 
 #: lib/enums/ModelInformation.tsx:62
 #: lib/enums/Roles.tsx:37
-#: src/components/nav/NavigationDrawer.tsx:75
-#: src/defaults/links.tsx:43
 #: src/pages/Index/Settings/SystemSettings.tsx:218
 #: src/pages/part/CategoryDetail.tsx:212
 #: src/pages/part/CategoryDetail.tsx:272
 #: src/pages/part/CategoryDetail.tsx:316
 #: src/pages/part/PartCategoryDetailsPanel.tsx:69
-#: src/pages/part/PartDetail.tsx:537
+#: src/pages/part/PartDetail.tsx:542
 msgid "Parts"
 msgstr "Parts"
 
@@ -200,7 +212,7 @@ msgstr "Parameter"
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:202
 #: src/pages/Index/Settings/SystemSettings.tsx:212
-#: src/pages/part/PartDetail.tsx:486
+#: src/pages/part/PartDetail.tsx:488
 msgid "Parameters"
 msgstr "Parameters"
 
@@ -231,7 +243,7 @@ msgstr "Part Test Templates"
 #: src/tables/part/PartPurchaseOrdersTable.tsx:59
 #: src/tables/purchasing/SupplierPartParametricTable.tsx:32
 #: src/tables/purchasing/SupplierPartTable.tsx:110
-#: src/tables/stock/StockItemTable.tsx:145
+#: src/tables/stock/StockItemTable.tsx:146
 msgid "Supplier Part"
 msgstr "Supplier Part"
 
@@ -245,7 +257,7 @@ msgstr "Supplier Parts"
 #: src/pages/company/ManufacturerPartDetail.tsx:206
 #: src/pages/company/SupplierPartDetailsPanel.tsx:115
 #: src/tables/part/PartPurchaseOrdersTable.tsx:65
-#: src/tables/stock/StockItemTable.tsx:152
+#: src/tables/stock/StockItemTable.tsx:153
 msgid "Manufacturer Part"
 msgstr "Manufacturer Part"
 
@@ -265,7 +277,7 @@ msgstr "Part Category"
 #: lib/enums/Roles.tsx:39
 #: src/pages/part/CategoryDetail.tsx:206
 #: src/pages/part/CategoryDetail.tsx:306
-#: src/pages/part/PartDetail.tsx:803
+#: src/pages/part/PartDetail.tsx:808
 msgid "Part Categories"
 msgstr "Part Categories"
 
@@ -284,12 +296,11 @@ msgstr "Part Categories"
 #: src/forms/BuildForms.tsx:867
 #: src/forms/SalesOrderForms.tsx:436
 #: src/forms/TransferOrderForms.tsx:240
-#: src/pages/stock/StockDetail.tsx:765
+#: src/pages/stock/StockDetail.tsx:768
 #: src/tables/part/PartTestResultTable.tsx:260
 #: src/tables/stock/InstalledItemsTable.tsx:72
-#: src/tables/stock/StockTrackingTable.tsx:107
-#: src/tables/stock/StockTrackingTable.tsx:114
-#: src/tables/stock/StockTrackingTable.tsx:302
+#: src/tables/stock/StockTrackingTable.tsx:172
+#: src/tables/stock/StockTrackingTable.tsx:179
 msgid "Stock Item"
 msgstr "Stock Item"
 
@@ -297,7 +308,6 @@ msgstr "Stock Item"
 #: lib/enums/Roles.tsx:49
 #: src/pages/company/CompanyDetail.tsx:126
 #: src/pages/part/CategoryDetail.tsx:241
-#: src/pages/part/PartStockHistoryDetail.tsx:120
 #: src/pages/stock/LocationDetail.tsx:153
 #: src/pages/stock/StockLocationDetailsPanel.tsx:60
 msgid "Stock Items"
@@ -313,7 +323,7 @@ msgstr "Stock Location"
 #: lib/enums/ModelInformation.tsx:138
 #: src/pages/stock/LocationDetail.tsx:127
 #: src/pages/stock/LocationDetail.tsx:432
-#: src/pages/stock/StockDetail.tsx:755
+#: src/pages/stock/StockDetail.tsx:758
 msgid "Stock Locations"
 msgstr "Stock Locations"
 
@@ -326,7 +336,6 @@ msgid "Stock Location Types"
 msgstr "Stock Location Types"
 
 #: lib/enums/ModelInformation.tsx:153
-#: src/pages/part/PartDetail.tsx:438
 msgid "Stock History"
 msgstr "Stock History"
 
@@ -341,7 +350,7 @@ msgstr "Stock Histories"
 #: src/tables/build/BuildAllocatedStockTable.tsx:88
 #: src/tables/part/PartBuildAllocationsTable.tsx:46
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:155
-#: src/tables/stock/StockTrackingTable.tsx:180
+#: src/tables/stock/StockTrackingTable.tsx:245
 msgid "Build Order"
 msgstr "Build Order"
 
@@ -350,7 +359,7 @@ msgstr "Build Order"
 #: src/defaults/actions.tsx:184
 #: src/pages/Index/Settings/SystemSettings.tsx:324
 #: src/pages/build/BuildIndex.tsx:87
-#: src/pages/part/PartDetail.tsx:417
+#: src/pages/part/PartDetail.tsx:418
 #: src/pages/sales/SalesOrderDetail.tsx:214
 msgid "Build Orders"
 msgstr "Build Orders"
@@ -410,8 +419,8 @@ msgstr "Project Codes"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:367
 #: src/pages/stock/StockDetailsPanel.tsx:300
 #: src/tables/part/PartPurchaseOrdersTable.tsx:40
-#: src/tables/stock/StockItemTable.tsx:137
-#: src/tables/stock/StockTrackingTable.tsx:191
+#: src/tables/stock/StockItemTable.tsx:138
+#: src/tables/stock/StockTrackingTable.tsx:256
 msgid "Purchase Order"
 msgstr "Purchase Order"
 
@@ -421,7 +430,7 @@ msgstr "Purchase Order"
 #: src/pages/Index/Settings/SystemSettings.tsx:351
 #: src/pages/company/CompanyDetail.tsx:119
 #: src/pages/company/SupplierPartDetail.tsx:99
-#: src/pages/part/PartDetail.tsx:384
+#: src/pages/part/PartDetail.tsx:385
 #: src/pages/purchasing/PurchasingIndex.tsx:95
 msgid "Purchase Orders"
 msgstr "Purchase Orders"
@@ -446,7 +455,7 @@ msgstr "Purchase Order Lines"
 #: src/tables/part/PartSalesOrdersTable.tsx:39
 #: src/tables/sales/SalesOrderAllocationTable.tsx:114
 #: src/tables/sales/SalesOrderShipmentTable.tsx:135
-#: src/tables/stock/StockTrackingTable.tsx:202
+#: src/tables/stock/StockTrackingTable.tsx:267
 msgid "Sales Order"
 msgstr "Sales Order"
 
@@ -455,7 +464,7 @@ msgstr "Sales Order"
 #: src/defaults/actions.tsx:143
 #: src/pages/Index/Settings/SystemSettings.tsx:369
 #: src/pages/company/CompanyDetail.tsx:139
-#: src/pages/part/PartDetail.tsx:396
+#: src/pages/part/PartDetail.tsx:397
 #: src/pages/sales/SalesIndex.tsx:107
 msgid "Sales Orders"
 msgstr "Sales Orders"
@@ -472,7 +481,7 @@ msgstr "Sales Order Shipments"
 #: lib/enums/ModelInformation.tsx:238
 #: src/components/previews/models/ReturnOrderPreview.tsx:15
 #: src/pages/sales/ReturnOrderDetail.tsx:348
-#: src/tables/stock/StockTrackingTable.tsx:213
+#: src/tables/stock/StockTrackingTable.tsx:278
 msgid "Return Order"
 msgstr "Return Order"
 
@@ -481,7 +490,7 @@ msgstr "Return Order"
 #: src/defaults/actions.tsx:165
 #: src/pages/Index/Settings/SystemSettings.tsx:381
 #: src/pages/company/CompanyDetail.tsx:146
-#: src/pages/part/PartDetail.tsx:407
+#: src/pages/part/PartDetail.tsx:408
 #: src/pages/sales/SalesIndex.tsx:147
 msgid "Return Orders"
 msgstr "Return Orders"
@@ -497,7 +506,7 @@ msgstr "Return Order Line Items"
 #: lib/enums/ModelInformation.tsx:255
 #: src/components/previews/models/TransferOrderPreview.tsx:15
 #: src/pages/stock/TransferOrderDetail.tsx:366
-#: src/tables/stock/StockTrackingTable.tsx:224
+#: src/tables/stock/StockTrackingTable.tsx:289
 #: src/tables/stock/TransferOrderAllocationTable.tsx:98
 msgid "Transfer Order"
 msgstr "Transfer Order"
@@ -506,7 +515,7 @@ msgstr "Transfer Order"
 #: lib/enums/Roles.tsx:45
 #: src/defaults/actions.tsx:154
 #: src/pages/Index/Settings/SystemSettings.tsx:394
-#: src/pages/part/PartDetail.tsx:424
+#: src/pages/part/PartDetail.tsx:425
 #: src/pages/stock/LocationDetail.tsx:168
 msgid "Transfer Orders"
 msgstr "Transfer Orders"
@@ -563,12 +572,12 @@ msgstr "Owners"
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/ExportSessionTable.tsx:44
 #: src/tables/settings/ImportSessionTable.tsx:88
-#: src/tables/stock/StockTrackingTable.tsx:280
+#: src/tables/stock/StockTrackingTable.tsx:348
 msgid "User"
 msgstr "User"
 
 #: lib/enums/ModelInformation.tsx:293
-#: src/components/nav/NavigationDrawer.tsx:124
+#: src/components/nav/NavigationDrawer.tsx:131
 #: src/defaults/actions.tsx:222
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
 #: src/pages/core/CoreIndex.tsx:22
@@ -582,7 +591,7 @@ msgid "Group"
 msgstr "Group"
 
 #: lib/enums/ModelInformation.tsx:300
-#: src/components/nav/NavigationDrawer.tsx:130
+#: src/components/nav/NavigationDrawer.tsx:137
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
 #: src/pages/core/CoreIndex.tsx:28
 #: src/pages/core/GroupDetail.tsx:80
@@ -793,7 +802,7 @@ msgid "Scan"
 msgstr "Scan"
 
 #: src/components/barcodes/BarcodeInput.tsx:53
-#: src/pages/stock/ScanWorkPanel.tsx:1252
+#: src/pages/stock/ScanWorkPanel.tsx:1427
 msgid "Camera Input"
 msgstr "Camera Input"
 
@@ -819,7 +828,7 @@ msgstr "Enter barcode data"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
 #: src/components/buttons/ScanButton.tsx:56
-#: src/components/nav/NavigationDrawer.tsx:145
+#: src/components/nav/NavigationDrawer.tsx:152
 #: src/forms/PurchaseOrderForms.tsx:534
 #: src/forms/PurchaseOrderForms.tsx:674
 msgid "Scan Barcode"
@@ -843,7 +852,6 @@ msgstr "Barcode does not match the expected model type"
 #: src/pages/stock/ScanResultList.tsx:59
 #: src/pages/stock/ScanStockEventTable.tsx:177
 #: src/pages/stock/ScanStockEventTable.tsx:332
-#: src/pages/stock/ScanWorkPanel.tsx:1176
 #: src/tables/bom/BomTable.tsx:583
 #: src/tables/settings/PendingTasksTable.tsx:68
 msgid "Success"
@@ -895,7 +903,7 @@ msgid "Failed to link barcode"
 msgstr "Failed to link barcode"
 
 #: src/components/barcodes/QRCode.tsx:179
-#: src/pages/part/PartDetailsPanel.tsx:148
+#: src/pages/part/PartDetailsPanel.tsx:151
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:126
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:126
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:128
@@ -1124,7 +1132,7 @@ msgstr "Target Date"
 #: src/components/tables/ColumnRenderers.tsx:723
 #: src/components/tables/Filter.tsx:400
 #: src/pages/build/BuildOrderDetailsPanel.tsx:155
-#: src/pages/part/PartDetailsPanel.tsx:290
+#: src/pages/part/PartDetailsPanel.tsx:293
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:165
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:177
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:179
@@ -1156,7 +1164,7 @@ msgstr "Accept Layout"
 #: src/components/dashboard/DashboardMenu.tsx:94
 #: src/components/nav/NavigationDrawer.tsx:69
 #: src/defaults/actions.tsx:62
-#: src/defaults/links.tsx:38
+#: src/defaults/links.tsx:39
 #: src/pages/Index/Home.tsx:8
 msgid "Dashboard"
 msgstr "Dashboard"
@@ -1375,12 +1383,12 @@ msgstr "Show the number of return orders which are assigned to you"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:224
 #: src/components/dashboard/widgets/GetStartedWidget.tsx:15
-#: src/defaults/links.tsx:115
+#: src/defaults/links.tsx:125
 msgid "Getting Started"
 msgstr "Getting Started"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:225
-#: src/defaults/links.tsx:118
+#: src/defaults/links.tsx:128
 msgid "Getting started with InvenTree"
 msgstr "Getting started with InvenTree"
 
@@ -1441,26 +1449,26 @@ msgstr "There are no unread news items"
 #~ msgid "Display number of completed {models} per month"
 #~ msgstr "Display number of completed {models} per month"
 
-#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:15
+#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:16
 msgid "Generating Stocktake Report"
 msgstr "Generating Stocktake Report"
 
-#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:20
-#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:53
-#: src/pages/part/PartStockHistoryDetail.tsx:99
+#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:21
+#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:54
+#: src/pages/part/PartStockHistoryDetail.tsx:105
 msgid "Generate Stocktake Report"
 msgstr "Generate Stocktake Report"
 
-#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:37
-#: src/pages/part/PartStockHistoryDetail.tsx:111
+#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:38
+#: src/pages/part/PartStockHistoryDetail.tsx:117
 msgid "Generate"
 msgstr "Generate"
 
-#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:64
+#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:65
 msgid "Stocktake"
 msgstr "Stocktake"
 
-#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:65
+#: src/components/dashboard/widgets/StocktakeDashboardWidget.tsx:66
 msgid "Generate a new stocktake report"
 msgstr "Generate a new stocktake report"
 
@@ -1515,7 +1523,8 @@ msgstr "Remove the associated image from this item?"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:898
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:917
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:273
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:555
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:522
+#: src/pages/stock/ScanApprovalReview.tsx:249
 #: src/tables/build/BuildAllocatedStockTable.tsx:183
 #: src/tables/build/BuildAllocatedStockTable.tsx:278
 #: src/tables/build/BuildLineTable.tsx:129
@@ -2123,7 +2132,7 @@ msgid "API Version"
 msgstr "API Version"
 
 #: src/components/forms/InstanceOptions.tsx:143
-#: src/components/nav/NavigationDrawer.tsx:215
+#: src/components/nav/NavigationDrawer.tsx:222
 #: src/defaults/actions.tsx:232
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:254
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:58
@@ -2240,7 +2249,7 @@ msgstr "Add new row"
 #: src/components/forms/fields/TreeField.tsx:328
 #: src/components/render/Instance.tsx:145
 #: src/components/render/ModelHoverCard.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:806
+#: src/components/tables/InvenTreeTable.tsx:820
 msgid "View details"
 msgstr "View details"
 
@@ -2251,6 +2260,7 @@ msgstr "Select..."
 #: src/components/forms/fields/TreeField.tsx:414
 #: src/components/wizards/ImportPartWizard.tsx:221
 #: src/forms/StockForms.tsx:1267
+#: src/pages/stock/ScanWorkPanel.tsx:1416
 msgid "Loading..."
 msgstr "Loading..."
 
@@ -2534,7 +2544,7 @@ msgstr "Unknown error"
 #~ msgstr "Read more"
 
 #: src/components/items/InfoItem.tsx:27
-#: src/pages/stock/ScanWorkPanel.tsx:1303
+#: src/pages/stock/ScanWorkPanel.tsx:1506
 msgid "None"
 msgstr "None"
 
@@ -2562,42 +2572,49 @@ msgid "This information is only available for administrative users"
 msgstr "This information is only available for administrative users"
 
 #: src/components/items/PartCreationMenu.tsx:43
-msgid "Import Parts"
-msgstr "Import Parts"
+#~ msgid "Import Parts"
+#~ msgstr "Import Parts"
 
-#: src/components/items/PartCreationMenu.tsx:62
-#: src/pages/part/PartDetail.tsx:665
-#: src/tables/part/PartTable.tsx:199
+#: src/components/items/PartCreationMenu.tsx:49
+#: src/pages/part/PartDetail.tsx:670
+#: src/tables/part/PartTable.tsx:220
 msgid "Add Part"
 msgstr "Add Part"
 
-#: src/components/items/PartCreationMenu.tsx:80
+#: src/components/items/PartCreationMenu.tsx:66
+#: src/pages/stock/WmsInventoryPanel.tsx:651
+#: src/tables/stock/StockItemTable.tsx:694
+#: src/tables/stock/StockItemTable.tsx:766
+msgid "设备资料导入"
+msgstr "设备资料导入"
+
+#: src/components/items/PartCreationMenu.tsx:77
 msgid "Add Parts"
 msgstr "Add Parts"
 
-#: src/components/items/PartCreationMenu.tsx:86
+#: src/components/items/PartCreationMenu.tsx:83
 msgid "Create Part"
 msgstr "Create Part"
 
-#: src/components/items/PartCreationMenu.tsx:88
+#: src/components/items/PartCreationMenu.tsx:85
 msgid "Create a new part"
 msgstr "Create a new part"
 
-#: src/components/items/PartCreationMenu.tsx:92
+#: src/components/items/PartCreationMenu.tsx:89
 #: src/tables/bom/BomTable.tsx:670
 #: src/tables/general/ParameterTable.tsx:203
 msgid "Import from File"
 msgstr "Import from File"
 
-#: src/components/items/PartCreationMenu.tsx:94
+#: src/components/items/PartCreationMenu.tsx:91
 msgid "Import parts from a file"
 msgstr "Import parts from a file"
 
-#: src/components/items/PartCreationMenu.tsx:99
+#: src/components/items/PartCreationMenu.tsx:96
 msgid "Import from Supplier"
 msgstr "Import from Supplier"
 
-#: src/components/items/PartCreationMenu.tsx:101
+#: src/components/items/PartCreationMenu.tsx:98
 msgid "Import parts from a supplier plugin"
 msgstr "Import parts from a supplier plugin"
 
@@ -2670,14 +2687,14 @@ msgstr "No items"
 #: src/components/render/Stock.tsx:98
 #: src/components/tables/ColumnRenderers.tsx:281
 #: src/components/tables/PartStockCell.tsx:85
-#: src/pages/part/PartDetail.tsx:579
-#: src/pages/stock/ScanWorkPanel.tsx:1306
-#: src/pages/stock/StockDetail.tsx:695
+#: src/pages/part/PartDetail.tsx:584
+#: src/pages/stock/ScanWorkPanel.tsx:1509
+#: src/pages/stock/StockDetail.tsx:698
 #: src/pages/stock/StockDetailsPanel.tsx:208
 #: src/tables/build/BuildAllocatedStockTable.tsx:128
 #: src/tables/build/BuildLineTable.tsx:211
-#: src/tables/stock/StockItemTable.tsx:114
-#: src/tables/stock/StockItemTable.tsx:251
+#: src/tables/stock/StockItemTable.tsx:115
+#: src/tables/stock/StockItemTable.tsx:252
 msgid "Available"
 msgstr "Available"
 
@@ -2735,7 +2752,7 @@ msgstr "Links"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:176
 #: src/defaults/actions.tsx:69
-#: src/defaults/links.tsx:197
+#: src/defaults/links.tsx:207
 msgid "Documentation"
 msgstr "Documentation"
 
@@ -2934,7 +2951,7 @@ msgid "Open search"
 msgstr "Open search"
 
 #: src/components/nav/Header.tsx:216
-#: src/components/nav/NavigationDrawer.tsx:157
+#: src/components/nav/NavigationDrawer.tsx:164
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:146
 #: src/pages/Index/Settings/UserSettings.tsx:109
@@ -2969,7 +2986,7 @@ msgstr "Nothing found..."
 #~ msgstr "Profile"
 
 #: src/components/nav/MainMenu.tsx:54
-#: src/components/nav/NavigationDrawer.tsx:203
+#: src/components/nav/NavigationDrawer.tsx:210
 #: src/pages/Index/Settings/AdminCenter/EmailManagementPanel.tsx:21
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:39
 msgid "Settings"
@@ -2981,7 +2998,7 @@ msgstr "Settings"
 #~ msgstr "Account settings"
 
 #: src/components/nav/MainMenu.tsx:61
-#: src/components/nav/NavigationDrawer.tsx:163
+#: src/components/nav/NavigationDrawer.tsx:170
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:106
 #: src/pages/Index/Settings/UserSettings.tsx:146
@@ -2999,7 +3016,7 @@ msgstr "User Settings"
 #~ msgstr "Current language {locale}"
 
 #: src/components/nav/MainMenu.tsx:69
-#: src/components/nav/NavigationDrawer.tsx:169
+#: src/components/nav/NavigationDrawer.tsx:176
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:193
 #: src/pages/Index/Settings/SystemSettings.tsx:428
@@ -3012,7 +3029,7 @@ msgstr "System Settings"
 #~ msgstr "Switch to pseudo language"
 
 #: src/components/nav/MainMenu.tsx:78
-#: src/components/nav/NavigationDrawer.tsx:176
+#: src/components/nav/NavigationDrawer.tsx:183
 #: src/components/nav/SettingsHeader.tsx:42
 #: src/defaults/actions.tsx:202
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:320
@@ -3022,8 +3039,8 @@ msgstr "Admin Center"
 
 #: src/components/nav/MainMenu.tsx:99
 #: src/defaults/actions.tsx:78
-#: src/defaults/links.tsx:169
-#: src/defaults/links.tsx:222
+#: src/defaults/links.tsx:179
+#: src/defaults/links.tsx:232
 msgid "About InvenTree"
 msgstr "About InvenTree"
 
@@ -3048,20 +3065,15 @@ msgstr "Logout"
 #~ msgid "Pages"
 #~ msgstr "Pages"
 
+#: src/components/nav/NavigationDrawer.tsx:75
+#: src/defaults/links.tsx:44
+msgid "基础资料"
+msgstr "基础资料"
+
 #: src/components/nav/NavigationDrawer.tsx:82
-#: src/components/render/Part.tsx:36
-#: src/components/wizards/ImportPartWizard.tsx:808
-#: src/defaults/links.tsx:51
-#: src/forms/StockForms.tsx:1476
-#: src/pages/Index/Settings/SystemSettings.tsx:259
-#: src/pages/part/PartDetail.tsx:296
-#: src/pages/stock/LocationDetail.tsx:399
-#: src/pages/stock/LocationDetail.tsx:441
-#: src/pages/stock/StockDetail.tsx:342
-#: src/pages/stock/TransferOrderDetail.tsx:372
-#: src/tables/stock/StockItemTable.tsx:100
-msgid "Stock"
-msgstr "Stock"
+#: src/defaults/links.tsx:52
+msgid "库存设备"
+msgstr "库存设备"
 
 #: src/components/nav/NavigationDrawer.tsx:84
 #: src/pages/stock/ScanInbound.tsx:534
@@ -3074,9 +3086,8 @@ msgstr "Stock"
 #~ msgstr "扫描商品条码，库存自动增加 1 件"
 
 #: src/components/nav/NavigationDrawer.tsx:89
-#: src/defaults/links.tsx:85
-#: src/pages/stock/ScanStockPage.tsx:126
-#: src/pages/stock/ScanWorkPanel.tsx:840
+#: src/defaults/links.tsx:93
+#: src/pages/stock/ScanStockPage.tsx:116
 msgid "Scan stock"
 msgstr "Scan stock"
 
@@ -3085,15 +3096,22 @@ msgid "Scan products for inbound and outbound stock operations"
 msgstr "Scan products for inbound and outbound stock operations"
 
 #: src/components/nav/NavigationDrawer.tsx:103
-#: src/defaults/links.tsx:61
+#: src/defaults/links.tsx:85
+#: src/pages/stock/WmsStatisticsPage.tsx:148
+#: src/pages/stock/WmsStatisticsPage.tsx:150
+msgid "统计查询"
+msgstr "统计查询"
+
+#: src/components/nav/NavigationDrawer.tsx:110
+#: src/defaults/links.tsx:62
 #: src/pages/Index/Settings/SystemSettings.tsx:319
 #: src/pages/build/BuildDetail.tsx:593
 #: src/pages/build/BuildIndex.tsx:121
 msgid "Manufacturing"
 msgstr "Manufacturing"
 
-#: src/components/nav/NavigationDrawer.tsx:110
-#: src/defaults/links.tsx:67
+#: src/components/nav/NavigationDrawer.tsx:117
+#: src/defaults/links.tsx:68
 #: src/pages/Index/Settings/SystemSettings.tsx:347
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:185
@@ -3104,8 +3122,8 @@ msgstr "Manufacturing"
 msgid "Purchasing"
 msgstr "Purchasing"
 
-#: src/components/nav/NavigationDrawer.tsx:117
-#: src/defaults/links.tsx:73
+#: src/components/nav/NavigationDrawer.tsx:124
+#: src/defaults/links.tsx:74
 #: src/pages/Index/Settings/SystemSettings.tsx:364
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:353
@@ -3115,11 +3133,11 @@ msgstr "Purchasing"
 msgid "Sales"
 msgstr "Sales"
 
-#: src/components/nav/NavigationDrawer.tsx:198
+#: src/components/nav/NavigationDrawer.tsx:205
 msgid "Navigation"
 msgstr "Navigation"
 
-#: src/components/nav/NavigationDrawer.tsx:226
+#: src/components/nav/NavigationDrawer.tsx:233
 msgid "About"
 msgstr "About"
 
@@ -3178,7 +3196,7 @@ msgstr "Remove search group"
 
 #: src/components/nav/SearchDrawer.tsx:305
 #: src/pages/company/ManufacturerPartDetail.tsx:91
-#: src/pages/part/PartDetail.tsx:371
+#: src/pages/part/PartDetail.tsx:372
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:123
 msgid "Suppliers"
@@ -3244,7 +3262,7 @@ msgstr "Attachments"
 #: src/components/panels/NotesPanel.tsx:27
 #: src/forms/StockForms.tsx:1546
 #: src/tables/part/PartTestResultTable.tsx:218
-#: src/tables/stock/StockTrackingTable.tsx:322
+#: src/tables/stock/StockTrackingTable.tsx:397
 msgid "Notes"
 msgstr "Notes"
 
@@ -3298,7 +3316,7 @@ msgstr "Plugin Information"
 #: src/pages/company/ManufacturerPartDetailsPanel.tsx:73
 #: src/pages/company/SupplierPartDetailsPanel.tsx:99
 #: src/pages/part/PartCategoryDetailsPanel.tsx:42
-#: src/pages/part/PartDetailsPanel.tsx:87
+#: src/pages/part/PartDetailsPanel.tsx:90
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:65
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:66
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:66
@@ -3327,7 +3345,7 @@ msgstr "Date"
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:68
 #: src/pages/core/UserDetail.tsx:78
 #: src/pages/core/UserDetail.tsx:208
-#: src/pages/part/PartDetailsPanel.tsx:244
+#: src/pages/part/PartDetailsPanel.tsx:247
 #: src/tables/bom/UsedInTable.tsx:107
 #: src/tables/company/CompanyTable.tsx:76
 #: src/tables/company/CompanyTable.tsx:111
@@ -3343,7 +3361,7 @@ msgstr "Date"
 #: src/tables/settings/ApiTokenTable.tsx:66
 #: src/tables/settings/ProjectCodeTable.tsx:104
 #: src/tables/settings/UserTable.tsx:402
-#: src/tables/stock/StockItemTable.tsx:230
+#: src/tables/stock/StockItemTable.tsx:231
 msgid "Active"
 msgstr "Active"
 
@@ -3511,130 +3529,130 @@ msgstr "The selected printer is no longer available. Refresh the list and select
 msgid "操作未完成。请检查打印组件是否运行、登录权限和服务端配置。"
 msgstr "The operation did not complete. Check the print component, login permissions and server configuration."
 
-#: src/components/printing/LocalPrintModal.tsx:313
+#: src/components/printing/LocalPrintModal.tsx:316
 #: src/components/printing/StockLabelPrintModal.tsx:47
 msgid "本机标签打印"
 msgstr "Local label printing"
 
-#: src/components/printing/LocalPrintModal.tsx:322
+#: src/components/printing/LocalPrintModal.tsx:325
 msgid "完整设备标签 · 50 × 30 mm"
 msgstr "完整设备标签 · 50 × 30 mm"
 
-#: src/components/printing/LocalPrintModal.tsx:324
+#: src/components/printing/LocalPrintModal.tsx:327
 msgid "库存标签 · 50 × 30 mm"
 msgstr "库存标签 · 50 × 30 mm"
 
-#: src/components/printing/LocalPrintModal.tsx:325
+#: src/components/printing/LocalPrintModal.tsx:328
 msgid "商品 IPN 标签 · 50 × 30 mm"
 msgstr "Product IPN label · 50 × 30 mm"
 
-#: src/components/printing/LocalPrintModal.tsx:330
+#: src/components/printing/LocalPrintModal.tsx:333
 msgid "标签已按份数生成。提交成功只表示进入本机队列，请检查实际出纸。"
 msgstr "Copies are already included in the PDF. Submission only confirms the local queue; check physical output."
 
-#: src/components/printing/LocalPrintModal.tsx:338
+#: src/components/printing/LocalPrintModal.tsx:341
 msgid "安装打印组件"
 msgstr "Install print component"
 
-#: src/components/printing/LocalPrintModal.tsx:344
+#: src/components/printing/LocalPrintModal.tsx:347
 msgid "刷新打印机"
 msgstr "Refresh printers"
 
-#: src/components/printing/LocalPrintModal.tsx:344
+#: src/components/printing/LocalPrintModal.tsx:347
 msgid "重新检测"
 msgstr "Detect again"
 
-#: src/components/printing/LocalPrintModal.tsx:350
+#: src/components/printing/LocalPrintModal.tsx:353
 msgid "下载 PDF"
 msgstr "Download PDF"
 
-#: src/components/printing/LocalPrintModal.tsx:354
+#: src/components/printing/LocalPrintModal.tsx:357
 msgid "上次创建请求的结果尚未确认。先查询该请求，再决定是否提交，避免重复创建。"
 msgstr "The last creation request is unconfirmed. Look it up before submitting to avoid creating a duplicate."
 
-#: src/components/printing/LocalPrintModal.tsx:362
+#: src/components/printing/LocalPrintModal.tsx:365
 msgid "查询上次请求"
 msgstr "Look up previous request"
 
-#: src/components/printing/LocalPrintModal.tsx:366
+#: src/components/printing/LocalPrintModal.tsx:369
 msgid "Windows 安装说明"
 msgstr "Windows installation instructions"
 
-#: src/components/printing/LocalPrintModal.tsx:368
+#: src/components/printing/LocalPrintModal.tsx:371
 msgid "先安装打印机厂商驱动，并确认 Windows 测试页能打印。安装 QZ Tray，允许登录自启，完成管理员提供的本站信任设置，再返回此处重新检测。"
 msgstr "Install the printer driver and print a Windows test page. Install QZ Tray, enable login autostart, configure site trust with your administrator, then detect again here."
 
-#: src/components/printing/LocalPrintModal.tsx:370
+#: src/components/printing/LocalPrintModal.tsx:373
 msgid "要求组件版本："
 msgstr "Required component version: "
 
-#: src/components/printing/LocalPrintModal.tsx:378
+#: src/components/printing/LocalPrintModal.tsx:381
 msgid "下载管理员指定安装包"
 msgstr "Download administrator-approved installer"
 
-#: src/components/printing/LocalPrintModal.tsx:380
+#: src/components/printing/LocalPrintModal.tsx:383
 msgid "尚未配置经过验证的安装包，请联系管理员。当前可下载 PDF。"
 msgstr "No verified installer is configured. Contact your administrator or download a PDF."
 
-#: src/components/printing/LocalPrintModal.tsx:386
+#: src/components/printing/LocalPrintModal.tsx:389
 msgid "本机打印机"
 msgstr "Local printer"
 
-#: src/components/printing/LocalPrintModal.tsx:387
+#: src/components/printing/LocalPrintModal.tsx:390
 msgid "请选择打印机"
 msgstr "Select a printer"
 
-#: src/components/printing/LocalPrintModal.tsx:387
+#: src/components/printing/LocalPrintModal.tsx:390
 msgid "请先检测打印组件"
 msgstr "Detect the print component first"
 
-#: src/components/printing/LocalPrintModal.tsx:404
+#: src/components/printing/LocalPrintModal.tsx:407
 msgid "每台设备的打印数量"
 msgstr "每台设备的打印数量"
 
-#: src/components/printing/LocalPrintModal.tsx:419
-#: src/pages/stock/WmsReceiptWorkbench.tsx:401
-#: src/pages/stock/WmsReceiptWorkbench.tsx:432
+#: src/components/printing/LocalPrintModal.tsx:422
+#: src/pages/stock/WmsReceiptWorkbench.tsx:505
+#: src/pages/stock/WmsReceiptWorkbench.tsx:536
 msgid "打印数量"
 msgstr "打印数量"
 
-#: src/components/printing/LocalPrintModal.tsx:442
+#: src/components/printing/LocalPrintModal.tsx:445
 msgid "每件份数"
 msgstr "Copies per item"
 
-#: src/components/printing/LocalPrintModal.tsx:452
+#: src/components/printing/LocalPrintModal.tsx:455
 msgid "总张数："
 msgstr "Total labels: "
 
-#: src/components/printing/LocalPrintModal.tsx:467
+#: src/components/printing/LocalPrintModal.tsx:470
 msgid "任务："
 msgstr "Task: "
 
-#: src/components/printing/LocalPrintModal.tsx:471
+#: src/components/printing/LocalPrintModal.tsx:474
 msgid "目标队列："
 msgstr "Target queue: "
 
-#: src/components/printing/LocalPrintModal.tsx:480
+#: src/components/printing/LocalPrintModal.tsx:483
 msgid "我已检查系统队列和实际标签，确认需要重新打印这些标签"
 msgstr "I checked the system queue and physical labels and confirm these labels need reprinting"
 
-#: src/components/printing/LocalPrintModal.tsx:490
+#: src/components/printing/LocalPrintModal.tsx:493
 msgid "创建补打任务"
 msgstr "Create reprint task"
 
-#: src/components/printing/LocalPrintModal.tsx:505
+#: src/components/printing/LocalPrintModal.tsx:508
 msgid "继续提交"
 msgstr "Continue submission"
 
-#: src/components/printing/LocalPrintModal.tsx:505
+#: src/components/printing/LocalPrintModal.tsx:508
 msgid "打印"
 msgstr "Print"
 
-#: src/components/printing/LocalPrintModal.tsx:515
+#: src/components/printing/LocalPrintModal.tsx:518
 msgid "新建标签任务"
 msgstr "New label task"
 
-#: src/components/printing/LocalPrintModal.tsx:519
+#: src/components/printing/LocalPrintModal.tsx:522
 msgid "最近任务（选择后不会自动发送）"
 msgstr "Recent tasks (selection does not send automatically)"
 
@@ -3643,6 +3661,8 @@ msgid "无法读取所选库存的标签信息，请重试。"
 msgstr "无法读取所选库存的标签信息，请重试。"
 
 #: src/components/printing/StockLabelPrintModal.tsx:52
+#: src/pages/stock/WmsBusinessAttachments.tsx:145
+#: src/pages/stock/WmsReceiptManager.tsx:122
 msgid "重试"
 msgstr "重试"
 
@@ -3651,44 +3671,46 @@ msgid "正在核对所选库存的标签信息…"
 msgstr "正在核对所选库存的标签信息…"
 
 #: src/components/printing/StockLabelPrintModal.tsx:73
-msgid "完整标签"
-msgstr "完整标签"
-
-#: src/components/printing/StockLabelPrintModal.tsx:73
 #: src/components/printing/StockLabelPrintModal.tsx:74
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:480
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:459
+#: src/pages/stock/ScanApprovalReview.tsx:85
 #: src/pages/stock/ScanStockEventTable.tsx:370
-#: src/pages/stock/ScanWorkPanel.tsx:936
-#: src/pages/stock/ScanWorkPanel.tsx:944
-#: src/pages/stock/ScanWorkPanel.tsx:955
-#: src/pages/stock/ScanWorkPanel.tsx:1303
+#: src/pages/stock/ScanWorkPanel.tsx:1176
+#: src/pages/stock/ScanWorkPanel.tsx:1184
+#: src/pages/stock/ScanWorkPanel.tsx:1195
+#: src/pages/stock/ScanWorkPanel.tsx:1506
+#: src/pages/stock/WmsBatchDetailPage.tsx:89
 #: src/pages/stock/WmsCompleteScan.tsx:322
-#: src/pages/stock/WmsInventoryPanel.tsx:215
-#: src/pages/stock/WmsInventoryPanel.tsx:236
-#: src/pages/stock/WmsInventoryPanel.tsx:607
+#: src/pages/stock/WmsInventoryPanel.tsx:229
+#: src/pages/stock/WmsInventoryPanel.tsx:250
+#: src/pages/stock/WmsInventoryPanel.tsx:621
 #: src/pages/stock/WmsNativeTools.tsx:74
-#: src/pages/stock/WmsReceiptWorkbench.tsx:81
-#: src/tables/stock/StockItemTable.tsx:466
+#: src/pages/stock/WmsStatisticsPage.tsx:189
+#: src/pages/stock/WmsStatisticsPage.tsx:475
+#: src/tables/stock/StockItemTable.tsx:468
+#: src/tables/stock/StockTrackingTable.tsx:122
 msgid "项目"
 msgstr "项目"
 
 #: src/components/printing/StockLabelPrintModal.tsx:73
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:508
 #: src/pages/stock/ScanStockEventTable.tsx:370
-#: src/pages/stock/WmsReceiptWorkbench.tsx:84
-#: src/pages/stock/WmsReceiptWorkbench.tsx:577
+#: src/pages/stock/WmsReceiptWorkbench.tsx:699
 msgid "合同"
 msgstr "合同"
+
+#: src/components/printing/StockLabelPrintModal.tsx:73
+msgid "完整标签"
+msgstr "完整标签"
+
+#: src/components/printing/StockLabelPrintModal.tsx:74
+#: src/pages/stock/ScanApprovalRequestList.tsx:153
+#: src/tables/stock/StockItemTable.tsx:454
+msgid "未填写"
+msgstr "未填写"
 
 #: src/components/printing/StockLabelPrintModal.tsx:74
 msgid "基础设备标签（未关联合同）"
 msgstr "基础设备标签（未关联合同）"
-
-#: src/components/printing/StockLabelPrintModal.tsx:74
-#: src/pages/stock/ScanApprovalRequestList.tsx:158
-#: src/tables/stock/StockItemTable.tsx:452
-msgid "未填写"
-msgstr "未填写"
 
 #: src/components/printing/StockLabelPrintModal.tsx:77
 msgid "已关联来源明细的库存打印原完整二维码；未关联合同的库存打印基础设备码。打印数量不会改变库存。"
@@ -3730,12 +3752,12 @@ msgstr "Unknown model: {model_name}"
 #: src/pages/company/CompanyDetail.tsx:262
 #: src/pages/company/SupplierPartDetail.tsx:216
 #: src/pages/core/UserDetail.tsx:210
-#: src/pages/part/PartDetail.tsx:624
+#: src/pages/part/PartDetail.tsx:629
 msgid "Inactive"
 msgstr "Inactive"
 
 #: src/components/render/Part.tsx:31
-#: src/pages/part/PartDetail.tsx:630
+#: src/pages/part/PartDetail.tsx:635
 #: src/tables/part/PartTableFilters.tsx:103
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
@@ -3747,34 +3769,47 @@ msgstr "Virtual"
 msgid "No stock"
 msgstr "No stock"
 
+#: src/components/render/Part.tsx:36
+#: src/components/wizards/ImportPartWizard.tsx:808
+#: src/forms/StockForms.tsx:1476
+#: src/pages/Index/Settings/SystemSettings.tsx:259
+#: src/pages/part/PartDetail.tsx:297
+#: src/pages/stock/LocationDetail.tsx:399
+#: src/pages/stock/LocationDetail.tsx:441
+#: src/pages/stock/StockDetail.tsx:345
+#: src/pages/stock/TransferOrderDetail.tsx:372
+#: src/tables/stock/StockItemTable.tsx:101
+msgid "Stock"
+msgstr "Stock"
+
 #: src/components/render/Part.tsx:51
 #: src/components/tables/PartStockCell.tsx:53
 #: src/components/wizards/OrderPartsWizard.tsx:136
 #: src/pages/company/SupplierPartDetail.tsx:237
 #: src/pages/company/SupplierPartDetailsPanel.tsx:151
-#: src/pages/part/PartDetail.tsx:606
-#: src/pages/part/PartDetailsPanel.tsx:174
+#: src/pages/part/PartDetail.tsx:611
+#: src/pages/part/PartDetailsPanel.tsx:177
 #: src/tables/bom/BomTable.tsx:478
 #: src/tables/build/BuildLineTable.tsx:241
-#: src/tables/part/PartTable.tsx:83
+#: src/tables/part/PartTable.tsx:103
 #: src/tables/part/PartTableFilters.tsx:149
 msgid "On Order"
 msgstr "On Order"
 
 #: src/components/render/Part.tsx:59
 #: src/components/wizards/OrderPartsWizard.tsx:142
-#: src/pages/part/PartDetail.tsx:612
-#: src/pages/part/PartDetailsPanel.tsx:213
-#: src/pages/stock/StockDetail.tsx:678
+#: src/pages/part/PartDetail.tsx:617
+#: src/pages/part/PartDetailsPanel.tsx:216
+#: src/pages/stock/StockDetail.tsx:681
 #: src/tables/part/PartTestResultTable.tsx:316
-#: src/tables/stock/StockItemTable.tsx:267
+#: src/tables/stock/StockItemTable.tsx:268
 msgid "In Production"
 msgstr "In Production"
 
 #: src/components/render/Part.tsx:78
-#: src/pages/stock/ScanApprovalRequestList.tsx:134
+#: src/pages/stock/ScanApprovalRequestList.tsx:129
 #: src/pages/stock/ScanStockEventTable.tsx:287
-#: src/tables/stock/StockTrackingTable.tsx:316
+#: src/tables/stock/StockTrackingTable.tsx:391
 msgid "Details"
 msgstr "Details"
 
@@ -3782,7 +3817,7 @@ msgstr "Details"
 #: src/components/tables/ColumnRenderers.tsx:449
 #: src/components/tables/ColumnRenderers.tsx:458
 #: src/components/wizards/ImportPartWizard.tsx:807
-#: src/pages/part/PartDetailsPanel.tsx:114
+#: src/pages/part/PartDetailsPanel.tsx:117
 #: src/tables/notifications/NotificationTable.tsx:32
 #: src/tables/part/PartCategoryTemplateTable.tsx:87
 msgid "Category"
@@ -3809,17 +3844,16 @@ msgstr "Category"
 #: src/forms/StockForms.tsx:1889
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:155
-#: src/pages/stock/ScanApprovalRequestList.tsx:126
+#: src/pages/stock/ScanApprovalRequestList.tsx:125
 #: src/pages/stock/ScanStockEventTable.tsx:285
-#: src/pages/stock/ScanWorkPanel.tsx:1195
 #: src/pages/stock/StockDetailsPanel.tsx:249
-#: src/tables/stock/StockTrackingTable.tsx:175
+#: src/tables/stock/StockTrackingTable.tsx:240
 msgid "Location"
 msgstr "Location"
 
 #: src/components/render/Stock.tsx:96
 #: src/forms/StockForms.tsx:680
-#: src/pages/stock/StockDetail.tsx:683
+#: src/pages/stock/StockDetail.tsx:686
 #: src/pages/stock/StockDetailsPanel.tsx:139
 #: src/tables/build/BuildOutputTable.tsx:110
 #: src/tables/sales/SalesOrderAllocationTable.tsx:145
@@ -3841,18 +3875,14 @@ msgstr "Serial Number"
 #: src/forms/StockForms.tsx:1524
 #: src/forms/TransferOrderForms.tsx:241
 #: src/pages/build/BuildIndex.tsx:47
-#: src/pages/part/PartStockHistoryDetail.tsx:64
-#: src/pages/part/PartStockHistoryDetail.tsx:244
-#: src/pages/part/PartStockHistoryDetail.tsx:268
+#: src/pages/part/PartStockHistoryDetail.tsx:67
 #: src/pages/part/bom/BomCompare.tsx:33
 #: src/pages/part/bom/BomCompare.tsx:204
 #: src/pages/part/pricing/BomPricingPanel.tsx:113
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
 #: src/pages/part/pricing/PriceBreakPanel.tsx:173
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:484
-#: src/pages/stock/ScanApprovalRequestList.tsx:132
 #: src/pages/stock/ScanResultList.tsx:33
-#: src/pages/stock/StockDetail.tsx:689
+#: src/pages/stock/StockDetail.tsx:692
 #: src/pages/stock/StockDetailsPanel.tsx:201
 #: src/tables/build/BuildLineTable.tsx:99
 #: src/tables/part/PartPurchaseOrdersTable.tsx:103
@@ -3860,7 +3890,7 @@ msgstr "Serial Number"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:173
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:204
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:69
-#: src/tables/stock/StockTrackingTable.tsx:103
+#: src/tables/stock/StockTrackingTable.tsx:111
 msgid "Quantity"
 msgstr "Quantity"
 
@@ -4018,7 +4048,7 @@ msgid "Part is not active"
 msgstr "Part is not active"
 
 #: src/components/tables/ColumnRenderers.tsx:79
-#: src/pages/part/PartDetail.tsx:492
+#: src/pages/part/PartDetail.tsx:494
 #: src/tables/bom/BomTable.tsx:713
 #: src/tables/part/PartTestTemplateTable.tsx:262
 msgid "Part is Locked"
@@ -4043,11 +4073,11 @@ msgstr "IPN"
 
 #: src/components/tables/ColumnRenderers.tsx:141
 #: src/pages/build/BuildOrderDetailsPanel.tsx:60
-#: src/pages/part/PartDetailsPanel.tsx:107
+#: src/pages/part/PartDetailsPanel.tsx:110
 #: src/pages/stock/StockDetailsPanel.tsx:103
 #: src/tables/bom/UsedInTable.tsx:56
 #: src/tables/build/BuildOrderTable.tsx:66
-#: src/tables/stock/StockItemTable.tsx:91
+#: src/tables/stock/StockItemTable.tsx:92
 msgid "Revision"
 msgstr "Revision"
 
@@ -4084,9 +4114,7 @@ msgid "This stock item is stale"
 msgstr "This stock item is stale"
 
 #: src/components/tables/ColumnRenderers.tsx:245
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:428
-#: src/pages/stock/ScanWorkPanel.tsx:1208
-#: src/pages/stock/StockDetail.tsx:705
+#: src/pages/stock/StockDetail.tsx:708
 #: src/pages/stock/StockDetailsPanel.tsx:224
 msgid "Frozen quantity"
 msgstr "Frozen quantity"
@@ -4132,7 +4160,7 @@ msgstr "Path"
 
 #: src/components/tables/ColumnRenderers.tsx:425
 #: src/components/tables/ColumnRenderers.tsx:434
-#: src/pages/part/PartDetailsPanel.tsx:120
+#: src/pages/part/PartDetailsPanel.tsx:123
 msgid "Default Location"
 msgstr "Default Location"
 
@@ -4166,12 +4194,12 @@ msgstr "User Information"
 
 #: src/components/tables/ColumnRenderers.tsx:693
 #: src/components/tables/Filter.tsx:480
-#: src/pages/part/PartDetailsPanel.tsx:282
+#: src/pages/part/PartDetailsPanel.tsx:285
 msgid "Created By"
 msgstr "Created By"
 
 #: src/components/tables/ColumnRenderers.tsx:765
-#: src/pages/part/PartDetailsPanel.tsx:277
+#: src/pages/part/PartDetailsPanel.tsx:280
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:175
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:187
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:189
@@ -4230,7 +4258,7 @@ msgstr "Show items which have a batch code"
 #: src/forms/PurchaseOrderForms.tsx:777
 #: src/forms/StockForms.tsx:692
 #: src/pages/build/BuildOrderDetailsPanel.tsx:186
-#: src/pages/stock/StockDetail.tsx:711
+#: src/pages/stock/StockDetail.tsx:714
 #: src/pages/stock/StockDetailsPanel.tsx:232
 #: src/tables/build/BuildAllocatedStockTable.tsx:119
 #: src/tables/build/BuildOutputTable.tsx:115
@@ -4256,8 +4284,8 @@ msgstr "Filter items by batch code"
 #: src/forms/StockForms.tsx:1891
 #: src/pages/company/SupplierPartDetail.tsx:221
 #: src/pages/company/SupplierPartDetailsPanel.tsx:144
-#: src/pages/part/PartDetail.tsx:573
-#: src/pages/part/PartDetailsPanel.tsx:160
+#: src/pages/part/PartDetail.tsx:578
+#: src/pages/part/PartDetailsPanel.tsx:163
 #: src/tables/purchasing/SupplierPartTable.tsx:274
 msgid "In Stock"
 msgstr "In Stock"
@@ -4467,7 +4495,7 @@ msgstr "Include results for part variants"
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:71
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:72
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:72
-#: src/pages/stock/ScanApprovalRequestList.tsx:124
+#: src/pages/stock/ScanApprovalRequestList.tsx:123
 #: src/pages/stock/StockDetailsPanel.tsx:112
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:49
 #: src/tables/build/BuildOutputTable.tsx:498
@@ -4480,8 +4508,8 @@ msgstr "Include results for part variants"
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
 #: src/tables/settings/ImportSessionTable.tsx:135
-#: src/tables/stock/StockItemTable.tsx:235
-#: src/tables/stock/StockTrackingTable.tsx:124
+#: src/tables/stock/StockItemTable.tsx:236
+#: src/tables/stock/StockTrackingTable.tsx:189
 msgid "Status"
 msgstr "Status"
 
@@ -4510,7 +4538,7 @@ msgstr "Select tags"
 
 #: src/components/tables/Filter.tsx:442
 #: src/tables/settings/ApiTokenTable.tsx:131
-#: src/tables/stock/StockTrackingTable.tsx:281
+#: src/tables/stock/StockTrackingTable.tsx:349
 msgid "Filter by user"
 msgstr "Filter by user"
 
@@ -4591,7 +4619,7 @@ msgstr "Remove filter"
 #: src/components/tables/FilterSelectDrawer.tsx:249
 #: src/components/tables/FilterSelectDrawer.tsx:276
 #: src/components/tables/FilterSelectDrawer.tsx:290
-#: src/pages/part/PartStockHistoryDetail.tsx:67
+#: src/pages/part/PartStockHistoryDetail.tsx:70
 #: src/tables/part/PartTestResultTable.tsx:210
 #: src/tables/stock/StockItemTestResultTable.tsx:205
 msgid "Value"
@@ -4664,26 +4692,38 @@ msgstr "Save Filters"
 #~ msgid "Select from the available filters"
 #~ msgstr "Select from the available filters"
 
-#: src/components/tables/InvenTreeTable.tsx:56
-#: src/components/tables/InvenTreeTable.tsx:588
+#: src/components/tables/InvenTreeTable.tsx:67
+#: src/components/tables/InvenTreeTable.tsx:600
 msgid "No records found"
 msgstr "No records found"
 
-#: src/components/tables/InvenTreeTable.tsx:170
+#: src/components/tables/InvenTreeTable.tsx:182
 msgid "Error loading table options"
 msgstr "Error loading table options"
 
-#: src/components/tables/InvenTreeTable.tsx:634
+#: src/components/tables/InvenTreeTable.tsx:646
 msgid "Server returned incorrect data type"
 msgstr "Server returned incorrect data type"
 
-#: src/components/tables/InvenTreeTable.tsx:667
+#: src/components/tables/InvenTreeTable.tsx:681
 msgid "Error loading table data"
 msgstr "Error loading table data"
 
-#: src/components/tables/InvenTreeTable.tsx:809
+#: src/components/tables/InvenTreeTable.tsx:823
 msgid "View {model}"
 msgstr "View {model}"
+
+#: src/components/tables/InvenTreeTable.tsx:936
+msgid "表格网络请求失败"
+msgstr "表格网络请求失败"
+
+#: src/components/tables/InvenTreeTable.tsx:938
+msgid "未能连接服务器或请求超时，请检查连接后重试。已有数据可能不是最新结果。"
+msgstr "未能连接服务器或请求超时，请检查连接后重试。已有数据可能不是最新结果。"
+
+#: src/components/tables/InvenTreeTable.tsx:948
+msgid "重试加载表格"
+msgstr "重试加载表格"
 
 #: src/components/tables/InvenTreeTableHeader.tsx:129
 msgid "No items selected"
@@ -4773,13 +4813,13 @@ msgstr "Building"
 
 #: src/components/tables/PartStockCell.tsx:69
 #: src/pages/part/PartAllocationPanel.tsx:21
-#: src/pages/stock/StockDetail.tsx:233
+#: src/pages/stock/StockDetail.tsx:235
 msgid "Build Order Allocations"
 msgstr "Build Order Allocations"
 
 #: src/components/tables/PartStockCell.tsx:77
 #: src/pages/part/PartAllocationPanel.tsx:31
-#: src/pages/stock/StockDetail.tsx:248
+#: src/pages/stock/StockDetail.tsx:250
 msgid "Sales Order Allocations"
 msgstr "Sales Order Allocations"
 
@@ -5208,8 +5248,8 @@ msgid "Next"
 msgstr "Next"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
-#: src/pages/part/PartDetail.tsx:652
-#: src/tables/part/PartTable.tsx:161
+#: src/pages/part/PartDetail.tsx:657
+#: src/tables/part/PartTable.tsx:182
 msgid "Edit Part"
 msgstr "Edit Part"
 
@@ -5385,7 +5425,7 @@ msgstr "Please correct the errors in the selected parts"
 
 #: src/components/wizards/OrderPartsWizard.tsx:629
 #: src/tables/build/BuildLineTable.tsx:908
-#: src/tables/part/PartTable.tsx:267
+#: src/tables/part/PartTable.tsx:288
 #: src/tables/sales/SalesOrderLineItemTable.tsx:426
 #: src/tables/stock/TransferOrderLineItemTable.tsx:333
 msgid "Order Parts"
@@ -5570,13 +5610,13 @@ msgid "Server Information"
 msgstr "Server Information"
 
 #: src/defaults/actions.tsx:86
-#: src/defaults/links.tsx:205
+#: src/defaults/links.tsx:215
 msgid "About this InvenTree instance"
 msgstr "About this InvenTree instance"
 
 #: src/defaults/actions.tsx:92
-#: src/defaults/links.tsx:182
-#: src/defaults/links.tsx:211
+#: src/defaults/links.tsx:192
+#: src/defaults/links.tsx:221
 msgid "License Information"
 msgstr "License Information"
 
@@ -5753,56 +5793,56 @@ msgstr "Current Server"
 #~ msgid "Licenses for packages used by InvenTree"
 #~ msgstr "Licenses for packages used by InvenTree"
 
-#: src/defaults/links.tsx:122
+#: src/defaults/links.tsx:132
 msgid "API"
 msgstr "API"
-
-#: src/defaults/links.tsx:125
-msgid "InvenTree API documentation"
-msgstr "InvenTree API documentation"
-
-#: src/defaults/links.tsx:129
-msgid "Developer Manual"
-msgstr "Developer Manual"
-
-#: src/defaults/links.tsx:132
-msgid "InvenTree developer manual"
-msgstr "InvenTree developer manual"
 
 #: src/defaults/links.tsx:134
 #~ msgid "Licenses"
 #~ msgstr "Licenses"
 
-#: src/defaults/links.tsx:136
+#: src/defaults/links.tsx:135
+msgid "InvenTree API documentation"
+msgstr "InvenTree API documentation"
+
+#: src/defaults/links.tsx:139
+msgid "Developer Manual"
+msgstr "Developer Manual"
+
+#: src/defaults/links.tsx:142
+msgid "InvenTree developer manual"
+msgstr "InvenTree developer manual"
+
+#: src/defaults/links.tsx:146
 msgid "FAQ"
 msgstr "FAQ"
 
-#: src/defaults/links.tsx:139
+#: src/defaults/links.tsx:149
 msgid "Frequently asked questions"
 msgstr "Frequently asked questions"
 
-#: src/defaults/links.tsx:143
+#: src/defaults/links.tsx:153
 msgid "GitHub Repository"
 msgstr "GitHub Repository"
 
-#: src/defaults/links.tsx:146
+#: src/defaults/links.tsx:156
 msgid "InvenTree source code on GitHub"
 msgstr "InvenTree source code on GitHub"
 
-#: src/defaults/links.tsx:156
-#: src/defaults/links.tsx:204
+#: src/defaults/links.tsx:166
+#: src/defaults/links.tsx:214
 msgid "System Information"
 msgstr "System Information"
 
-#: src/defaults/links.tsx:198
+#: src/defaults/links.tsx:208
 msgid "InvenTree documentation"
 msgstr "InvenTree documentation"
 
-#: src/defaults/links.tsx:212
+#: src/defaults/links.tsx:222
 msgid "Licenses for dependencies of the InvenTree software"
 msgstr "Licenses for dependencies of the InvenTree software"
 
-#: src/defaults/links.tsx:223
+#: src/defaults/links.tsx:233
 msgid "About the InvenTree Project"
 msgstr "About the InvenTree Project"
 
@@ -6012,11 +6052,11 @@ msgstr "Allocated stock items will be returned to stock"
 #: src/forms/BuildForms.tsx:971
 #: src/forms/SalesOrderForms.tsx:435
 #: src/forms/TransferOrderForms.tsx:239
-#: src/pages/part/PartDetail.tsx:594
+#: src/pages/part/PartDetail.tsx:599
 #: src/tables/build/BuildAllocatedStockTable.tsx:132
 #: src/tables/build/BuildLineTable.tsx:201
 #: src/tables/sales/SalesOrderLineItemTable.tsx:398
-#: src/tables/stock/StockItemTable.tsx:246
+#: src/tables/stock/StockItemTable.tsx:247
 #: src/tables/stock/TransferOrderLineItemTable.tsx:493
 msgid "Allocated"
 msgstr "Allocated"
@@ -6087,7 +6127,7 @@ msgstr "Fully consumed"
 
 #: src/forms/BuildForms.tsx:972
 #: src/tables/build/BuildLineTable.tsx:206
-#: src/tables/stock/StockItemTable.tsx:275
+#: src/tables/stock/StockItemTable.tsx:276
 msgid "Consumed"
 msgstr "Consumed"
 
@@ -6111,20 +6151,63 @@ msgstr "Select project code for this item"
 #~ msgid "Company updated"
 #~ msgstr "Company updated"
 
+#: src/forms/PartForms.tsx:42
+#: src/pages/part/PartDetailsPanel.tsx:87
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:458
+#: src/pages/stock/ScanApprovalReview.tsx:84
+#: src/pages/stock/ScanWorkPanel.tsx:1151
+#: src/pages/stock/WmsBatchDetailPage.tsx:88
+#: src/pages/stock/WmsInventoryPanel.tsx:50
+#: src/pages/stock/WmsInventoryPanel.tsx:364
+#: src/pages/stock/WmsNativeTools.tsx:106
+#: src/pages/stock/WmsReceiptWorkbench.tsx:68
+#: src/pages/stock/WmsStatisticsPage.tsx:321
+#: src/tables/part/PartTable.tsx:62
+#: src/tables/stock/StockItemTable.tsx:475
+#: src/tables/stock/StockItemTable.tsx:507
+msgid "品牌"
+msgstr "品牌"
+
+#: src/forms/PartForms.tsx:43
+#: src/pages/part/PartDetailsPanel.tsx:88
+#: src/pages/stock/ScanWorkPanel.tsx:1156
+#: src/pages/stock/WmsInventoryPanel.tsx:54
+#: src/pages/stock/WmsReceiptWorkbench.tsx:71
+#: src/tables/part/PartTable.tsx:68
+#: src/tables/stock/StockItemTable.tsx:478
+msgid "规格"
+msgstr "规格"
+
+#: src/forms/PartForms.tsx:44
+#: src/pages/part/PartDetailsPanel.tsx:89
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:457
+#: src/pages/stock/ScanApprovalReview.tsx:83
+#: src/pages/stock/ScanWorkPanel.tsx:1161
+#: src/pages/stock/WmsBatchDetailPage.tsx:87
+#: src/pages/stock/WmsInventoryPanel.tsx:52
+#: src/pages/stock/WmsInventoryPanel.tsx:369
+#: src/pages/stock/WmsNativeTools.tsx:107
+#: src/pages/stock/WmsReceiptWorkbench.tsx:74
+#: src/tables/part/PartTable.tsx:74
+#: src/tables/stock/StockItemTable.tsx:477
+#: src/tables/stock/StockItemTable.tsx:508
+msgid "型号"
+msgstr "型号"
+
 #: src/forms/PartForms.tsx:108
 #~ msgid "Part created"
 #~ msgstr "Part created"
 
-#: src/forms/PartForms.tsx:113
-#: src/forms/PartForms.tsx:247
+#: src/forms/PartForms.tsx:116
+#: src/forms/PartForms.tsx:250
 #: src/pages/part/PartCategoryDetailsPanel.tsx:58
-#: src/pages/part/PartDetailsPanel.tsx:269
+#: src/pages/part/PartDetailsPanel.tsx:272
 #: src/tables/part/PartCategoryTable.tsx:95
 #: src/tables/part/PartTableFilters.tsx:155
 msgid "Subscribed"
 msgstr "Subscribed"
 
-#: src/forms/PartForms.tsx:114
+#: src/forms/PartForms.tsx:117
 msgid "Subscribe to notifications for this part"
 msgstr "Subscribe to notifications for this part"
 
@@ -6132,11 +6215,11 @@ msgstr "Subscribe to notifications for this part"
 #~ msgid "Part updated"
 #~ msgstr "Part updated"
 
-#: src/forms/PartForms.tsx:233
+#: src/forms/PartForms.tsx:236
 msgid "Parent part category"
 msgstr "Parent part category"
 
-#: src/forms/PartForms.tsx:248
+#: src/forms/PartForms.tsx:251
 msgid "Subscribe to notifications for this category"
 msgstr "Subscribe to notifications for this category"
 
@@ -6174,7 +6257,7 @@ msgid "Default location selected"
 msgstr "Default location selected"
 
 #: src/forms/PurchaseOrderForms.tsx:564
-#: src/pages/part/PartDetailsPanel.tsx:268
+#: src/pages/part/PartDetailsPanel.tsx:271
 #: src/tables/bom/BomTable.tsx:276
 #: src/tables/bom/BomTable.tsx:468
 msgid "Virtual Part"
@@ -6256,7 +6339,7 @@ msgstr "Enter serial numbers for received items"
 
 #: src/forms/PurchaseOrderForms.tsx:809
 #: src/pages/stock/StockDetailsPanel.tsx:328
-#: src/tables/stock/StockItemTable.tsx:204
+#: src/tables/stock/StockItemTable.tsx:205
 msgid "Expiry Date"
 msgstr "Expiry Date"
 
@@ -6378,9 +6461,9 @@ msgid "Stock Status"
 msgstr "Stock Status"
 
 #: src/forms/StockForms.tsx:349
-#: src/pages/stock/StockDetail.tsx:407
-#: src/tables/stock/StockItemTable.tsx:554
-#: src/tables/stock/StockItemTable.tsx:628
+#: src/pages/stock/StockDetail.tsx:410
+#: src/tables/stock/StockItemTable.tsx:556
+#: src/tables/stock/StockItemTable.tsx:630
 msgid "Add Stock Item"
 msgstr "Add Stock Item"
 
@@ -6389,7 +6472,7 @@ msgid "Select the part to install"
 msgstr "Select the part to install"
 
 #: src/forms/StockForms.tsx:526
-#: src/pages/stock/StockDetail.tsx:297
+#: src/pages/stock/StockDetail.tsx:299
 msgid "Installed Items"
 msgstr "Installed Items"
 
@@ -6449,7 +6532,7 @@ msgstr "Unit Quantity"
 #: src/tables/general/ExtraLineItemTable.tsx:67
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:256
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
-#: src/tables/stock/StockItemTable.tsx:159
+#: src/tables/stock/StockItemTable.tsx:160
 msgid "Unit Price"
 msgstr "Unit Price"
 
@@ -6936,7 +7019,7 @@ msgid "Delete selected stock items"
 msgstr "Delete selected stock items"
 
 #: src/hooks/UseStockAdjustActions.tsx:226
-#: src/pages/part/PartDetail.tsx:744
+#: src/pages/part/PartDetail.tsx:749
 msgid "Stock Actions"
 msgstr "Stock Actions"
 
@@ -6970,7 +7053,7 @@ msgid "Confirm your new password"
 msgstr "Confirm your new password"
 
 #: src/pages/Auth/ChangePassword.tsx:80
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:630
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:676
 msgid "Confirm"
 msgstr "Confirm"
 
@@ -8461,8 +8544,6 @@ msgid "Part Stocktake"
 msgstr "Part Stocktake"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:299
-#: src/pages/part/PartStockHistoryDetail.tsx:299
-#: src/pages/stock/StockDetail.tsx:204
 msgid "Stock Tracking"
 msgstr "Stock Tracking"
 
@@ -8539,14 +8620,14 @@ msgstr "The assembled part may not have a Bill of Materials (BOM) defined, or th
 #~ msgstr "Build Status"
 
 #: src/pages/build/BuildDetail.tsx:116
-#: src/pages/part/PartDetail.tsx:342
+#: src/pages/part/PartDetail.tsx:343
 #: src/pages/part/bom/BomActions.tsx:115
 #: src/pages/part/bom/BomActions.tsx:120
 msgid "BOM Not Validated"
 msgstr "BOM Not Validated"
 
 #: src/pages/build/BuildDetail.tsx:118
-#: src/pages/part/PartDetail.tsx:344
+#: src/pages/part/PartDetail.tsx:345
 msgid "The Bill of Materials for this assembly has not been validated."
 msgstr "The Bill of Materials for this assembly has not been validated."
 
@@ -8625,8 +8706,8 @@ msgstr "Child Build Orders"
 #~ msgstr "Test Statistics"
 
 #: src/pages/build/BuildDetail.tsx:349
-#: src/pages/part/PartDetail.tsx:469
-#: src/pages/stock/StockDetail.tsx:283
+#: src/pages/part/PartDetail.tsx:471
+#: src/pages/stock/StockDetail.tsx:285
 #: src/tables/build/BuildOutputTable.tsx:759
 #: src/tables/stock/StockItemTestResultTable.tsx:171
 msgid "Test Results"
@@ -8855,7 +8936,7 @@ msgid "Build Quantity"
 msgstr "Build Quantity"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:121
-#: src/pages/part/PartDetailsPanel.tsx:224
+#: src/pages/part/PartDetailsPanel.tsx:227
 #: src/tables/bom/BomTable.tsx:393
 #: src/tables/bom/BomTable.tsx:436
 msgid "Can Build"
@@ -8872,17 +8953,17 @@ msgid "Destination Location"
 msgstr "Destination Location"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:196
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:444
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:580
 #: src/pages/stock/StockDetailsPanel.tsx:369
 #: src/tables/settings/ApiTokenTable.tsx:101
 #: src/tables/settings/PendingTasksTable.tsx:41
-#: src/tables/stock/StockItemTable.tsx:193
+#: src/tables/stock/StockItemTable.tsx:194
 msgid "Created"
 msgstr "Created"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:220
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:61
-#: src/pages/stock/ScanApprovalRequestList.tsx:86
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:59
+#: src/pages/stock/ScanApprovalRequestList.tsx:85
 #: src/tables/build/BuildOrderTable.tsx:76
 #: src/tables/part/PartSalesOrdersTable.tsx:98
 #: src/tables/sales/SalesOrderLineItemTable.tsx:403
@@ -8961,7 +9042,7 @@ msgstr "Default Currency"
 #: src/tables/sales/SalesOrderParametricTable.tsx:25
 #: src/tables/sales/SalesOrderShipmentTable.tsx:124
 #: src/tables/sales/SalesOrderTable.tsx:87
-#: src/tables/stock/StockTrackingTable.tsx:235
+#: src/tables/stock/StockTrackingTable.tsx:300
 msgid "Customer"
 msgstr "Customer"
 
@@ -9020,7 +9101,7 @@ msgstr "Manufacturer Details"
 
 #: src/pages/company/ManufacturerPartDetailsPanel.tsx:112
 #: src/pages/company/SupplierPartDetailsPanel.tsx:199
-#: src/pages/part/PartDetail.tsx:283
+#: src/pages/part/PartDetail.tsx:284
 msgid "Part Details"
 msgstr "Part Details"
 
@@ -9055,7 +9136,7 @@ msgid "Add Supplier Part"
 msgstr "Add Supplier Part"
 
 #: src/pages/company/SupplierPartDetail.tsx:231
-#: src/pages/part/PartDetail.tsx:588
+#: src/pages/part/PartDetail.tsx:593
 msgid "No Stock"
 msgstr "No Stock"
 
@@ -9203,7 +9284,7 @@ msgstr "Default location"
 #~ msgid "Bill of materials scheduled for validation"
 #~ msgstr "Bill of materials scheduled for validation"
 
-#: src/pages/part/PartDetail.tsx:270
+#: src/pages/part/PartDetail.tsx:271
 msgid "Select Part Revision"
 msgstr "Select Part Revision"
 
@@ -9215,44 +9296,48 @@ msgstr "Select Part Revision"
 #~ msgid "Edit part"
 #~ msgstr "Edit part"
 
-#: src/pages/part/PartDetail.tsx:315
+#: src/pages/part/PartDetail.tsx:316
 msgid "Variants"
 msgstr "Variants"
-
-#: src/pages/part/PartDetail.tsx:322
-#: src/pages/stock/StockDetail.tsx:214
-msgid "Allocations"
-msgstr "Allocations"
 
 #: src/pages/part/PartDetail.tsx:322
 #~ msgid "Duplicate part"
 #~ msgstr "Duplicate part"
 
+#: src/pages/part/PartDetail.tsx:323
+#: src/pages/stock/StockDetail.tsx:216
+msgid "Allocations"
+msgstr "Allocations"
+
 #: src/pages/part/PartDetail.tsx:327
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
 
-#: src/pages/part/PartDetail.tsx:329
+#: src/pages/part/PartDetail.tsx:330
 msgid "Bill of Materials"
 msgstr "Bill of Materials"
 
-#: src/pages/part/PartDetail.tsx:358
+#: src/pages/part/PartDetail.tsx:359
 msgid "Used In"
 msgstr "Used In"
 
-#: src/pages/part/PartDetail.tsx:365
+#: src/pages/part/PartDetail.tsx:366
 msgid "Part Pricing"
 msgstr "Part Pricing"
 
-#: src/pages/part/PartDetail.tsx:453
+#: src/pages/part/PartDetail.tsx:439
+msgid "库存历史"
+msgstr "库存历史"
+
+#: src/pages/part/PartDetail.tsx:455
 msgid "Test Templates"
 msgstr "Test Templates"
 
-#: src/pages/part/PartDetail.tsx:480
+#: src/pages/part/PartDetail.tsx:482
 msgid "Related Parts"
 msgstr "Related Parts"
 
-#: src/pages/part/PartDetail.tsx:497
+#: src/pages/part/PartDetail.tsx:499
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr "Part parameters cannot be edited, as the part is locked"
 
@@ -9264,7 +9349,7 @@ msgstr "Part parameters cannot be edited, as the part is locked"
 #~ msgid "Consumable Part"
 #~ msgstr "Consumable Part"
 
-#: src/pages/part/PartDetail.tsx:600
+#: src/pages/part/PartDetail.tsx:605
 #: src/tables/part/PartTestTemplateTable.tsx:116
 #: src/tables/stock/StockItemTestResultTable.tsx:403
 msgid "Required"
@@ -9274,11 +9359,11 @@ msgstr "Required"
 #~ msgid "Scheduling"
 #~ msgstr "Scheduling"
 
-#: src/pages/part/PartDetail.tsx:618
+#: src/pages/part/PartDetail.tsx:623
 msgid "Deficit"
 msgstr "Deficit"
 
-#: src/pages/part/PartDetail.tsx:636
+#: src/pages/part/PartDetail.tsx:641
 #: src/pages/part/bom/BomCompare.tsx:38
 #: src/tables/bom/BomTable.tsx:503
 #: src/tables/build/BuildLineTable.tsx:216
@@ -9286,11 +9371,11 @@ msgstr "Deficit"
 msgid "Consumable"
 msgstr "Consumable"
 
-#: src/pages/part/PartDetail.tsx:679
+#: src/pages/part/PartDetail.tsx:684
 msgid "Delete Part"
 msgstr "Delete Part"
 
-#: src/pages/part/PartDetail.tsx:688
+#: src/pages/part/PartDetail.tsx:693
 msgid "Deleting this part cannot be reversed"
 msgstr "Deleting this part cannot be reversed"
 
@@ -9298,31 +9383,31 @@ msgstr "Deleting this part cannot be reversed"
 #~ msgid "Default Supplier"
 #~ msgstr "Default Supplier"
 
-#: src/pages/part/PartDetail.tsx:750
-#: src/pages/stock/StockDetail.tsx:624
+#: src/pages/part/PartDetail.tsx:755
+#: src/pages/stock/StockDetail.tsx:627
 msgid "Order"
 msgstr "Order"
 
-#: src/pages/part/PartDetail.tsx:751
-#: src/pages/stock/StockDetail.tsx:625
+#: src/pages/part/PartDetail.tsx:756
+#: src/pages/stock/StockDetail.tsx:628
 #: src/tables/build/BuildLineTable.tsx:851
 msgid "Order Stock"
 msgstr "Order Stock"
 
-#: src/pages/part/PartDetail.tsx:763
+#: src/pages/part/PartDetail.tsx:768
 msgid "Search by serial number"
 msgstr "Search by serial number"
 
-#: src/pages/part/PartDetail.tsx:771
-#: src/tables/part/PartTable.tsx:251
+#: src/pages/part/PartDetail.tsx:776
+#: src/tables/part/PartTable.tsx:272
 msgid "Part Actions"
 msgstr "Part Actions"
 
-#: src/pages/part/PartDetail.tsx:832
+#: src/pages/part/PartDetail.tsx:837
 msgid "Part locked"
 msgstr "Part locked"
 
-#: src/pages/part/PartDetail.tsx:832
+#: src/pages/part/PartDetail.tsx:837
 msgid "Part unlocked"
 msgstr "Part unlocked"
 
@@ -9340,28 +9425,28 @@ msgstr "Part unlocked"
 #~ msgid "Product barcode"
 #~ msgstr "Product barcode"
 
-#: src/pages/part/PartDetailsPanel.tsx:91
+#: src/pages/part/PartDetailsPanel.tsx:94
 msgid "Variant of"
 msgstr "Variant of"
 
-#: src/pages/part/PartDetailsPanel.tsx:99
+#: src/pages/part/PartDetailsPanel.tsx:102
 msgid "Revision of"
 msgstr "Revision of"
 
-#: src/pages/part/PartDetailsPanel.tsx:127
+#: src/pages/part/PartDetailsPanel.tsx:130
 msgid "Category Default Location"
 msgstr "Category Default Location"
 
-#: src/pages/part/PartDetailsPanel.tsx:134
+#: src/pages/part/PartDetailsPanel.tsx:137
 msgid "Units"
 msgstr "Units"
 
-#: src/pages/part/PartDetailsPanel.tsx:141
+#: src/pages/part/PartDetailsPanel.tsx:144
 #: src/tables/settings/PendingTasksTable.tsx:51
 msgid "Keywords"
 msgstr "Keywords"
 
-#: src/pages/part/PartDetailsPanel.tsx:168
+#: src/pages/part/PartDetailsPanel.tsx:171
 #: src/tables/bom/BomTable.tsx:473
 #: src/tables/build/BuildLineTable.tsx:325
 #: src/tables/part/PartTableFilters.tsx:143
@@ -9370,80 +9455,80 @@ msgstr "Keywords"
 msgid "Available Stock"
 msgstr "Available Stock"
 
-#: src/pages/part/PartDetailsPanel.tsx:181
+#: src/pages/part/PartDetailsPanel.tsx:184
 msgid "Required for Orders"
 msgstr "Required for Orders"
 
-#: src/pages/part/PartDetailsPanel.tsx:192
+#: src/pages/part/PartDetailsPanel.tsx:195
 msgid "Allocated to Build Orders"
 msgstr "Allocated to Build Orders"
 
-#: src/pages/part/PartDetailsPanel.tsx:204
+#: src/pages/part/PartDetailsPanel.tsx:207
 msgid "Allocated to Sales Orders"
 msgstr "Allocated to Sales Orders"
 
-#: src/pages/part/PartDetailsPanel.tsx:231
+#: src/pages/part/PartDetailsPanel.tsx:234
 msgid "Minimum Stock"
 msgstr "Minimum Stock"
 
-#: src/pages/part/PartDetailsPanel.tsx:238
+#: src/pages/part/PartDetailsPanel.tsx:241
 msgid "Maximum Stock"
 msgstr "Maximum Stock"
 
-#: src/pages/part/PartDetailsPanel.tsx:245
+#: src/pages/part/PartDetailsPanel.tsx:248
 #: src/tables/bom/UsedInTable.tsx:97
 #: src/tables/part/PartTableFilters.tsx:19
 #: src/tables/settings/SelectionListDrawer.tsx:174
 msgid "Locked"
 msgstr "Locked"
 
-#: src/pages/part/PartDetailsPanel.tsx:250
+#: src/pages/part/PartDetailsPanel.tsx:253
 msgid "Template Part"
 msgstr "Template Part"
 
-#: src/pages/part/PartDetailsPanel.tsx:252
+#: src/pages/part/PartDetailsPanel.tsx:255
 #: src/tables/bom/BomTable.tsx:463
 msgid "Assembled Part"
 msgstr "Assembled Part"
 
-#: src/pages/part/PartDetailsPanel.tsx:253
+#: src/pages/part/PartDetailsPanel.tsx:256
 msgid "Component Part"
 msgstr "Component Part"
 
-#: src/pages/part/PartDetailsPanel.tsx:257
+#: src/pages/part/PartDetailsPanel.tsx:260
 #: src/tables/bom/BomTable.tsx:448
 msgid "Testable Part"
 msgstr "Testable Part"
 
-#: src/pages/part/PartDetailsPanel.tsx:260
+#: src/pages/part/PartDetailsPanel.tsx:263
 #: src/tables/bom/BomTable.tsx:453
 msgid "Trackable Part"
 msgstr "Trackable Part"
 
-#: src/pages/part/PartDetailsPanel.tsx:261
+#: src/pages/part/PartDetailsPanel.tsx:264
 msgid "Purchaseable Part"
 msgstr "Purchaseable Part"
 
-#: src/pages/part/PartDetailsPanel.tsx:266
+#: src/pages/part/PartDetailsPanel.tsx:269
 msgid "Saleable Part"
 msgstr "Saleable Part"
 
-#: src/pages/part/PartDetailsPanel.tsx:296
+#: src/pages/part/PartDetailsPanel.tsx:299
 msgid "Default Expiry"
 msgstr "Default Expiry"
 
-#: src/pages/part/PartDetailsPanel.tsx:300
+#: src/pages/part/PartDetailsPanel.tsx:303
 msgid "days"
 msgstr "days"
 
-#: src/pages/part/PartDetailsPanel.tsx:308
+#: src/pages/part/PartDetailsPanel.tsx:311
 #: src/pages/part/pricing/BomPricingPanel.tsx:82
 #: src/pages/part/pricing/VariantPricingPanel.tsx:98
-#: src/tables/part/PartTable.tsx:90
+#: src/tables/part/PartTable.tsx:110
 msgid "Price Range"
 msgstr "Price Range"
 
-#: src/pages/part/PartDetailsPanel.tsx:317
+#: src/pages/part/PartDetailsPanel.tsx:320
 msgid "Latest Serial Number"
 msgstr "Latest Serial Number"
 
@@ -9522,46 +9607,81 @@ msgstr "Sale History"
 #~ msgid "Expected Quantity"
 #~ msgstr "Expected Quantity"
 
-#: src/pages/part/PartStockHistoryDetail.tsx:86
+#: src/pages/part/PartStockHistoryDetail.tsx:92
 msgid "Edit Stocktake Entry"
 msgstr "Edit Stocktake Entry"
 
-#: src/pages/part/PartStockHistoryDetail.tsx:94
+#: src/pages/part/PartStockHistoryDetail.tsx:100
 msgid "Delete Stocktake Entry"
 msgstr "Delete Stocktake Entry"
 
-#: src/pages/part/PartStockHistoryDetail.tsx:112
+#: src/pages/part/PartStockHistoryDetail.tsx:118
 msgid "Stocktake report scheduled for generation"
 msgstr "Stocktake report scheduled for generation"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:126
-msgid "Stock Quantity"
-msgstr "Stock Quantity"
+msgid "库存明细条数"
+msgstr "库存明细条数"
+
+#: src/pages/part/PartStockHistoryDetail.tsx:126
+#~ msgid "Stock Quantity"
+#~ msgstr "Stock Quantity"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:132
-#: src/pages/part/PartStockHistoryDetail.tsx:245
+msgid "实物库存数量（{units}）"
+msgstr "实物库存数量（{units}）"
+
+#: src/pages/part/PartStockHistoryDetail.tsx:132
+#: src/pages/part/PartStockHistoryDetail.tsx:276
+msgid "实物库存数量"
+msgstr "实物库存数量"
+
+#: src/pages/part/PartStockHistoryDetail.tsx:138
+#: src/pages/part/PartStockHistoryDetail.tsx:252
 #: src/pages/stock/StockDetailsPanel.tsx:346
-#: src/tables/stock/StockItemTable.tsx:171
+#: src/tables/stock/StockItemTable.tsx:172
 msgid "Stock Value"
 msgstr "Stock Value"
 
-#: src/pages/part/PartStockHistoryDetail.tsx:204
+#: src/pages/part/PartStockHistoryDetail.tsx:210
 msgid "Generate Stocktake Entry"
 msgstr "Generate Stocktake Entry"
 
-#: src/pages/part/PartStockHistoryDetail.tsx:274
+#: src/pages/part/PartStockHistoryDetail.tsx:251
+msgid "实物量（{units}）"
+msgstr "实物量（{units}）"
+
+#: src/pages/part/PartStockHistoryDetail.tsx:251
+msgid "实物量"
+msgstr "实物量"
+
+#: src/pages/part/PartStockHistoryDetail.tsx:282
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:340
 msgid "Minimum Value"
 msgstr "Minimum Value"
 
-#: src/pages/part/PartStockHistoryDetail.tsx:280
+#: src/pages/part/PartStockHistoryDetail.tsx:288
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:341
 msgid "Maximum Value"
 msgstr "Maximum Value"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:307
-msgid "Stocktake Entries"
-msgstr "Stocktake Entries"
+#~ msgid "Stocktake Entries"
+#~ msgstr "Stocktake Entries"
+
+#: src/pages/part/PartStockHistoryDetail.tsx:308
+msgid "此处展示该设备跨项目、合同及库位的实物库存快照，包含变体设备；不扣除冻结数量，不代表可用库存，也不是期间出入库数量。历史快照从启用后开始积累，不自动补算过去余额。库存价值为原生估算值，未维护价格时可能为零。"
+msgstr "此处展示该设备跨项目、合同及库位的实物库存快照，包含变体设备；不扣除冻结数量，不代表可用库存，也不是期间出入库数量。历史快照从启用后开始积累，不自动补算过去余额。库存价值为原生估算值，未维护价格时可能为零。"
+
+#: src/pages/part/PartStockHistoryDetail.tsx:312
+#: src/pages/stock/StockDetail.tsx:205
+#: src/pages/stock/WmsStatisticsPage.tsx:170
+msgid "库存流水"
+msgstr "库存流水"
+
+#: src/pages/part/PartStockHistoryDetail.tsx:320
+msgid "库存历史快照"
+msgstr "库存历史快照"
 
 #: src/pages/part/PartStocktakeDetail.tsx:104
 #: src/tables/settings/StocktakeReportTable.tsx:72
@@ -9812,7 +9932,7 @@ msgstr "Purchase Pricing"
 #: src/tables/general/ParameterTable.tsx:101
 #: src/tables/general/ParametricDataTable.tsx:101
 #: src/tables/settings/TemplateTable.tsx:261
-#: src/tables/stock/StockItemTable.tsx:199
+#: src/tables/stock/StockItemTable.tsx:200
 msgid "Last Updated"
 msgstr "Last Updated"
 
@@ -9829,7 +9949,7 @@ msgid "Pricing Actions"
 msgstr "Pricing Actions"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:306
-#: src/pages/stock/ScanApprovalRequestList.tsx:100
+#: src/pages/stock/ScanApprovalRequestList.tsx:99
 #: src/pages/stock/ScanStockEventTable.tsx:267
 msgid "Refresh"
 msgstr "Refresh"
@@ -10275,12 +10395,12 @@ msgid "Scan Stock Item"
 msgstr "Scan Stock Item"
 
 #: src/pages/stock/LocationDetail.tsx:307
-#: src/pages/stock/StockDetail.tsx:540
+#: src/pages/stock/StockDetail.tsx:543
 msgid "Scanned stock item into location"
 msgstr "Scanned stock item into location"
 
 #: src/pages/stock/LocationDetail.tsx:313
-#: src/pages/stock/StockDetail.tsx:546
+#: src/pages/stock/StockDetail.tsx:549
 msgid "Error scanning stock item"
 msgstr "Error scanning stock item"
 
@@ -10312,352 +10432,502 @@ msgstr "Scan in container"
 msgid "Scan container into this location"
 msgstr "Scan container into this location"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:55
-#: src/pages/stock/ScanApprovalRequestList.tsx:84
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:53
+#: src/pages/stock/ScanApprovalRequestList.tsx:83
 msgid "Draft"
 msgstr "Draft"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:57
-#: src/pages/stock/ScanApprovalRequestList.tsx:85
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:55
+#: src/pages/stock/ScanApprovalRequestList.tsx:84
 msgid "Pending approval"
 msgstr "Pending approval"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:59
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:57
 msgid "Applying"
 msgstr "Applying"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:63
-#: src/pages/stock/ScanApprovalRequestList.tsx:87
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:61
+#: src/pages/stock/ScanApprovalRequestList.tsx:86
 msgid "Rejected"
 msgstr "Rejected"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:65
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:452
-#: src/pages/stock/ScanApprovalRequestList.tsx:88
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:63
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:593
+#: src/pages/stock/ScanApprovalRequestList.tsx:87
 msgid "Cancelled"
 msgstr "Cancelled"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:67
-#: src/pages/stock/ScanApprovalRequestList.tsx:89
-#: src/pages/stock/ScanWorkPanel.tsx:90
-#: src/pages/stock/ScanWorkPanel.tsx:1224
-#: src/pages/stock/StockDetail.tsx:732
-#: src/tables/stock/StockItemTable.tsx:306
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:65
+#: src/pages/stock/ScanApprovalRequestList.tsx:88
+#: src/pages/stock/StockDetail.tsx:735
+#: src/tables/stock/StockItemTable.tsx:307
 msgid "Expired"
 msgstr "Expired"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:90
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:88
 msgid "Not assigned"
 msgstr "Not assigned"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:199
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:214
 msgid "Approval request submitted."
 msgstr "Approval request submitted."
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:204
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:219
 msgid "The request could not be submitted."
 msgstr "The request could not be submitted."
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:220
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:235
 msgid "A reason is required."
 msgstr "A reason is required."
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:244
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:259
 msgid "Approval request completed."
 msgstr "Approval request completed."
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:246
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:261
 msgid "Approval request rejected."
 msgstr "Approval request rejected."
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:247
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:262
 msgid "Approval request cancelled."
 msgstr "Approval request cancelled."
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:255
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:270
 msgid "The request changed on the server. Its latest status has been loaded."
 msgstr "The request changed on the server. Its latest status has been loaded."
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:256
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:271
 msgid "The request action failed."
 msgstr "The request action failed."
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:289
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:304
 msgid "The request line could not be removed."
 msgstr "The request line could not be removed."
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:299
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:314
 msgid "The approval request could not be loaded."
 msgstr "The approval request could not be loaded."
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:307
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:322
 msgid "Loading approval request…"
 msgstr "Loading approval request…"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:346
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:362
 msgid "Submit for approval"
 msgstr "Submit for approval"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:358
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:374
 msgid "Approve"
 msgstr "Approve"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:371
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:387
 msgid "Reject"
 msgstr "Reject"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:384
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:581
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:400
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:627
 msgid "Cancel request"
 msgstr "Cancel request"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:396
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:416
+#: src/pages/stock/ScanWorkPanel.tsx:1443
+msgid "待入库明细"
+msgstr "待入库明细"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:417
+#: src/pages/stock/ScanWorkPanel.tsx:1443
+msgid "待出库明细"
+msgstr "待出库明细"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:426
+msgid "草稿自动保存"
+msgstr "草稿自动保存"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:426
+msgid "剩余"
+msgstr "剩余"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:426
+msgid "分钟"
+msgstr "分钟"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:426
+msgid "已到期，请刷新明细"
+msgstr "已到期，请刷新明细"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:439
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:559
 msgid "Last approval error"
 msgstr "Last approval error"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:404
-#: src/pages/stock/ScanApprovalRequestList.tsx:125
-#: src/tables/settings/EmailTable.tsx:122
-msgid "Direction"
-msgstr "Direction"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:407
-#: src/pages/stock/ScanApprovalRequestList.tsx:152
-#: src/pages/stock/ScanStockEventTable.tsx:316
-#: src/pages/stock/ScanStockPage.tsx:138
-msgid "Inbound"
-msgstr "Inbound"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:407
-#: src/pages/stock/ScanApprovalRequestList.tsx:152
-#: src/pages/stock/ScanStockEventTable.tsx:317
-#: src/pages/stock/ScanStockPage.tsx:146
-msgid "Outbound"
-msgstr "Outbound"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:412
-#: src/pages/stock/ScanApprovalRequestList.tsx:129
-msgid "Requester"
-msgstr "Requester"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:421
-#: src/pages/stock/ScanApprovalRequestList.tsx:130
-#: src/pages/stock/ScanWorkPanel.tsx:1201
-msgid "Approval route"
-msgstr "Approval route"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:429
-#: src/pages/stock/ScanWorkPanel.tsx:1209
-msgid "Pending inbound quantity"
-msgstr "Pending inbound quantity"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:437
-#: src/pages/stock/ScanWorkPanel.tsx:1215
-msgid "lines"
-msgstr "lines"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:442
-msgid "Request timeline"
-msgstr "Request timeline"
-
 #: src/pages/stock/ScanApprovalRequestDetails.tsx:445
-msgid "Submitted"
-msgstr "Submitted"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:447
-msgid "Decided"
-msgstr "Decided"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:457
-#: src/pages/stock/ScanApprovalRequestList.tsx:133
-msgid "Expires"
-msgstr "Expires"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:469
-msgid "Request lines"
-msgstr "Request lines"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:471
 msgid "This request has no active lines."
 msgstr "This request has no active lines."
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:477
-#: src/pages/stock/ScanStockEventTable.tsx:352
-#: src/pages/stock/ScanStockEventTable.tsx:450
-msgid "Line"
-msgstr "Line"
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:456
+#: src/pages/stock/ScanApprovalReview.tsx:278
+#: src/pages/stock/ScanWorkPanel.tsx:1145
+#: src/pages/stock/WmsBatchDetailPage.tsx:85
+#: src/pages/stock/WmsCompleteScan.tsx:321
+#: src/pages/stock/WmsInventoryPanel.tsx:49
+#: src/pages/stock/WmsInventoryPanel.tsx:247
+#: src/pages/stock/WmsNativeTools.tsx:71
+msgid "设备名称"
+msgstr "设备名称"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:460
+#: src/pages/stock/ScanApprovalReview.tsx:86
+#: src/pages/stock/ScanWorkPanel.tsx:1213
+#: src/pages/stock/WmsBatchDetailPage.tsx:90
+#: src/pages/stock/WmsCompleteScan.tsx:324
+#: src/pages/stock/WmsContractEditor.tsx:112
+#: src/pages/stock/WmsContractManager.tsx:73
+#: src/pages/stock/WmsNativeTools.tsx:75
+#: src/pages/stock/WmsNativeTools.tsx:95
+#: src/pages/stock/WmsNativeTools.tsx:104
+#: src/pages/stock/WmsReceiptManager.tsx:92
+#: src/pages/stock/WmsReceiptManager.tsx:132
+#: src/pages/stock/WmsReceiptWorkbench.tsx:317
+#: src/pages/stock/WmsReceiptWorkbench.tsx:756
+#: src/pages/stock/WmsStatisticsPage.tsx:197
+#: src/pages/stock/WmsStatisticsPage.tsx:475
+#: src/pages/stock/WmsStockAttribution.tsx:123
+#: src/tables/stock/StockItemTable.tsx:442
+#: src/tables/stock/StockItemTable.tsx:499
+#: src/tables/stock/StockTrackingTable.tsx:127
+msgid "合同号"
+msgstr "合同号"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:461
+#: src/pages/stock/ScanApprovalReview.tsx:279
+#: src/pages/stock/ScanManualPicker.tsx:105
+#: src/pages/stock/WmsInventoryPanel.tsx:249
+#: src/pages/stock/WmsNativeTools.tsx:73
+#: src/pages/stock/WmsStatisticsPage.tsx:322
+#: src/pages/stock/WmsStatisticsPage.tsx:467
+msgid "数量"
+msgstr "数量"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:462
+#: src/pages/stock/ScanApprovalReview.tsx:88
+#: src/pages/stock/ScanApprovalReview.tsx:164
+#: src/pages/stock/WmsBatchDetailPage.tsx:93
+#: src/pages/stock/WmsBatchDetailPage.tsx:195
+#: src/pages/stock/WmsCompleteScan.tsx:258
+#: src/pages/stock/WmsReceiptManager.tsx:133
+#: src/pages/stock/WmsStatisticsPage.tsx:234
+#: src/pages/stock/WmsStatisticsPage.tsx:323
+#: src/pages/stock/WmsStatisticsPage.tsx:472
+msgid "实际库位"
+msgstr "实际库位"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:463
+#: src/pages/stock/ScanApprovalReview.tsx:207
+#: src/pages/stock/WmsContractManager.tsx:78
+#: src/pages/stock/WmsInventoryPanel.tsx:134
+#: src/pages/stock/WmsInventoryPanel.tsx:625
+#: src/pages/stock/WmsProjectSelect.tsx:207
+#: src/pages/stock/WmsReceiptLineEditor.tsx:69
+#: src/pages/stock/WmsReceiptManager.tsx:136
+#: src/pages/stock/WmsReceiptWorkbench.tsx:510
+#: src/pages/stock/WmsReceiptWorkbench.tsx:837
+#: src/pages/stock/WmsStatisticsPage.tsx:328
+msgid "操作"
+msgstr "操作"
 
 #: src/pages/stock/ScanApprovalRequestDetails.tsx:478
-msgid "Product"
-msgstr "Product"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:479
-#: src/pages/stock/ScanStockEventTable.tsx:283
-msgid "Stock item"
-msgstr "Stock item"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:481
-#: src/pages/stock/ScanWorkPanel.tsx:1378
-#: src/pages/stock/WmsInventoryPanel.tsx:45
-#: src/pages/stock/WmsInventoryPanel.tsx:234
-#: src/pages/stock/WmsNativeTools.tsx:72
-#: src/tables/stock/StockItemTable.tsx:472
-msgid "单位"
-msgstr "单位"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:482
-#: src/pages/stock/ScanWorkPanel.tsx:1086
-#: src/pages/stock/WmsCompleteScan.tsx:360
-#: src/pages/stock/WmsInventoryPanel.tsx:238
-#: src/pages/stock/WmsInventoryPanel.tsx:393
-#: src/pages/stock/WmsNativeTools.tsx:82
-#: src/pages/stock/WmsNativeTools.tsx:128
-msgid "用途"
-msgstr "用途"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:483
-#: src/pages/stock/WmsCompleteScan.tsx:367
-#: src/pages/stock/WmsInventoryPanel.tsx:241
-#: src/pages/stock/WmsNativeTools.tsx:83
-msgid "备注"
-msgstr "备注"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:485
-msgid "Request state"
-msgstr "Request state"
+#~ msgid "Pending inbound quantity"
+#~ msgstr "Pending inbound quantity"
 
 #: src/pages/stock/ScanApprovalRequestDetails.tsx:486
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:606
+#~ msgid "lines"
+#~ msgstr "lines"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:491
+#~ msgid "Request timeline"
+#~ msgstr "Request timeline"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:495
+#: src/pages/stock/ScanStockEventTable.tsx:371
+#: src/pages/stock/WmsStatisticsPage.tsx:343
+msgid "历史未填写"
+msgstr "历史未填写"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:501
+#: src/pages/stock/ScanApprovalReview.tsx:231
+msgid "累计扫码"
+msgstr "累计扫码"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:501
+#: src/pages/stock/ScanApprovalReview.tsx:231
+msgid "次"
+msgstr "次"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:518
+#~ msgid "Request lines"
+#~ msgstr "Request lines"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:521
+#: src/pages/stock/ScanApprovalReview.tsx:249
+msgid "撤销最近一次"
+msgstr "撤销最近一次"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:537
+#: src/pages/stock/ScanApprovalReview.tsx:194
+msgid "明细"
+msgstr "明细"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:584
+#: src/pages/stock/ScanApprovalReview.tsx:156
+msgid "Submitted"
+msgstr "Submitted"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:588
+msgid "Decided"
+msgstr "Decided"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:598
+#: src/pages/stock/ScanApprovalReview.tsx:167
+msgid "Expires"
+msgstr "Expires"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:615
+#~ msgid "Product"
+#~ msgstr "Product"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:622
+#~ msgid "Request state"
+#~ msgstr "Request state"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:624
+msgid "Approve request"
+msgstr "Approve request"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:626
+msgid "Reject request"
+msgstr "Reject request"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:643
+msgid "All request lines will be applied in one transaction."
+msgstr "All request lines will be applied in one transaction."
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:644
+msgid "Outbound reservations will be released and this request cannot be restored."
+msgstr "Outbound reservations will be released and this request cannot be restored."
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:652
+#: src/pages/stock/ScanApprovalReview.tsx:280
 #: src/pages/stock/ScanStockEventTable.tsx:286
 msgid "Reason"
 msgstr "Reason"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:509
-#: src/pages/stock/ScanStockEventTable.tsx:371
-msgid "历史未填写"
-msgstr "历史未填写"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:513
-#: src/pages/stock/ScanStockEventTable.tsx:376
-#: src/pages/stock/ScanWorkPanel.tsx:993
-#: src/pages/stock/ScanWorkPanel.tsx:994
-#: src/pages/stock/WmsCompleteScan.tsx:330
-#: src/pages/stock/WmsReceiptWorkbench.tsx:273
-#: src/pages/stock/WmsReceiptWorkbench.tsx:456
-#: src/pages/stock/WmsStockAttribution.tsx:147
-#: src/pages/stock/WmsStockAttribution.tsx:151
-#: src/tables/stock/StockItemTable.tsx:453
-msgid "待验收"
-msgstr "待验收"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:513
-#: src/pages/stock/ScanStockEventTable.tsx:375
-msgid "验收"
-msgstr "验收"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:514
-#: src/pages/stock/ScanStockEventTable.tsx:377
-#: src/pages/stock/WmsReceiptWorkbench.tsx:458
-msgid "个月"
-msgstr "个月"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:535
-#: src/pages/stock/ScanResultList.tsx:57
-#: src/pages/stock/ScanStockEventTable.tsx:335
-#: src/tables/stock/StockItemTable.tsx:120
-msgid "Frozen"
-msgstr "Frozen"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:536
-#: src/pages/stock/ScanResultList.tsx:58
-#: src/pages/stock/ScanStockEventTable.tsx:336
-msgid "Pending inbound"
-msgstr "Pending inbound"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:538
-msgid "Applied"
-msgstr "Applied"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:539
-msgid "Terminal"
-msgstr "Terminal"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:578
-msgid "Approve request"
-msgstr "Approve request"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:580
-msgid "Reject request"
-msgstr "Reject request"
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:597
-msgid "All request lines will be applied in one transaction."
-msgstr "All request lines will be applied in one transaction."
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:598
-msgid "Outbound reservations will be released and this request cannot be restored."
-msgstr "Outbound reservations will be released and this request cannot be restored."
-
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:606
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:652
 msgid "Decision note"
 msgstr "Decision note"
 
-#: src/pages/stock/ScanApprovalRequestDetails.tsx:623
-#: src/pages/stock/ScanWorkPanel.tsx:1411
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:669
+#: src/pages/stock/ScanWorkPanel.tsx:1614
 msgid "Back"
 msgstr "Back"
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:81
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:675
+#~ msgid "Applied"
+#~ msgstr "Applied"
+
+#: src/pages/stock/ScanApprovalRequestDetails.tsx:676
+#~ msgid "Terminal"
+#~ msgstr "Terminal"
+
+#: src/pages/stock/ScanApprovalRequestList.tsx:80
 msgid "Request status"
 msgstr "Request status"
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:82
+#: src/pages/stock/ScanApprovalRequestList.tsx:81
 msgid "All statuses"
 msgstr "All statuses"
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:108
+#: src/pages/stock/ScanApprovalRequestList.tsx:107
 msgid "Loading approval requests…"
 msgstr "Loading approval requests…"
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:111
+#: src/pages/stock/ScanApprovalRequestList.tsx:110
 msgid "Approval requests could not be loaded."
 msgstr "Approval requests could not be loaded."
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:115
+#: src/pages/stock/ScanApprovalRequestList.tsx:114
 msgid "There are no requests waiting for your approval."
 msgstr "There are no requests waiting for your approval."
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:116
+#: src/pages/stock/ScanApprovalRequestList.tsx:115
 msgid "No approval requests found."
 msgstr "No approval requests found."
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:123
+#: src/pages/stock/ScanApprovalRequestList.tsx:122
 #: src/pages/stock/ScanStockEventTable.tsx:280
-#: src/pages/stock/ScanWorkPanel.tsx:1189
 msgid "Request"
 msgstr "Request"
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:127
-#: src/pages/stock/WmsReceiptWorkbench.tsx:402
+#: src/pages/stock/ScanApprovalRequestList.tsx:124
+#: src/tables/settings/EmailTable.tsx:122
+msgid "Direction"
+msgstr "Direction"
+
+#: src/pages/stock/ScanApprovalRequestList.tsx:126
+#: src/pages/stock/WmsReceiptWorkbench.tsx:506
 msgid "项目 / 合同"
 msgstr "项目 / 合同"
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:128
+#: src/pages/stock/ScanApprovalRequestList.tsx:127
 msgid "验收 / 质保月数 / 到期"
 msgstr "验收 / 质保月数 / 到期"
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:131
-msgid "Lines"
-msgstr "Lines"
+#: src/pages/stock/ScanApprovalRequestList.tsx:128
+#: src/pages/stock/ScanApprovalReview.tsx:151
+msgid "Requester"
+msgstr "Requester"
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:182
+#: src/pages/stock/ScanApprovalRequestList.tsx:131
+#~ msgid "Lines"
+#~ msgstr "Lines"
+
+#: src/pages/stock/ScanApprovalRequestList.tsx:147
+#: src/pages/stock/ScanStockEventTable.tsx:316
+#: src/pages/stock/ScanStockPage.tsx:129
+msgid "Inbound"
+msgstr "Inbound"
+
+#: src/pages/stock/ScanApprovalRequestList.tsx:147
+#: src/pages/stock/ScanStockEventTable.tsx:317
+#: src/pages/stock/ScanStockPage.tsx:138
+msgid "Outbound"
+msgstr "Outbound"
+
+#: src/pages/stock/ScanApprovalRequestList.tsx:173
 msgid "Open"
 msgstr "Open"
 
-#: src/pages/stock/ScanApprovalRequestList.tsx:195
+#: src/pages/stock/ScanApprovalRequestList.tsx:186
 #: src/pages/stock/ScanStockEventTable.tsx:517
 msgid "Approval request"
 msgstr "Approval request"
+
+#: src/pages/stock/ScanApprovalReview.tsx:81
+#: src/pages/stock/WmsBatchDetailPage.tsx:84
+msgid "序号"
+msgstr "序号"
+
+#: src/pages/stock/ScanApprovalReview.tsx:82
+#: src/pages/stock/WmsStatisticsPage.tsx:204
+msgid "设备名称 / 编号"
+msgstr "设备名称 / 编号"
+
+#: src/pages/stock/ScanApprovalReview.tsx:87
+msgid "实际数量"
+msgstr "实际数量"
+
+#: src/pages/stock/ScanApprovalReview.tsx:87
+msgid "申请数量"
+msgstr "申请数量"
+
+#: src/pages/stock/ScanApprovalReview.tsx:89
+#: src/pages/stock/ScanWorkPanel.tsx:1323
+#: src/pages/stock/WmsBatchDetailPage.tsx:95
+#: src/pages/stock/WmsBatchDetailPage.tsx:254
+#: src/pages/stock/WmsCompleteScan.tsx:360
+#: src/pages/stock/WmsInventoryPanel.tsx:252
+#: src/pages/stock/WmsInventoryPanel.tsx:407
+#: src/pages/stock/WmsNativeTools.tsx:82
+#: src/pages/stock/WmsNativeTools.tsx:128
+#: src/pages/stock/WmsStatisticsPage.tsx:485
+msgid "用途"
+msgstr "用途"
+
+#: src/pages/stock/ScanApprovalReview.tsx:90
+#: src/pages/stock/WmsBatchDetailPage.tsx:94
+#: src/pages/stock/WmsBatchDetailPage.tsx:249
+#: src/pages/stock/WmsCompleteScan.tsx:367
+#: src/pages/stock/WmsInventoryPanel.tsx:255
+#: src/pages/stock/WmsNativeTools.tsx:83
+#: src/pages/stock/WmsStatisticsPage.tsx:483
+msgid "备注"
+msgstr "备注"
+
+#: src/pages/stock/ScanApprovalReview.tsx:131
+msgid "入库审批单"
+msgstr "入库审批单"
+
+#: src/pages/stock/ScanApprovalReview.tsx:131
+msgid "出库审批单"
+msgstr "出库审批单"
+
+#: src/pages/stock/ScanApprovalReview.tsx:140
+msgid "导出明细"
+msgstr "导出明细"
+
+#: src/pages/stock/ScanApprovalReview.tsx:148
+#: src/pages/stock/WmsBatchDetailPage.tsx:175
+msgid "申请单号"
+msgstr "申请单号"
+
+#: src/pages/stock/ScanApprovalReview.tsx:159
+msgid "Approval route"
+msgstr "Approval route"
+
+#: src/pages/stock/ScanApprovalReview.tsx:175
+#: src/pages/stock/WmsBatchDetailPage.tsx:202
+msgid "设备明细"
+msgstr "设备明细"
+
+#: src/pages/stock/ScanApprovalReview.tsx:178
+#: src/pages/stock/WmsBatchDetailPage.tsx:205
+#: src/pages/stock/WmsBusinessAttachments.tsx:116
+#: src/pages/stock/WmsStatisticsPage.tsx:326
+msgid "到货单附件"
+msgstr "到货单附件"
+
+#: src/pages/stock/ScanApprovalReview.tsx:178
+#: src/pages/stock/WmsBatchDetailPage.tsx:205
+#: src/pages/stock/WmsBusinessAttachments.tsx:116
+#: src/pages/stock/WmsStatisticsPage.tsx:327
+msgid "出库单附件"
+msgstr "出库单附件"
+
+#: src/pages/stock/ScanApprovalReview.tsx:180
+#: src/pages/stock/ScanStockPage.tsx:196
+#: src/pages/stock/WmsBatchDetailPage.tsx:207
+msgid "审批记录"
+msgstr "审批记录"
+
+#: src/pages/stock/ScanApprovalReview.tsx:186
+msgid "搜索明细"
+msgstr "搜索明细"
+
+#: src/pages/stock/ScanApprovalReview.tsx:187
+msgid "搜索设备名称 / 型号 / 编号"
+msgstr "搜索设备名称 / 型号 / 编号"
+
+#: src/pages/stock/ScanApprovalReview.tsx:194
+#: src/pages/stock/WmsBatchDetailPage.tsx:221
+msgid "数量合计"
+msgstr "数量合计"
+
+#: src/pages/stock/ScanApprovalReview.tsx:260
+#: src/pages/stock/WmsBatchDetailPage.tsx:277
+msgid "显示"
+msgstr "显示"
+
+#: src/pages/stock/ScanApprovalReview.tsx:260
+#: src/pages/stock/WmsBatchDetailPage.tsx:277
+msgid "条明细"
+msgstr "条明细"
+
+#: src/pages/stock/ScanApprovalReview.tsx:263
+msgid "无有效明细，历史明细请查看审批记录。"
+msgstr "无有效明细，历史明细请查看审批记录。"
+
+#: src/pages/stock/ScanApprovalReview.tsx:316
+msgid "核对设备、合同和数量后审批"
+msgstr "核对设备、合同和数量后审批"
 
 #: src/pages/stock/ScanInbound.tsx:170
 #~ msgid "入库失败，请检查网络后重试"
@@ -10858,10 +11128,6 @@ msgstr "Approval request"
 #~ msgid "还没有扫码入库记录"
 #~ msgstr "还没有扫码入库记录"
 
-#: src/pages/stock/ScanInbound.tsx:815
-#~ msgid "入库时间"
-#~ msgstr "入库时间"
-
 #: src/pages/stock/ScanInbound.tsx:816
 #~ msgid "条码"
 #~ msgstr "条码"
@@ -10874,21 +11140,67 @@ msgstr "Approval request"
 #~ msgid "库位"
 #~ msgstr "库位"
 
-#: src/pages/stock/ScanInbound.tsx:819
-#~ msgid "入库数量"
-#~ msgstr "入库数量"
-
 #: src/pages/stock/ScanInbound.tsx:820
 #~ msgid "入库后总库存"
 #~ msgstr "入库后总库存"
 
-#: src/pages/stock/ScanInbound.tsx:821
-#~ msgid "操作人"
-#~ msgstr "操作人"
-
 #: src/pages/stock/ScanInbound.tsx:844
 #~ msgid "系统"
 #~ msgstr "系统"
+
+#: src/pages/stock/ScanManualPicker.tsx:62
+#~ msgid "选择对应项目、合同的设备明细，核对数量后加入。后续补打标签不会重复入库。"
+#~ msgstr "选择对应项目、合同的设备明细，核对数量后加入。后续补打标签不会重复入库。"
+
+#: src/pages/stock/ScanManualPicker.tsx:64
+#~ msgid "匹配明细较多，仅显示部分结果，请输入更具体的名称或型号。"
+#~ msgstr "匹配明细较多，仅显示部分结果，请输入更具体的名称或型号。"
+
+#: src/pages/stock/ScanManualPicker.tsx:65
+#: src/pages/stock/WmsStatisticsPage.tsx:320
+msgid "设备名称 / 型号"
+msgstr "设备名称 / 型号"
+
+#: src/pages/stock/ScanManualPicker.tsx:66
+msgid "输入名称、型号或设备编号"
+msgstr "输入名称、型号或设备编号"
+
+#: src/pages/stock/ScanManualPicker.tsx:78
+msgid "正在查找设备…"
+msgstr "正在查找设备…"
+
+#: src/pages/stock/ScanManualPicker.tsx:78
+msgid "没有匹配的可用明细"
+msgstr "没有匹配的可用明细"
+
+#: src/pages/stock/ScanManualPicker.tsx:120
+#~ msgid "选择并核对"
+#~ msgstr "选择并核对"
+
+#: src/pages/stock/ScanManualPicker.tsx:123
+msgid "加入待入库"
+msgstr "加入待入库"
+
+#: src/pages/stock/ScanManualPicker.tsx:123
+#: src/pages/stock/ScanWorkPanel.tsx:1393
+msgid "加入待出库"
+msgstr "加入待出库"
+
+#: src/pages/stock/ScanManualPicker.tsx:129
+#~ msgid "没有匹配的可用明细，请检查名称、项目及库位。"
+#~ msgstr "没有匹配的可用明细，请检查名称、项目及库位。"
+
+#: src/pages/stock/ScanManualPicker.tsx:133
+msgid "匹配明细较多，请输入更具体的名称或型号。"
+msgstr "匹配明细较多，请输入更具体的名称或型号。"
+
+#: src/pages/stock/ScanManualPicker.tsx:135
+#~ msgid "无来源标签的历史库存可输入设备编号办理；请选择实际库位和项目核对可用库存。"
+#~ msgstr "无来源标签的历史库存可输入设备编号办理；请选择实际库位和项目核对可用库存。"
+
+#: src/pages/stock/ScanManualPicker.tsx:141
+msgid "没有准备明细？新建入库单"
+msgstr "没有准备明细？新建入库单"
 
 #: src/pages/stock/ScanResultList.tsx:19
 msgid "Scan results from this session will appear here."
@@ -10917,10 +11229,20 @@ msgstr "Message"
 msgid "Replayed"
 msgstr "Replayed"
 
+#: src/pages/stock/ScanResultList.tsx:57
+#: src/pages/stock/ScanStockEventTable.tsx:335
+#: src/tables/stock/StockItemTable.tsx:121
+msgid "Frozen"
+msgstr "Frozen"
+
+#: src/pages/stock/ScanResultList.tsx:58
+#: src/pages/stock/ScanStockEventTable.tsx:336
+msgid "Pending inbound"
+msgstr "Pending inbound"
+
 #: src/pages/stock/ScanResultList.tsx:60
 #: src/pages/stock/ScanStockEventTable.tsx:178
 #: src/pages/stock/ScanStockEventTable.tsx:337
-#: src/pages/stock/ScanWorkPanel.tsx:1180
 #: src/tables/settings/EmailTable.tsx:29
 msgid "Failed"
 msgstr "Failed"
@@ -11000,9 +11322,12 @@ msgid "Operation"
 msgstr "Operation"
 
 #: src/pages/stock/ScanStockEventTable.tsx:281
-#: src/tables/stock/StockTrackingTable.tsx:328
 msgid "Operator"
 msgstr "Operator"
+
+#: src/pages/stock/ScanStockEventTable.tsx:283
+msgid "Stock item"
+msgstr "Stock item"
 
 #: src/pages/stock/ScanStockEventTable.tsx:284
 msgid "Quantity change"
@@ -11016,9 +11341,36 @@ msgstr "Direct scan"
 msgid "scans"
 msgstr "scans"
 
+#: src/pages/stock/ScanStockEventTable.tsx:352
+#: src/pages/stock/ScanStockEventTable.tsx:450
+msgid "Line"
+msgstr "Line"
+
 #: src/pages/stock/ScanStockEventTable.tsx:359
 msgid "Unknown operator"
 msgstr "Unknown operator"
+
+#: src/pages/stock/ScanStockEventTable.tsx:375
+msgid "验收"
+msgstr "验收"
+
+#: src/pages/stock/ScanStockEventTable.tsx:376
+#: src/pages/stock/ScanWorkPanel.tsx:1233
+#: src/pages/stock/ScanWorkPanel.tsx:1234
+#: src/pages/stock/WmsCompleteScan.tsx:330
+#: src/pages/stock/WmsContractManager.tsx:101
+#: src/pages/stock/WmsReceiptWorkbench.tsx:332
+#: src/pages/stock/WmsReceiptWorkbench.tsx:567
+#: src/pages/stock/WmsStockAttribution.tsx:158
+#: src/pages/stock/WmsStockAttribution.tsx:162
+#: src/tables/stock/StockItemTable.tsx:455
+msgid "待验收"
+msgstr "待验收"
+
+#: src/pages/stock/ScanStockEventTable.tsx:377
+#: src/pages/stock/WmsReceiptWorkbench.tsx:569
+msgid "个月"
+msgstr "个月"
 
 #: src/pages/stock/ScanStockEventTable.tsx:459
 msgid "View scan"
@@ -11074,12 +11426,12 @@ msgid "Part total quantity"
 msgstr "Part total quantity"
 
 #: src/pages/stock/ScanStockEventTable.tsx:539
-#: src/pages/stock/ScanWorkPanel.tsx:851
+#: src/pages/stock/ScanWorkPanel.tsx:1084
 msgid "Source location"
 msgstr "Source location"
 
 #: src/pages/stock/ScanStockEventTable.tsx:543
-#: src/pages/stock/ScanWorkPanel.tsx:850
+#: src/pages/stock/ScanWorkPanel.tsx:1083
 msgid "Destination location"
 msgstr "Destination location"
 
@@ -11103,44 +11455,56 @@ msgstr "Tracking entries"
 msgid "Completed at"
 msgstr "Completed at"
 
-#: src/pages/stock/ScanStockPage.tsx:97
+#: src/pages/stock/ScanStockPage.tsx:87
 msgid "Scan direction changed by requester."
 msgstr "Scan direction changed by requester."
 
-#: src/pages/stock/ScanStockPage.tsx:109
-#: src/pages/stock/ScanWorkPanel.tsx:488
+#: src/pages/stock/ScanStockPage.tsx:99
+#: src/pages/stock/ScanWorkPanel.tsx:539
 msgid "The current request could not be cancelled."
 msgstr "The current request could not be cancelled."
+
+#: src/pages/stock/ScanStockPage.tsx:110
+msgid "Scan stock inbound"
+msgstr "Scan stock inbound"
+
+#: src/pages/stock/ScanStockPage.tsx:110
+msgid "Scan stock outbound"
+msgstr "Scan stock outbound"
 
 #: src/pages/stock/ScanStockPage.tsx:116
 #~ msgid "Product barcode identifies the product; IPN is your internal catalogue code; batch distinguishes purchasing or production lots of the same product."
 #~ msgstr "Product barcode identifies the product; IPN is your internal catalogue code; batch distinguishes purchasing or production lots of the same product."
 
-#: src/pages/stock/ScanStockPage.tsx:120
-msgid "Scan stock inbound"
-msgstr "Scan stock inbound"
-
-#: src/pages/stock/ScanStockPage.tsx:120
-msgid "Scan stock outbound"
-msgstr "Scan stock outbound"
+#: src/pages/stock/ScanStockPage.tsx:118
+msgid "扫码核对设备，提交整单审批；收发记录请前往统计查询。"
+msgstr "扫码核对设备，提交整单审批；收发记录请前往统计查询。"
 
 #: src/pages/stock/ScanStockPage.tsx:128
-msgid "Use one workspace for inbound, outbound, current stock, and audit records."
-msgstr "Use one workspace for inbound, outbound, current stock, and audit records."
+#~ msgid "Use one workspace for inbound, outbound, current stock, and audit records."
+#~ msgstr "Use one workspace for inbound, outbound, current stock, and audit records."
 
-#: src/pages/stock/ScanStockPage.tsx:170
+#: src/pages/stock/ScanStockPage.tsx:145
+msgid "出入库作业需要操作权限。"
+msgstr "出入库作业需要操作权限。"
+
+#: src/pages/stock/ScanStockPage.tsx:150
+msgid "前往统计查询"
+msgstr "前往统计查询"
+
+#: src/pages/stock/ScanStockPage.tsx:175
+#~ msgid "Current stock"
+#~ msgstr "Current stock"
+
+#: src/pages/stock/ScanStockPage.tsx:178
 msgid "Scan work"
 msgstr "Scan work"
 
-#: src/pages/stock/ScanStockPage.tsx:175
-msgid "Current stock"
-msgstr "Current stock"
-
-#: src/pages/stock/ScanStockPage.tsx:180
+#: src/pages/stock/ScanStockPage.tsx:183
 msgid "My requests"
 msgstr "My requests"
 
-#: src/pages/stock/ScanStockPage.tsx:185
+#: src/pages/stock/ScanStockPage.tsx:188
 msgid "Pending my approval"
 msgstr "Pending my approval"
 
@@ -11148,25 +11512,25 @@ msgstr "Pending my approval"
 #~ msgid "IPN is the product scan code and internal catalogue number; batch distinguishes purchasing or production lots of the same product."
 #~ msgstr "IPN is the product scan code and internal catalogue number; batch distinguishes purchasing or production lots of the same product."
 
-#: src/pages/stock/ScanStockPage.tsx:193
-msgid "审批记录"
-msgstr "审批记录"
-
 #: src/pages/stock/ScanStockPage.tsx:197
 #~ msgid "完整标签业务"
 #~ msgstr "完整标签业务"
 
 #: src/pages/stock/ScanStockPage.tsx:198
-msgid "Operation records"
-msgstr "Operation records"
+#~ msgid "Operation records"
+#~ msgstr "Operation records"
 
 #: src/pages/stock/ScanStockPage.tsx:198
 #~ msgid "历史旧码兼容"
 #~ msgstr "历史旧码兼容"
 
 #: src/pages/stock/ScanStockPage.tsx:210
-msgid "入库单"
-msgstr "入库单"
+#~ msgid "入库单"
+#~ msgstr "入库单"
+
+#: src/pages/stock/ScanStockPage.tsx:211
+msgid "请管理员启用扫码审批后使用完整标签业务。"
+msgstr "请管理员启用扫码审批后使用完整标签业务。"
 
 #: src/pages/stock/ScanStockPage.tsx:211
 #~ msgid "请管理员启用扫码审批后办理完整标签业务。"
@@ -11177,81 +11541,71 @@ msgstr "入库单"
 #~ msgstr "历史旧码不能自动识别合同。已补录完整标签的库存请使用完整标签业务。"
 
 #: src/pages/stock/ScanStockPage.tsx:222
-msgid "切换为普通扫码"
-msgstr "切换为普通扫码"
+#~ msgid "切换为普通扫码"
+#~ msgstr "切换为普通扫码"
 
 #: src/pages/stock/ScanStockPage.tsx:227
-msgid "正在加载入库单…"
-msgstr "正在加载入库单…"
+#~ msgid "正在加载入库单…"
+#~ msgstr "正在加载入库单…"
 
 #: src/pages/stock/ScanStockPage.tsx:229
-msgid "入库单不存在或已取消。"
-msgstr "入库单不存在或已取消。"
+#~ msgid "入库单不存在或已取消。"
+#~ msgstr "入库单不存在或已取消。"
 
-#: src/pages/stock/ScanStockPage.tsx:247
-msgid "请管理员启用扫码审批后使用完整标签业务。"
-msgstr "请管理员启用扫码审批后使用完整标签业务。"
-
-#: src/pages/stock/ScanStockPage.tsx:257
-msgid "前往库存页面"
-msgstr "前往库存页面"
-
-#: src/pages/stock/ScanStockPage.tsx:282
-#: src/tables/stock/StockItemTable.tsx:681
-#: src/tables/stock/StockItemTable.tsx:799
-msgid "期间入出库记录"
-msgstr "期间入出库记录"
-
-#: src/pages/stock/ScanStockPage.tsx:287
-msgid "Stock tracking"
-msgstr "Stock tracking"
-
-#: src/pages/stock/ScanStockPage.tsx:290
-msgid "Scan records"
-msgstr "Scan records"
-
-#: src/pages/stock/ScanStockPage.tsx:301
-msgid "查询期间入出库记录"
-msgstr "查询期间入出库记录"
-
-#: src/pages/stock/ScanStockPage.tsx:317
+#: src/pages/stock/ScanStockPage.tsx:237
 msgid "Confirm mode change"
 msgstr "Confirm mode change"
 
-#: src/pages/stock/ScanStockPage.tsx:324
+#: src/pages/stock/ScanStockPage.tsx:244
 msgid "The current draft is tied to one direction. Keep it for later and start a new request, or cancel it and release any outbound reservation."
 msgstr "The current draft is tied to one direction. Keep it for later and start a new request, or cancel it and release any outbound reservation."
 
-#: src/pages/stock/ScanStockPage.tsx:325
+#: src/pages/stock/ScanStockPage.tsx:245
 msgid "Changing mode clears the selected location, pending choices, and session results. Confirm the new stock direction before scanning again."
 msgstr "Changing mode clears the selected location, pending choices, and session results. Confirm the new stock direction before scanning again."
 
-#: src/pages/stock/ScanStockPage.tsx:345
+#: src/pages/stock/ScanStockPage.tsx:257
+#~ msgid "前往库存页面"
+#~ msgstr "前往库存页面"
+
+#: src/pages/stock/ScanStockPage.tsx:265
 msgid "Keep request and switch"
 msgstr "Keep request and switch"
 
-#: src/pages/stock/ScanStockPage.tsx:347
+#: src/pages/stock/ScanStockPage.tsx:267
 msgid "Switch to outbound"
 msgstr "Switch to outbound"
 
-#: src/pages/stock/ScanStockPage.tsx:348
+#: src/pages/stock/ScanStockPage.tsx:268
 msgid "Switch to inbound"
 msgstr "Switch to inbound"
 
-#: src/pages/stock/ScanStockPage.tsx:356
-#: src/pages/stock/ScanWorkPanel.tsx:1425
+#: src/pages/stock/ScanStockPage.tsx:276
+#: src/pages/stock/ScanWorkPanel.tsx:1628
 msgid "Cancel request and switch"
 msgstr "Cancel request and switch"
 
-#: src/pages/stock/ScanWorkPanel.tsx:256
+#: src/pages/stock/ScanStockPage.tsx:287
+#~ msgid "Stock tracking"
+#~ msgstr "Stock tracking"
+
+#: src/pages/stock/ScanStockPage.tsx:290
+#~ msgid "Scan records"
+#~ msgstr "Scan records"
+
+#: src/pages/stock/ScanStockPage.tsx:301
+#~ msgid "查询期间入出库记录"
+#~ msgstr "查询期间入出库记录"
+
+#: src/pages/stock/ScanWorkPanel.tsx:267
 msgid "原出库请求已确认，当前库存已为0；未重复扣减。"
 msgstr "原出库请求已确认，当前库存已为0；未重复扣减。"
 
-#: src/pages/stock/ScanWorkPanel.tsx:257
+#: src/pages/stock/ScanWorkPanel.tsx:268
 msgid "出库成功，当前库存已为0。"
 msgstr "出库成功，当前库存已为0。"
 
-#: src/pages/stock/ScanWorkPanel.tsx:269
+#: src/pages/stock/ScanWorkPanel.tsx:280
 msgid "出库已成功，剩余库存查询失败，请重试库存查询。"
 msgstr "出库已成功，剩余库存查询失败，请重试库存查询。"
 
@@ -11279,10 +11633,6 @@ msgstr "出库已成功，剩余库存查询失败，请重试库存查询。"
 #~ msgid "请从当前设备、实际地点的现存项目中选择"
 #~ msgstr "请从当前设备、实际地点的现存项目中选择"
 
-#: src/pages/stock/ScanWorkPanel.tsx:482
-msgid "Scan location changed by requester."
-msgstr "Scan location changed by requester."
-
 #: src/pages/stock/ScanWorkPanel.tsx:488
 #~ msgid "This barcode is unknown. Product creation, barcode assignment, stock creation, and inbound quantity will commit together."
 #~ msgstr "This barcode is unknown. Product creation, barcode assignment, stock creation, and inbound quantity will commit together."
@@ -11299,75 +11649,73 @@ msgstr "Scan location changed by requester."
 #~ msgid "Optional internal catalogue code for this product, such as MAT-000123. It is different from the scanned barcode."
 #~ msgstr "Optional internal catalogue code for this product, such as MAT-000123. It is different from the scanned barcode."
 
-#: src/pages/stock/ScanWorkPanel.tsx:505
+#: src/pages/stock/ScanWorkPanel.tsx:533
+msgid "Scan location changed by requester."
+msgstr "Scan location changed by requester."
+
+#: src/pages/stock/ScanWorkPanel.tsx:556
 msgid "Destination location set from barcode."
 msgstr "Destination location set from barcode."
 
-#: src/pages/stock/ScanWorkPanel.tsx:506
+#: src/pages/stock/ScanWorkPanel.tsx:557
 msgid "Source location set from barcode."
 msgstr "Source location set from barcode."
 
-#: src/pages/stock/ScanWorkPanel.tsx:524
+#: src/pages/stock/ScanWorkPanel.tsx:589
 msgid "The scanned barcode is not a stock location."
 msgstr "The scanned barcode is not a stock location."
 
-#: src/pages/stock/ScanWorkPanel.tsx:529
+#: src/pages/stock/ScanWorkPanel.tsx:594
 msgid "The location barcode could not be resolved."
 msgstr "The location barcode could not be resolved."
 
-#: src/pages/stock/ScanWorkPanel.tsx:548
+#: src/pages/stock/ScanWorkPanel.tsx:613
 msgid "Select a destination location before scanning stock."
 msgstr "Select a destination location before scanning stock."
 
-#: src/pages/stock/ScanWorkPanel.tsx:549
+#: src/pages/stock/ScanWorkPanel.tsx:614
 msgid "Select a source location before scanning stock."
 msgstr "Select a source location before scanning stock."
-
-#: src/pages/stock/ScanWorkPanel.tsx:626
-msgid "This scan was already processed; the request quantity was not changed again."
-msgstr "This scan was already processed; the request quantity was not changed again."
-
-#: src/pages/stock/ScanWorkPanel.tsx:627
-msgid "This scan was already processed; stock was not changed again."
-msgstr "This scan was already processed; stock was not changed again."
-
-#: src/pages/stock/ScanWorkPanel.tsx:632
-msgid "Stock reserved for approval."
-msgstr "Stock reserved for approval."
-
-#: src/pages/stock/ScanWorkPanel.tsx:633
-msgid "Stock added to the pending inbound request."
-msgstr "Stock added to the pending inbound request."
-
-#: src/pages/stock/ScanWorkPanel.tsx:634
-msgid "Stock updated."
-msgstr "Stock updated."
 
 #: src/pages/stock/ScanWorkPanel.tsx:673
 #~ msgid "项目（先输入设备码）"
 #~ msgstr "项目（先输入设备码）"
 
-#: src/pages/stock/ScanWorkPanel.tsx:684
-#: src/pages/stock/WmsCompleteScan.tsx:163
-msgid "同一码已加入，已定位原申请行："
-msgstr "同一码已加入，已定位原申请行："
+#: src/pages/stock/ScanWorkPanel.tsx:692
+#~ msgid "Stock reserved for approval."
+#~ msgstr "Stock reserved for approval."
 
-#: src/pages/stock/ScanWorkPanel.tsx:689
-#: src/pages/stock/WmsCompleteScan.tsx:178
-msgid "该明细已核对或已入库，请查看原申请。"
-msgstr "该明细已核对或已入库，请查看原申请。"
+#: src/pages/stock/ScanWorkPanel.tsx:693
+#~ msgid "Stock added to the pending inbound request."
+#~ msgstr "Stock added to the pending inbound request."
 
-#: src/pages/stock/ScanWorkPanel.tsx:697
-msgid "实际数量与准备数量不同，请明确核对确认。"
-msgstr "实际数量与准备数量不同，请明确核对确认。"
+#: src/pages/stock/ScanWorkPanel.tsx:700
+msgid "This scan was already processed; the request quantity was not changed again."
+msgstr "This scan was already processed; the request quantity was not changed again."
+
+#: src/pages/stock/ScanWorkPanel.tsx:701
+msgid "This scan was already processed; stock was not changed again."
+msgstr "This scan was already processed; stock was not changed again."
 
 #: src/pages/stock/ScanWorkPanel.tsx:703
 #~ msgid "Multiple stock contexts match this product. Choose explicitly; no quantity has changed yet. A batch identifies a purchasing or production lot of the same product."
 #~ msgstr "Multiple stock contexts match this product. Choose explicitly; no quantity has changed yet. A batch identifies a purchasing or production lot of the same product."
 
+#: src/pages/stock/ScanWorkPanel.tsx:706
+msgid "已加入待出库"
+msgstr "已加入待出库"
+
 #: src/pages/stock/ScanWorkPanel.tsx:707
-msgid "项目必填，出库还须填写用途"
-msgstr "项目必填，出库还须填写用途"
+msgid "已加入待入库"
+msgstr "已加入待入库"
+
+#: src/pages/stock/ScanWorkPanel.tsx:707
+#~ msgid "项目必填，出库还须填写用途"
+#~ msgstr "项目必填，出库还须填写用途"
+
+#: src/pages/stock/ScanWorkPanel.tsx:708
+msgid "Stock updated."
+msgstr "Stock updated."
 
 #: src/pages/stock/ScanWorkPanel.tsx:709
 #~ msgid "Product IPN or stock item code"
@@ -11377,13 +11725,14 @@ msgstr "项目必填，出库还须填写用途"
 #~ msgid "Scan a product IPN, INV-PA, or INV-SI code"
 #~ msgstr "Scan a product IPN, INV-PA, or INV-SI code"
 
-#: src/pages/stock/ScanWorkPanel.tsx:711
-msgid "请先安全重试并确认上一笔请求"
-msgstr "请先安全重试并确认上一笔请求"
+#: src/pages/stock/ScanWorkPanel.tsx:768
+#: src/pages/stock/WmsCompleteScan.tsx:181
+msgid "当前草稿属于其他库位，请先提交或取消该草稿。"
+msgstr "当前草稿属于其他库位，请先提交或取消该草稿。"
 
-#: src/pages/stock/ScanWorkPanel.tsx:773
-msgid "网络结果未确认，安全重试复用原请求，避免重复入出库。"
-msgstr "网络结果未确认，安全重试复用原请求，避免重复入出库。"
+#: src/pages/stock/ScanWorkPanel.tsx:772
+msgid "该明细已作废，不能继续扫码。"
+msgstr "该明细已作废，不能继续扫码。"
 
 #: src/pages/stock/ScanWorkPanel.tsx:774
 #~ msgid "设备ID／库存项码"
@@ -11393,29 +11742,29 @@ msgstr "网络结果未确认，安全重试复用原请求，避免重复入出
 #~ msgid "扫描设备ID、INV-PA或INV-SI码"
 #~ msgstr "扫描设备ID、INV-PA或INV-SI码"
 
-#: src/pages/stock/ScanWorkPanel.tsx:797
-msgid "请求已确认"
-msgstr "请求已确认"
+#: src/pages/stock/ScanWorkPanel.tsx:780
+msgid "实际数量与准备数量不同，请明确核对确认。"
+msgstr "实际数量与准备数量不同，请明确核对确认。"
 
-#: src/pages/stock/ScanWorkPanel.tsx:810
-msgid "安全重试原请求"
-msgstr "安全重试原请求"
+#: src/pages/stock/ScanWorkPanel.tsx:789
+msgid "请选择有可用库存的实际库位。"
+msgstr "请选择有可用库存的实际库位。"
 
-#: src/pages/stock/ScanWorkPanel.tsx:818
-msgid "Inbound mode"
-msgstr "Inbound mode"
+#: src/pages/stock/ScanWorkPanel.tsx:794
+msgid "请选择实际库位并填写有效数量。"
+msgstr "请选择实际库位并填写有效数量。"
 
-#: src/pages/stock/ScanWorkPanel.tsx:818
-msgid "Outbound mode"
-msgstr "Outbound mode"
+#: src/pages/stock/ScanWorkPanel.tsx:799
+msgid "请选择项目"
+msgstr "请选择项目"
+
+#: src/pages/stock/ScanWorkPanel.tsx:804
+msgid "请先安全重试并确认上一笔请求"
+msgstr "请先安全重试并确认上一笔请求"
 
 #: src/pages/stock/ScanWorkPanel.tsx:822
-msgid "Review the scanned information, then add a pending inbound line. Physical stock changes only after the whole request is approved."
-msgstr "Review the scanned information, then add a pending inbound line. Physical stock changes only after the whole request is approved."
-
-#: src/pages/stock/ScanWorkPanel.tsx:823
-msgid "Review the scanned information, then confirm to add stock to the destination location."
-msgstr "Review the scanned information, then confirm to add stock to the destination location."
+#~ msgid "Review the scanned information, then add a pending inbound line. Physical stock changes only after the whole request is approved."
+#~ msgstr "Review the scanned information, then add a pending inbound line. Physical stock changes only after the whole request is approved."
 
 #: src/pages/stock/ScanWorkPanel.tsx:823
 #~ msgid "Each accepted scan adds a pending inbound line. Physical stock changes only after the whole request is approved."
@@ -11426,12 +11775,8 @@ msgstr "Review the scanned information, then confirm to add stock to the destina
 #~ msgstr "Each accepted scan adds stock to the confirmed destination location."
 
 #: src/pages/stock/ScanWorkPanel.tsx:825
-msgid "Review the scanned information, then add an outbound line to reserve stock. Physical stock changes only after the whole request is approved."
-msgstr "Review the scanned information, then add an outbound line to reserve stock. Physical stock changes only after the whole request is approved."
-
-#: src/pages/stock/ScanWorkPanel.tsx:826
-msgid "Review the scanned information, then confirm to remove unallocated stock from the source location."
-msgstr "Review the scanned information, then confirm to remove unallocated stock from the source location."
+#~ msgid "Review the scanned information, then add an outbound line to reserve stock. Physical stock changes only after the whole request is approved."
+#~ msgstr "Review the scanned information, then add an outbound line to reserve stock. Physical stock changes only after the whole request is approved."
 
 #: src/pages/stock/ScanWorkPanel.tsx:826
 #~ msgid "Each accepted scan immediately reserves available stock. Physical stock changes only after the whole request is approved."
@@ -11441,311 +11786,409 @@ msgstr "Review the scanned information, then confirm to remove unallocated stock
 #~ msgid "Each accepted scan removes unallocated stock from the confirmed source location."
 #~ msgstr "Each accepted scan removes unallocated stock from the confirmed source location."
 
-#: src/pages/stock/ScanWorkPanel.tsx:853
-msgid "Select and confirm a stock location"
-msgstr "Select and confirm a stock location"
-
-#: src/pages/stock/ScanWorkPanel.tsx:860
-msgid "No stock locations found"
-msgstr "No stock locations found"
-
-#: src/pages/stock/ScanWorkPanel.tsx:875
-msgid "Location barcode"
-msgstr "Location barcode"
-
-#: src/pages/stock/ScanWorkPanel.tsx:876
-msgid "Scan an INV-SL or linked location barcode"
-msgstr "Scan an INV-SL or linked location barcode"
-
-#: src/pages/stock/ScanWorkPanel.tsx:888
-msgid "Set location"
-msgstr "Set location"
-
-#: src/pages/stock/ScanWorkPanel.tsx:909
-msgid "扫码（二维码／设备ID／库存项码）"
-msgstr "扫码（二维码／设备ID／库存项码）"
-
 #: src/pages/stock/ScanWorkPanel.tsx:910
-msgid "扫码后自动填充，请核对信息和数量后加入申请。"
-msgstr "扫码后自动填充，请核对信息和数量后加入申请。"
+#~ msgid "扫码后自动填充，请核对信息和数量后加入申请。"
+#~ msgstr "扫码后自动填充，请核对信息和数量后加入申请。"
 
-#: src/pages/stock/ScanWorkPanel.tsx:911
-msgid "扫描标签或输入设备编号"
-msgstr "扫描标签或输入设备编号"
-
-#: src/pages/stock/ScanWorkPanel.tsx:920
-#: src/pages/stock/WmsCompleteScan.tsx:320
-#: src/pages/stock/WmsInventoryPanel.tsx:40
-#: src/pages/stock/WmsInventoryPanel.tsx:232
-#: src/pages/stock/WmsInventoryPanel.tsx:604
-#: src/pages/stock/WmsNativeTools.tsx:70
-#: src/tables/stock/StockItemTable.tsx:465
-msgid "设备ID"
-msgstr "设备ID"
-
-#: src/pages/stock/ScanWorkPanel.tsx:923
-#: src/pages/stock/ScanWorkPanel.tsx:929
-#: src/pages/stock/ScanWorkPanel.tsx:939
-msgid "扫码后自动填充"
-msgstr "扫码后自动填充"
-
-#: src/pages/stock/ScanWorkPanel.tsx:926
-#: src/pages/stock/WmsCompleteScan.tsx:321
-#: src/pages/stock/WmsInventoryPanel.tsx:41
-#: src/pages/stock/WmsInventoryPanel.tsx:233
-#: src/pages/stock/WmsNativeTools.tsx:71
-msgid "设备名称"
-msgstr "设备名称"
+#: src/pages/stock/ScanWorkPanel.tsx:919
+msgid "网络结果未确认，安全重试复用原请求，避免重复入出库。"
+msgstr "网络结果未确认，安全重试复用原请求，避免重复入出库。"
 
 #: src/pages/stock/ScanWorkPanel.tsx:928
 #~ msgid "Reserve stock"
 #~ msgstr "Reserve stock"
 
+#: src/pages/stock/ScanWorkPanel.tsx:935
+#~ msgid "Inbound mode"
+#~ msgstr "Inbound mode"
+
+#: src/pages/stock/ScanWorkPanel.tsx:935
+#~ msgid "Outbound mode"
+#~ msgstr "Outbound mode"
+
+#: src/pages/stock/ScanWorkPanel.tsx:939
+#~ msgid "完整标签回车自动加入待入库；信息缺失或数量差异时补充核对，整单审批通过后增加库存。"
+#~ msgstr "完整标签回车自动加入待入库；信息缺失或数量差异时补充核对，整单审批通过后增加库存。"
+
+#: src/pages/stock/ScanWorkPanel.tsx:940
+#~ msgid "Review the scanned information, then confirm to add stock to the destination location."
+#~ msgstr "Review the scanned information, then confirm to add stock to the destination location."
+
+#: src/pages/stock/ScanWorkPanel.tsx:942
+#~ msgid "完整标签回车自动加入待出库并冻结可用库存；整单审批通过后扣减库存。"
+#~ msgstr "完整标签回车自动加入待出库并冻结可用库存；整单审批通过后扣减库存。"
+
+#: src/pages/stock/ScanWorkPanel.tsx:943
+msgid "请求已确认"
+msgstr "请求已确认"
+
+#: src/pages/stock/ScanWorkPanel.tsx:943
+#~ msgid "Review the scanned information, then confirm to remove unallocated stock from the source location."
+#~ msgstr "Review the scanned information, then confirm to remove unallocated stock from the source location."
+
 #: src/pages/stock/ScanWorkPanel.tsx:946
 #~ msgid "可选择已有项目或直接输入新名称；入库成功后保存，需审批时以审批通过为准。"
 #~ msgstr "可选择已有项目或直接输入新名称；入库成功后保存，需审批时以审批通过为准。"
 
-#: src/pages/stock/ScanWorkPanel.tsx:956
-msgid "输入设备码后选择项目"
-msgstr "输入设备码后选择项目"
+#: src/pages/stock/ScanWorkPanel.tsx:955
+#~ msgid "录入设备"
+#~ msgstr "录入设备"
 
-#: src/pages/stock/ScanWorkPanel.tsx:973
-#: src/pages/stock/WmsCompleteScan.tsx:324
-#: src/pages/stock/WmsContractEditor.tsx:93
-#: src/pages/stock/WmsNativeTools.tsx:75
-#: src/pages/stock/WmsNativeTools.tsx:95
-#: src/pages/stock/WmsNativeTools.tsx:104
-#: src/pages/stock/WmsReceiptWorkbench.tsx:258
-#: src/pages/stock/WmsReceiptWorkbench.tsx:630
-#: src/pages/stock/WmsStockAttribution.tsx:120
-#: src/tables/stock/StockItemTable.tsx:440
-#: src/tables/stock/StockItemTable.tsx:497
-msgid "合同号"
-msgstr "合同号"
+#: src/pages/stock/ScanWorkPanel.tsx:956
+msgid "安全重试原请求"
+msgstr "安全重试原请求"
+
+#: src/pages/stock/ScanWorkPanel.tsx:970
+msgid "扫码录入"
+msgstr "扫码录入"
+
+#: src/pages/stock/ScanWorkPanel.tsx:971
+msgid "按名称 / 型号添加"
+msgstr "按名称 / 型号添加"
 
 #: src/pages/stock/ScanWorkPanel.tsx:978
-msgid "此码未包含合同号"
-msgstr "此码未包含合同号"
+msgid "扫码（二维码／设备ID／库存项码）"
+msgstr "扫码（二维码／设备ID／库存项码）"
 
-#: src/pages/stock/ScanWorkPanel.tsx:979
-msgid "扫描完整二维码后自动填充"
-msgstr "扫描完整二维码后自动填充"
+#: src/pages/stock/ScanWorkPanel.tsx:991
+msgid "扫描设备标签，回车自动加入"
+msgstr "扫描设备标签，回车自动加入"
 
-#: src/pages/stock/ScanWorkPanel.tsx:985
+#: src/pages/stock/ScanWorkPanel.tsx:1026
+msgid "正在加入…"
+msgstr "正在加入…"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1028
+#: src/pages/stock/ScanWorkPanel.tsx:1225
 msgid "正在识别标签…"
 msgstr "正在识别标签…"
 
-#: src/pages/stock/ScanWorkPanel.tsx:992
-#: src/pages/stock/WmsContractEditor.tsx:104
-#: src/pages/stock/WmsReceiptWorkbench.tsx:272
-#: src/pages/stock/WmsStockAttribution.tsx:147
+#: src/pages/stock/ScanWorkPanel.tsx:1033
+msgid "当前库位"
+msgstr "当前库位"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1035
+msgid "扫码后自动识别"
+msgstr "扫码后自动识别"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1045
+msgid "核对信息"
+msgstr "核对信息"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1045
+msgid "修改库位"
+msgstr "修改库位"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1054
+#~ msgid "完整标签扫码回车后自动填充并加入待办；缺少的信息请补填。"
+#~ msgstr "完整标签扫码回车后自动填充并加入待办；缺少的信息请补填。"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1055
+#~ msgid "扫描标签或输入设备编号"
+#~ msgstr "扫描标签或输入设备编号"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1071
+msgid "核对设备与出入库信息"
+msgstr "核对设备与出入库信息"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1071
+msgid "设置实际库位"
+msgstr "设置实际库位"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1086
+msgid "Select and confirm a stock location"
+msgstr "Select and confirm a stock location"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1093
+msgid "No stock locations found"
+msgstr "No stock locations found"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1108
+msgid "Location barcode"
+msgstr "Location barcode"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1109
+msgid "Scan an INV-SL or linked location barcode"
+msgstr "Scan an INV-SL or linked location barcode"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1121
+msgid "Set location"
+msgstr "Set location"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1139
+#: src/pages/stock/WmsCompleteScan.tsx:320
+#: src/pages/stock/WmsInventoryPanel.tsx:48
+#: src/pages/stock/WmsInventoryPanel.tsx:246
+#: src/pages/stock/WmsInventoryPanel.tsx:618
+#: src/pages/stock/WmsNativeTools.tsx:70
+#: src/tables/stock/StockItemTable.tsx:467
+msgid "设备ID"
+msgstr "设备ID"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1142
+#: src/pages/stock/ScanWorkPanel.tsx:1148
+#: src/pages/stock/ScanWorkPanel.tsx:1179
+msgid "扫码后自动填充"
+msgstr "扫码后自动填充"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1166
+#: src/pages/stock/ScanWorkPanel.tsx:1581
+#: src/pages/stock/WmsBatchDetailPage.tsx:92
+#: src/pages/stock/WmsInventoryPanel.tsx:53
+#: src/pages/stock/WmsInventoryPanel.tsx:248
+#: src/pages/stock/WmsNativeTools.tsx:72
+#: src/tables/stock/StockItemTable.tsx:474
+msgid "单位"
+msgstr "单位"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1171
+#~ msgid "Current request"
+#~ msgstr "Current request"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1172
+#~ msgid "Session summary"
+#~ msgstr "Session summary"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1176
+#~ msgid "Accepted"
+#~ msgstr "Accepted"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1196
+msgid "输入设备码后选择项目"
+msgstr "输入设备码后选择项目"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1218
+msgid "此码未包含合同号"
+msgstr "此码未包含合同号"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1219
+msgid "扫描完整二维码后自动填充"
+msgstr "扫描完整二维码后自动填充"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1220
+#~ msgid "Draft time remaining"
+#~ msgstr "Draft time remaining"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1232
+#: src/pages/stock/WmsContractEditor.tsx:136
+#: src/pages/stock/WmsReceiptWorkbench.tsx:331
+#: src/pages/stock/WmsStockAttribution.tsx:158
 msgid "验收日期（合同起始时间）"
 msgstr "验收日期（合同起始时间）"
 
-#: src/pages/stock/ScanWorkPanel.tsx:993
+#: src/pages/stock/ScanWorkPanel.tsx:1233
 #: src/pages/stock/WmsNativeTools.tsx:78
 #: src/pages/stock/WmsNativeTools.tsx:98
-#: src/pages/stock/WmsStockAttribution.tsx:150
+#: src/pages/stock/WmsStatisticsPage.tsx:480
+#: src/pages/stock/WmsStockAttribution.tsx:161
 msgid "质保到期日"
 msgstr "质保到期日"
 
-#: src/pages/stock/ScanWorkPanel.tsx:998
-#: src/pages/stock/WmsReceiptWorkbench.tsx:305
-#: src/pages/stock/WmsReceiptWorkbench.tsx:583
+#: src/pages/stock/ScanWorkPanel.tsx:1238
+#: src/pages/stock/WmsReceiptLineEditor.tsx:68
+#: src/pages/stock/WmsReceiptLineEditor.tsx:78
+#: src/pages/stock/WmsReceiptWorkbench.tsx:381
+#: src/pages/stock/WmsReceiptWorkbench.tsx:705
 msgid "准备数量"
 msgstr "准备数量"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1003
-#: src/pages/stock/ScanWorkPanel.tsx:1045
-#: src/pages/stock/WmsInventoryPanel.tsx:699
-msgid "当前库存"
-msgstr "当前库存"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1008
-#: src/pages/stock/ScanWorkPanel.tsx:1046
-#: src/pages/stock/WmsInventoryPanel.tsx:221
-#: src/pages/stock/WmsNativeTools.tsx:93
-msgid "可用数量"
-msgstr "可用数量"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1032
-msgid "请选择实际库位并输入设备码查看库存。"
-msgstr "请选择实际库位并输入设备码查看库存。"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1034
-msgid "正在查询库存…"
-msgstr "正在查询库存…"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1036
-msgid "库存查询失败，请重试。"
-msgstr "库存查询失败，请重试。"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1041
-msgid "当前库位该设备所有项目合计"
-msgstr "当前库位该设备所有项目合计"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1042
-msgid "当前设备、项目及实际库位"
-msgstr "当前设备、项目及实际库位"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1050
-#: src/pages/stock/WmsInventoryPanel.tsx:220
-#: src/pages/stock/WmsInventoryPanel.tsx:617
-#: src/pages/stock/WmsNativeTools.tsx:92
-msgid "冻结数量"
-msgstr "冻结数量"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1050
-msgid "业务占用数量"
-msgstr "业务占用数量"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1056
-msgid "当前项目在此库位暂无该设备库存，无法出库。"
-msgstr "当前项目在此库位暂无该设备库存，无法出库。"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1057
-msgid "当前库位该设备暂无库存，无法出库。"
-msgstr "当前库位该设备暂无库存，无法出库。"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1060
-msgid "当前无可用库存，库存已冻结或占用。"
-msgstr "当前无可用库存，库存已冻结或占用。"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1063
-msgid "请选择项目查看可用库存"
-msgstr "请选择项目查看可用库存"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1069
-msgid "设备码无法识别，请检查设备ID或库存项码。"
-msgstr "设备码无法识别，请检查设备ID或库存项码。"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1078
-msgid "重新查询库存"
-msgstr "重新查询库存"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1093
-msgid "本次扫码备注"
-msgstr "本次扫码备注"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1099
-msgid "Quantity per scan"
-msgstr "Quantity per scan"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1114
-msgid "已核对实际数量与准备数量的差异"
-msgstr "已核对实际数量与准备数量的差异"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1156
-msgid "Add pending inbound"
-msgstr "Add pending inbound"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1157
-msgid "加入待出库"
-msgstr "加入待出库"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1159
-msgid "Add stock"
-msgstr "Add stock"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1160
-msgid "Remove stock"
-msgstr "Remove stock"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1171
-msgid "Current request"
-msgstr "Current request"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1172
-msgid "Session summary"
-msgstr "Session summary"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1176
-msgid "Accepted"
-msgstr "Accepted"
-
-#: src/pages/stock/ScanWorkPanel.tsx:1220
-msgid "Draft time remaining"
-msgstr "Draft time remaining"
-
 #: src/pages/stock/ScanWorkPanel.tsx:1238
-msgid "Restoring your most recent draft…"
-msgstr "Restoring your most recent draft…"
+#~ msgid "Restoring your most recent draft…"
+#~ msgstr "Restoring your most recent draft…"
 
 #: src/pages/stock/ScanWorkPanel.tsx:1238
 #~ msgid "A draft request is created on the server with your first scan."
 #~ msgstr "A draft request is created on the server with your first scan."
 
 #: src/pages/stock/ScanWorkPanel.tsx:1239
-msgid "A draft request is created when you first confirm and add a line."
-msgstr "A draft request is created when you first confirm and add a line."
+#~ msgid "A draft request is created when you first confirm and add a line."
+#~ msgstr "A draft request is created when you first confirm and add a line."
 
 #: src/pages/stock/ScanWorkPanel.tsx:1240
-msgid "Changing mode clears the location and current session results."
-msgstr "Changing mode clears the location and current session results."
+#~ msgid "Changing mode clears the location and current session results."
+#~ msgstr "Changing mode clears the location and current session results."
 
-#: src/pages/stock/ScanWorkPanel.tsx:1290
+#: src/pages/stock/ScanWorkPanel.tsx:1243
+#: src/pages/stock/ScanWorkPanel.tsx:1283
+#: src/pages/stock/WmsInventoryPanel.tsx:715
+msgid "当前库存"
+msgstr "当前库存"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1246
+#: src/pages/stock/ScanWorkPanel.tsx:1284
+#: src/pages/stock/WmsInventoryPanel.tsx:235
+#: src/pages/stock/WmsNativeTools.tsx:93
+msgid "可用数量"
+msgstr "可用数量"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1270
+msgid "请选择实际库位并输入设备码查看库存。"
+msgstr "请选择实际库位并输入设备码查看库存。"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1272
+msgid "正在查询库存…"
+msgstr "正在查询库存…"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1274
+msgid "库存查询失败，请重试。"
+msgstr "库存查询失败，请重试。"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1279
+msgid "当前库位该设备所有项目合计"
+msgstr "当前库位该设备所有项目合计"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1280
+msgid "当前设备、项目及实际库位"
+msgstr "当前设备、项目及实际库位"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1288
+#: src/pages/stock/WmsInventoryPanel.tsx:234
+#: src/pages/stock/WmsInventoryPanel.tsx:631
+#: src/pages/stock/WmsNativeTools.tsx:92
+msgid "冻结数量"
+msgstr "冻结数量"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1288
+msgid "业务占用数量"
+msgstr "业务占用数量"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1294
+msgid "当前项目在此库位暂无该设备库存，无法出库。"
+msgstr "当前项目在此库位暂无该设备库存，无法出库。"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1295
+msgid "当前库位该设备暂无库存，无法出库。"
+msgstr "当前库位该设备暂无库存，无法出库。"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1298
+msgid "当前无可用库存，库存已冻结或占用。"
+msgstr "当前无可用库存，库存已冻结或占用。"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1301
+msgid "请选择项目查看可用库存"
+msgstr "请选择项目查看可用库存"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1307
+msgid "设备码无法识别，请检查设备ID或库存项码。"
+msgstr "设备码无法识别，请检查设备ID或库存项码。"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1316
+msgid "重新查询库存"
+msgstr "重新查询库存"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1324
+msgid "选填"
+msgstr "Optional"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1332
+msgid "本次扫码备注"
+msgstr "本次扫码备注"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1338
+msgid "Quantity per scan"
+msgstr "Quantity per scan"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1354
+msgid "已核对实际数量与准备数量的差异"
+msgstr "已核对实际数量与准备数量的差异"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1392
+msgid "Add pending inbound"
+msgstr "Add pending inbound"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1395
+msgid "Add stock"
+msgstr "Add stock"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1396
+msgid "Remove stock"
+msgstr "Remove stock"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1410
+#: src/tables/stock/StockItemTable.tsx:616
+#: src/tables/stock/StockItemTable.tsx:684
+msgid "入库填单与打印"
+msgstr "入库填单与打印"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1447
+msgid "正在恢复待办明细…"
+msgstr "正在恢复待办明细…"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1448
+msgid "扫描设备标签或按名称、型号添加设备。"
+msgstr "扫描设备标签或按名称、型号添加设备。"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1480
+msgid "收起扫码日志"
+msgstr "收起扫码日志"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1480
+msgid "查看扫码日志"
+msgstr "查看扫码日志"
+
+#: src/pages/stock/ScanWorkPanel.tsx:1493
 msgid "Select a stock item"
 msgstr "Select a stock item"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1295
+#: src/pages/stock/ScanWorkPanel.tsx:1498
 msgid "当前设备、项目及地点存在多个库存项，请明确选择。"
 msgstr "当前设备、项目及地点存在多个库存项，请明确选择。"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1318
+#: src/pages/stock/ScanWorkPanel.tsx:1521
 #: src/tables/part/PartThumbTable.tsx:233
 msgid "Select"
 msgstr "Select"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1332
+#: src/pages/stock/ScanWorkPanel.tsx:1535
 msgid "Create a new stock item"
 msgstr "Create a new stock item"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1345
+#: src/pages/stock/ScanWorkPanel.tsx:1548
 msgid "Create product for pending inbound"
 msgstr "Create product for pending inbound"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1346
-#: src/pages/stock/ScanWorkPanel.tsx:1389
+#: src/pages/stock/ScanWorkPanel.tsx:1549
+#: src/pages/stock/ScanWorkPanel.tsx:1592
 msgid "Create product and add stock"
 msgstr "Create product and add stock"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1353
+#: src/pages/stock/ScanWorkPanel.tsx:1556
 msgid "This IPN is unknown. The setup is stored on the request; product creation and stock addition happen only if the whole request is approved."
 msgstr "This IPN is unknown. The setup is stored on the request; product creation and stock addition happen only if the whole request is approved."
 
-#: src/pages/stock/ScanWorkPanel.tsx:1354
+#: src/pages/stock/ScanWorkPanel.tsx:1557
 msgid "This IPN is unknown. Product creation, stock creation, and inbound quantity will commit together."
 msgstr "This IPN is unknown. Product creation, stock creation, and inbound quantity will commit together."
 
-#: src/pages/stock/ScanWorkPanel.tsx:1358
+#: src/pages/stock/ScanWorkPanel.tsx:1561
 msgid "Internal part number (IPN)"
 msgstr "Internal part number (IPN)"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1359
+#: src/pages/stock/ScanWorkPanel.tsx:1562
 msgid "The scanned code becomes the new product IPN and is used for future scans."
 msgstr "The scanned code becomes the new product IPN and is used for future scans."
 
-#: src/pages/stock/ScanWorkPanel.tsx:1364
+#: src/pages/stock/ScanWorkPanel.tsx:1567
 msgid "Product name"
 msgstr "Product name"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1371
+#: src/pages/stock/ScanWorkPanel.tsx:1574
 msgid "设备分类"
 msgstr "设备分类"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1388
+#: src/pages/stock/ScanWorkPanel.tsx:1591
 msgid "Add product setup to request"
 msgstr "Add product setup to request"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1397
+#: src/pages/stock/ScanWorkPanel.tsx:1600
 msgid "Change request location"
 msgstr "Change request location"
 
-#: src/pages/stock/ScanWorkPanel.tsx:1403
+#: src/pages/stock/ScanWorkPanel.tsx:1606
 msgid "The current request is tied to one location. Keep it and start a new request at the selected location, or cancel it and release any outbound reservation."
 msgstr "The current request is tied to one location. Keep it and start a new request at the selected location, or cancel it and release any outbound reservation."
 
-#: src/pages/stock/ScanWorkPanel.tsx:1418
+#: src/pages/stock/ScanWorkPanel.tsx:1621
 msgid "Keep request and start new"
 msgstr "Keep request and start new"
 
@@ -11761,7 +12204,7 @@ msgstr "Keep request and start new"
 #~ msgid "Unlink custom barcode from stock item"
 #~ msgstr "Unlink custom barcode from stock item"
 
-#: src/pages/stock/StockDetail.tsx:191
+#: src/pages/stock/StockDetail.tsx:192
 msgid "Stock Details"
 msgstr "Stock Details"
 
@@ -11773,27 +12216,27 @@ msgstr "Stock Details"
 #~ msgid "Delete stock item"
 #~ msgstr "Delete stock item"
 
-#: src/pages/stock/StockDetail.tsx:266
+#: src/pages/stock/StockDetail.tsx:268
 msgid "Transfer Order Allocations"
 msgstr "Transfer Order Allocations"
 
-#: src/pages/stock/StockDetail.tsx:304
+#: src/pages/stock/StockDetail.tsx:306
 msgid "Child Items"
 msgstr "Child Items"
 
-#: src/pages/stock/StockDetail.tsx:361
+#: src/pages/stock/StockDetail.tsx:364
 msgid "Edit Stock Item"
 msgstr "Edit Stock Item"
 
-#: src/pages/stock/StockDetail.tsx:382
+#: src/pages/stock/StockDetail.tsx:385
 msgid "Convert Stock Item"
 msgstr "Convert Stock Item"
 
-#: src/pages/stock/StockDetail.tsx:424
+#: src/pages/stock/StockDetail.tsx:427
 msgid "Items Created"
 msgstr "Items Created"
 
-#: src/pages/stock/StockDetail.tsx:425
+#: src/pages/stock/StockDetail.tsx:428
 msgid "Created {n} stock items"
 msgstr "Created {n} stock items"
 
@@ -11801,24 +12244,24 @@ msgstr "Created {n} stock items"
 #~ msgid "Duplicate stock item"
 #~ msgstr "Duplicate stock item"
 
-#: src/pages/stock/StockDetail.tsx:442
+#: src/pages/stock/StockDetail.tsx:445
 msgid "Delete Stock Item"
 msgstr "Delete Stock Item"
 
-#: src/pages/stock/StockDetail.tsx:493
+#: src/pages/stock/StockDetail.tsx:496
 msgid "Serialize Stock Item"
 msgstr "Serialize Stock Item"
-
-#: src/pages/stock/StockDetail.tsx:509
-msgid "Stock item serialized"
-msgstr "Stock item serialized"
 
 #: src/pages/stock/StockDetail.tsx:509
 #~ msgid "Scan Into Location"
 #~ msgstr "Scan Into Location"
 
-#: src/pages/stock/StockDetail.tsx:522
-#: src/pages/stock/StockDetail.tsx:573
+#: src/pages/stock/StockDetail.tsx:512
+msgid "Stock item serialized"
+msgstr "Stock item serialized"
+
+#: src/pages/stock/StockDetail.tsx:525
+#: src/pages/stock/StockDetail.tsx:576
 msgid "Scan location and move stock"
 msgstr "Scan location and move stock"
 
@@ -11834,40 +12277,40 @@ msgstr "Scan location and move stock"
 #~ msgid "Test Data"
 #~ msgstr "Test Data"
 
-#: src/pages/stock/StockDetail.tsx:575
+#: src/pages/stock/StockDetail.tsx:578
 msgid "Scan a location barcode and move this stock item without changing its quantity"
 msgstr "Scan a location barcode and move this stock item without changing its quantity"
 
-#: src/pages/stock/StockDetail.tsx:587
+#: src/pages/stock/StockDetail.tsx:590
 msgid "Stock Operations"
 msgstr "Stock Operations"
 
-#: src/pages/stock/StockDetail.tsx:595
+#: src/pages/stock/StockDetail.tsx:598
 #: src/tables/build/BuildOutputTable.tsx:626
 msgid "Serialize"
 msgstr "Serialize"
 
-#: src/pages/stock/StockDetail.tsx:596
+#: src/pages/stock/StockDetail.tsx:599
 msgid "Serialize stock"
 msgstr "Serialize stock"
 
-#: src/pages/stock/StockDetail.tsx:612
+#: src/pages/stock/StockDetail.tsx:615
 msgid "Disassemble"
 msgstr "Disassemble"
 
-#: src/pages/stock/StockDetail.tsx:613
+#: src/pages/stock/StockDetail.tsx:616
 msgid "Disassemble this stock item into its component parts"
 msgstr "Disassemble this stock item into its component parts"
 
-#: src/pages/stock/StockDetail.tsx:639
+#: src/pages/stock/StockDetail.tsx:642
 msgid "Stock Item Actions"
 msgstr "Stock Item Actions"
 
-#: src/pages/stock/StockDetail.tsx:653
+#: src/pages/stock/StockDetail.tsx:656
 msgid "Convert"
 msgstr "Convert"
 
-#: src/pages/stock/StockDetail.tsx:654
+#: src/pages/stock/StockDetail.tsx:657
 msgid "Convert this stock item to a different part"
 msgstr "Convert this stock item to a different part"
 
@@ -11876,12 +12319,12 @@ msgstr "Convert this stock item to a different part"
 #~ msgid "Transfer stock"
 #~ msgstr "Transfer stock"
 
-#: src/pages/stock/StockDetail.tsx:726
-#: src/tables/stock/StockItemTable.tsx:312
+#: src/pages/stock/StockDetail.tsx:729
+#: src/tables/stock/StockItemTable.tsx:313
 msgid "Stale"
 msgstr "Stale"
 
-#: src/pages/stock/StockDetail.tsx:738
+#: src/pages/stock/StockDetail.tsx:741
 msgid "Unavailable"
 msgstr "Unavailable"
 
@@ -11996,9 +12439,150 @@ msgstr "Hold Transfer Order"
 msgid "Complete Transfer Order"
 msgstr "Complete Transfer Order"
 
-#: src/pages/stock/WmsCompleteScan.tsx:181
-msgid "当前草稿属于其他库位，请先提交或取消该草稿。"
-msgstr "当前草稿属于其他库位，请先提交或取消该草稿。"
+#: src/pages/stock/WmsBatchDetailPage.tsx:59
+msgid "入库批次明细"
+msgstr "入库批次明细"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:59
+msgid "出库批次明细"
+msgstr "出库批次明细"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:86
+msgid "设备编号"
+msgstr "设备编号"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:91
+msgid "入库数量"
+msgstr "入库数量"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:91
+msgid "出库数量"
+msgstr "出库数量"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:132
+msgid "批次明细"
+msgstr "批次明细"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:142
+msgid "返回统计查询"
+msgstr "返回统计查询"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:150
+msgid "批次编号无效"
+msgstr "批次编号无效"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:160
+#: src/pages/stock/WmsReceiptManager.tsx:54
+#: src/pages/stock/WmsReceiptWorkbench.tsx:580
+msgid "已入库"
+msgstr "已入库"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:161
+msgid "已出库"
+msgstr "已出库"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:169
+msgid "导出本批明细"
+msgstr "导出本批明细"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:178
+#: src/pages/stock/WmsStatisticsPage.tsx:318
+msgid "入库时间"
+msgstr "入库时间"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:178
+#: src/pages/stock/WmsStatisticsPage.tsx:318
+msgid "出库时间"
+msgstr "出库时间"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:185
+#: src/pages/stock/WmsStatisticsPage.tsx:471
+#: src/tables/stock/StockTrackingTable.tsx:155
+msgid "申请人"
+msgstr "申请人"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:190
+#: src/pages/stock/WmsStatisticsPage.tsx:471
+msgid "审核人"
+msgstr "审核人"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:213
+msgid "搜索本批明细"
+msgstr "搜索本批明细"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:214
+msgid "输入设备名称 / 型号 / 编号"
+msgstr "输入设备名称 / 型号 / 编号"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:221
+#: src/pages/stock/WmsReceiptManager.tsx:176
+msgid "条"
+msgstr "条"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:221
+msgid "本批全部明细"
+msgstr "本批全部明细"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:278
+msgid "没有符合条件的明细"
+msgstr "没有符合条件的明细"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:290
+msgid "创建申请"
+msgstr "创建申请"
+
+#: src/pages/stock/WmsBatchDetailPage.tsx:295
+msgid "提交审批"
+msgstr "提交审批"
+
+#: src/pages/stock/WmsBusinessAttachments.tsx:64
+msgid "仅支持 PDF、PNG、JPG 文件，单个附件不能超过 10 MB。"
+msgstr "仅支持 PDF、PNG、JPG 文件，单个附件不能超过 10 MB。"
+
+#: src/pages/stock/WmsBusinessAttachments.tsx:120
+msgid "选填，可在出入库后补充"
+msgstr "选填，可在出入库后补充"
+
+#: src/pages/stock/WmsBusinessAttachments.tsx:129
+#: src/pages/stock/WmsBusinessAttachments.tsx:199
+msgid "上传附件"
+msgstr "上传附件"
+
+#: src/pages/stock/WmsBusinessAttachments.tsx:136
+msgid "附件选填，可在出入库完成后补充，不影响审批和库存。"
+msgstr "附件选填，可在出入库完成后补充，不影响审批和库存。"
+
+#: src/pages/stock/WmsBusinessAttachments.tsx:140
+msgid "附件加载失败，请重试"
+msgstr "附件加载失败，请重试"
+
+#: src/pages/stock/WmsBusinessAttachments.tsx:166
+msgid "预览"
+msgstr "预览"
+
+#: src/pages/stock/WmsBusinessAttachments.tsx:171
+msgid "下载"
+msgstr "下载"
+
+#: src/pages/stock/WmsBusinessAttachments.tsx:176
+msgid "暂未上传附件，可稍后补充。"
+msgstr "暂未上传附件，可稍后补充。"
+
+#: src/pages/stock/WmsBusinessAttachments.tsx:181
+msgid "附件说明（选填）"
+msgstr "附件说明（选填）"
+
+#: src/pages/stock/WmsBusinessAttachments.tsx:189
+msgid "PDF / PNG / JPG，单个文件不超过 10 MB"
+msgstr "PDF / PNG / JPG，单个文件不超过 10 MB"
+
+#: src/pages/stock/WmsCompleteScan.tsx:163
+msgid "同一码已加入，已定位原申请行："
+msgstr "同一码已加入，已定位原申请行："
+
+#: src/pages/stock/WmsCompleteScan.tsx:178
+msgid "该明细已核对或已入库，请查看原申请。"
+msgstr "该明细已核对或已入库，请查看原申请。"
 
 #: src/pages/stock/WmsCompleteScan.tsx:214
 msgid "扫码未成功，请刷新后重试。"
@@ -12020,10 +12604,6 @@ msgstr "扫描实物完整标签，核对实际数量后加入草稿。重复扫
 msgid "扫描完整标签自动加载项目、合同及当前库位库存。加入草稿即冻结，审批通过后扣减。"
 msgstr "扫描完整标签自动加载项目、合同及当前库位库存。加入草稿即冻结，审批通过后扣减。"
 
-#: src/pages/stock/WmsCompleteScan.tsx:258
-msgid "实际库位"
-msgstr "实际库位"
-
 #: src/pages/stock/WmsCompleteScan.tsx:281
 msgid "实物完整二维码"
 msgstr "实物完整二维码"
@@ -12037,17 +12617,20 @@ msgid "相机扫码"
 msgstr "相机扫码"
 
 #: src/pages/stock/WmsCompleteScan.tsx:330
+#: src/pages/stock/WmsContractManager.tsx:75
 #: src/pages/stock/WmsNativeTools.tsx:76
 #: src/pages/stock/WmsNativeTools.tsx:96
-#: src/tables/stock/StockItemTable.tsx:442
+#: src/pages/stock/WmsStatisticsPage.tsx:479
+#: src/tables/stock/StockItemTable.tsx:444
 msgid "验收日期"
 msgstr "验收日期"
 
 #: src/pages/stock/WmsCompleteScan.tsx:331
+#: src/pages/stock/WmsContractManager.tsx:76
 #: src/pages/stock/WmsNativeTools.tsx:77
 #: src/pages/stock/WmsNativeTools.tsx:97
-#: src/pages/stock/WmsReceiptWorkbench.tsx:273
-#: src/tables/stock/StockItemTable.tsx:443
+#: src/pages/stock/WmsReceiptWorkbench.tsx:332
+#: src/tables/stock/StockItemTable.tsx:445
 msgid "质保月数"
 msgstr "质保月数"
 
@@ -12112,377 +12695,447 @@ msgid "确认提交"
 msgstr "确认提交"
 
 #: src/pages/stock/WmsContractEditor.tsx:75
-msgid "编辑合同与验收"
-msgstr "编辑合同与验收"
-
-#: src/pages/stock/WmsContractEditor.tsx:75
-#: src/pages/stock/WmsReceiptWorkbench.tsx:268
-msgid "新建合同"
-msgstr "新建合同"
-
-#: src/pages/stock/WmsContractEditor.tsx:75
 #~ msgid "维护合同"
 #~ msgstr "维护合同"
-
-#: src/pages/stock/WmsContractEditor.tsx:80
-msgid "选择已有合同（留空则新建）"
-msgstr "选择已有合同（留空则新建）"
 
 #: src/pages/stock/WmsContractEditor.tsx:80
 #~ msgid "选择已有合同进行维护"
 #~ msgstr "选择已有合同进行维护"
 
-#: src/pages/stock/WmsContractEditor.tsx:105
+#: src/pages/stock/WmsContractEditor.tsx:94
+#: src/pages/stock/WmsContractManager.tsx:65
+#: src/pages/stock/WmsReceiptWorkbench.tsx:327
+msgid "新建合同"
+msgstr "新建合同"
+
+#: src/pages/stock/WmsContractEditor.tsx:94
+msgid "编辑合同与验收"
+msgstr "编辑合同与验收"
+
+#: src/pages/stock/WmsContractEditor.tsx:99
+msgid "选择已有合同（留空则新建）"
+msgstr "选择已有合同（留空则新建）"
+
+#: src/pages/stock/WmsContractEditor.tsx:122
+#: src/pages/stock/WmsContractManager.tsx:74
+msgid "所属项目"
+msgstr "所属项目"
+
+#: src/pages/stock/WmsContractEditor.tsx:132
+msgid "历史合同尚未确定所属项目，请核对关联单据后补充；不会自动改写历史单据。"
+msgstr "历史合同尚未确定所属项目，请核对关联单据后补充；不会自动改写历史单据。"
+
+#: src/pages/stock/WmsContractEditor.tsx:137
 msgid "可在入库后补填或更新，关联设备按此日期统一计算质保。"
 msgstr "可在入库后补填或更新，关联设备按此日期统一计算质保。"
 
-#: src/pages/stock/WmsContractEditor.tsx:119
+#: src/pages/stock/WmsContractEditor.tsx:150
+#~ msgid "保存后统一更新验收日期和质保到期日。修改合同号需更换关联标签。"
+#~ msgstr "保存后统一更新验收日期和质保到期日。修改合同号需更换关联标签。"
+
+#: src/pages/stock/WmsContractEditor.tsx:151
 msgid "12个月"
 msgstr "12个月"
 
-#: src/pages/stock/WmsContractEditor.tsx:126
+#: src/pages/stock/WmsContractEditor.tsx:158
 msgid "24个月"
 msgstr "24个月"
 
-#: src/pages/stock/WmsContractEditor.tsx:129
-#: src/pages/stock/WmsStockAttribution.tsx:150
+#: src/pages/stock/WmsContractEditor.tsx:161
+#: src/pages/stock/WmsStockAttribution.tsx:161
 msgid "合同质保月数"
 msgstr "合同质保月数"
 
-#: src/pages/stock/WmsContractEditor.tsx:141
-#: src/pages/stock/WmsReceiptWorkbench.tsx:590
-#: src/pages/stock/WmsReceiptWorkbench.tsx:645
+#: src/pages/stock/WmsContractEditor.tsx:173
+#: src/pages/stock/WmsReceiptLineEditor.tsx:157
+#: src/pages/stock/WmsReceiptWorkbench.tsx:712
+#: src/pages/stock/WmsReceiptWorkbench.tsx:771
 msgid "修改原因"
 msgstr "修改原因"
 
-#: src/pages/stock/WmsContractEditor.tsx:149
+#: src/pages/stock/WmsContractEditor.tsx:180
+msgid "启用合同"
+msgstr "启用合同"
+
+#: src/pages/stock/WmsContractEditor.tsx:181
+msgid "停用后不再供新单据选择，历史单据和原标签继续有效。"
+msgstr "停用后不再供新单据选择，历史单据和原标签继续有效。"
+
+#: src/pages/stock/WmsContractEditor.tsx:190
 msgid "关联设备明细数"
 msgstr "关联设备明细数"
 
-#: src/pages/stock/WmsContractEditor.tsx:150
-msgid "保存后统一更新验收日期和质保到期日。修改合同号需更换关联标签。"
-msgstr "保存后统一更新验收日期和质保到期日。修改合同号需更换关联标签。"
+#: src/pages/stock/WmsContractEditor.tsx:192
+msgid "合同号发生变化，关联标签需更换；原标签将失效。"
+msgstr "合同号发生变化，关联标签需更换；原标签将失效。"
 
-#: src/pages/stock/WmsContractEditor.tsx:198
+#: src/pages/stock/WmsContractEditor.tsx:193
+msgid "更新验收日期、质保月数或启用状态无需更换标签，原二维码继续有效。"
+msgstr "更新验收日期、质保月数或启用状态无需更换标签，原二维码继续有效。"
+
+#: src/pages/stock/WmsContractEditor.tsx:248
 msgid "核对影响数量"
 msgstr "核对影响数量"
 
-#: src/pages/stock/WmsContractEditor.tsx:198
+#: src/pages/stock/WmsContractEditor.tsx:248
 msgid "确认保存合同"
 msgstr "确认保存合同"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:42
-#: src/pages/stock/WmsInventoryPanel.tsx:350
-#: src/pages/stock/WmsNativeTools.tsx:106
-#: src/tables/stock/StockItemTable.tsx:473
-#: src/tables/stock/StockItemTable.tsx:505
-msgid "品牌"
-msgstr "品牌"
+#: src/pages/stock/WmsContractManager.tsx:37
+msgid "合同加载失败，请重试"
+msgstr "合同加载失败，请重试"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:43
-#: src/tables/stock/StockItemTable.tsx:474
-msgid "分类"
-msgstr "分类"
+#: src/pages/stock/WmsContractManager.tsx:41
+msgid "搜索合同号"
+msgstr "搜索合同号"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:44
-#: src/pages/stock/WmsInventoryPanel.tsx:355
-#: src/pages/stock/WmsNativeTools.tsx:107
-#: src/tables/stock/StockItemTable.tsx:475
-#: src/tables/stock/StockItemTable.tsx:506
-msgid "型号"
-msgstr "型号"
+#: src/pages/stock/WmsContractManager.tsx:46
+msgid "搜索所属项目"
+msgstr "搜索所属项目"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:46
-#: src/tables/stock/StockItemTable.tsx:476
-msgid "规格"
-msgstr "规格"
+#: src/pages/stock/WmsContractManager.tsx:51
+#: src/pages/stock/WmsContractManager.tsx:77
+#: src/pages/stock/WmsProjectSelect.tsx:207
+#: src/pages/stock/WmsReceiptManager.tsx:110
+#: src/pages/stock/WmsReceiptManager.tsx:135
+#: src/pages/stock/WmsReceiptWorkbench.tsx:509
+msgid "状态"
+msgstr "状态"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:47
-#: src/tables/stock/StockItemTable.tsx:477
-msgid "设备备注"
-msgstr "设备备注"
+#: src/pages/stock/WmsContractManager.tsx:55
+msgid "全部"
+msgstr "全部"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:63
-#: src/pages/stock/WmsInventoryPanel.tsx:229
+#: src/pages/stock/WmsContractManager.tsx:56
+#: src/pages/stock/WmsContractManager.tsx:105
+#: src/pages/stock/WmsInventoryPanel.tsx:71
+#: src/pages/stock/WmsInventoryPanel.tsx:243
 #: src/pages/stock/WmsNativeTools.tsx:100
+#: src/pages/stock/WmsProjectSelect.tsx:226
 msgid "启用"
 msgstr "启用"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:63
+#: src/pages/stock/WmsContractManager.tsx:57
+#: src/pages/stock/WmsContractManager.tsx:105
+#: src/pages/stock/WmsInventoryPanel.tsx:71
+#: src/pages/stock/WmsProjectSelect.tsx:226
 msgid "停用"
 msgstr "停用"
+
+#: src/pages/stock/WmsContractManager.tsx:67
+msgid "验收日期可在入库后统一补填；更新验收日期或质保月数无需更换标签。停用只限制新单据选用。"
+msgstr "验收日期可在入库后统一补填；更新验收日期或质保月数无需更换标签。停用只限制新单据选用。"
+
+#: src/pages/stock/WmsContractManager.tsx:89
+#: src/pages/stock/WmsContractManager.tsx:100
+#: src/pages/stock/WmsReceiptWorkbench.tsx:241
+#: src/pages/stock/WmsStockAttribution.tsx:136
+msgid "待关联项目"
+msgstr "待关联项目"
+
+#: src/pages/stock/WmsContractManager.tsx:117
+#: src/pages/stock/WmsInventoryPanel.tsx:168
+#: src/pages/stock/WmsNativeTools.tsx:293
+#: src/pages/stock/WmsProjectSelect.tsx:238
+msgid "编辑"
+msgstr "编辑"
+
+#: src/pages/stock/WmsContractManager.tsx:126
+#: src/pages/stock/WmsProjectSelect.tsx:247
+msgid "删除"
+msgstr "删除"
+
+#: src/pages/stock/WmsContractManager.tsx:143
+msgid "删除未使用合同"
+msgstr "删除未使用合同"
+
+#: src/pages/stock/WmsContractManager.tsx:147
+msgid "仅未被单据使用的合同可以删除；已使用的合同请停用。修改记录保留。"
+msgstr "仅未被单据使用的合同可以删除；已使用的合同请停用。修改记录保留。"
+
+#: src/pages/stock/WmsContractManager.tsx:169
+#: src/pages/stock/WmsProjectSelect.tsx:305
+msgid "确认删除"
+msgstr "确认删除"
+
+#: src/pages/stock/WmsInventoryPanel.tsx:51
+#: src/tables/stock/StockItemTable.tsx:476
+msgid "分类"
+msgstr "分类"
+
+#: src/pages/stock/WmsInventoryPanel.tsx:55
+#: src/tables/stock/StockItemTable.tsx:479
+msgid "设备备注"
+msgstr "设备备注"
 
 #: src/pages/stock/WmsInventoryPanel.tsx:73
 #~ msgid "操作失败，请重试"
 #~ msgstr "操作失败，请重试"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:74
+#: src/pages/stock/WmsInventoryPanel.tsx:82
 msgid "可用库存不足，未扣减库存。请核对项目、库位和出库数量。"
 msgstr "可用库存不足，未扣减库存。请核对项目、库位和出库数量。"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:75
+#: src/pages/stock/WmsInventoryPanel.tsx:83
 msgid "本次操作编号已用于其他请求，请重新扫码。"
 msgstr "本次操作编号已用于其他请求，请重新扫码。"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:76
+#: src/pages/stock/WmsInventoryPanel.tsx:84
 msgid "请选择库存地点。"
 msgstr "请选择库存地点。"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:77
+#: src/pages/stock/WmsInventoryPanel.tsx:85
 msgid "未找到设备，请核对设备ID。"
 msgstr "未找到设备，请核对设备ID。"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:81
+#: src/pages/stock/WmsInventoryPanel.tsx:89
 msgid "操作未完成，请核对设备、项目和库位后重试。"
 msgstr "操作未完成，请核对设备、项目和库位后重试。"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:89
+#: src/pages/stock/WmsInventoryPanel.tsx:97
 msgid "操作失败，请核对填写内容后重试"
 msgstr "操作失败，请核对填写内容后重试"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:120
-#: src/pages/stock/WmsInventoryPanel.tsx:611
-#: src/pages/stock/WmsReceiptWorkbench.tsx:406
-msgid "操作"
-msgstr "操作"
-
-#: src/pages/stock/WmsInventoryPanel.tsx:154
-#: src/pages/stock/WmsNativeTools.tsx:293
-msgid "编辑"
-msgstr "编辑"
-
-#: src/pages/stock/WmsInventoryPanel.tsx:162
+#: src/pages/stock/WmsInventoryPanel.tsx:176
+#: src/pages/stock/WmsStatisticsPage.tsx:414
 msgid "没有符合条件的记录"
 msgstr "没有符合条件的记录"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:216
-#: src/pages/stock/WmsInventoryPanel.tsx:237
-#: src/pages/stock/WmsInventoryPanel.tsx:377
-#: src/pages/stock/WmsInventoryPanel.tsx:608
+#: src/pages/stock/WmsInventoryPanel.tsx:230
+#: src/pages/stock/WmsInventoryPanel.tsx:251
+#: src/pages/stock/WmsInventoryPanel.tsx:391
+#: src/pages/stock/WmsInventoryPanel.tsx:622
 #: src/pages/stock/WmsNativeTools.tsx:79
 #: src/pages/stock/WmsNativeTools.tsx:123
 msgid "实际地点"
 msgstr "实际地点"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:219
+#: src/pages/stock/WmsInventoryPanel.tsx:233
 #: src/pages/stock/WmsNativeTools.tsx:91
 msgid "库存数量"
 msgstr "库存数量"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:223
+#: src/pages/stock/WmsInventoryPanel.tsx:237
 #: src/pages/stock/WmsNativeTools.tsx:94
 msgid "项目数量"
 msgstr "项目数量"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:225
-#: src/tables/stock/StockItemTable.tsx:486
+#: src/pages/stock/WmsInventoryPanel.tsx:239
+#: src/tables/stock/StockItemTable.tsx:488
 msgid "最后库存变动时间"
 msgstr "最后库存变动时间"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:226
-#: src/tables/stock/StockItemTable.tsx:483
+#: src/pages/stock/WmsInventoryPanel.tsx:240
+#: src/tables/stock/StockItemTable.tsx:485
 msgid "库存备注"
 msgstr "库存备注"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:235
-#: src/pages/stock/WmsNativeTools.tsx:73
-msgid "数量"
-msgstr "数量"
-
-#: src/pages/stock/WmsInventoryPanel.tsx:239
-#: src/pages/stock/WmsInventoryPanel.tsx:387
+#: src/pages/stock/WmsInventoryPanel.tsx:253
+#: src/pages/stock/WmsInventoryPanel.tsx:401
 #: src/pages/stock/WmsNativeTools.tsx:81
 #: src/pages/stock/WmsNativeTools.tsx:127
 msgid "发起人"
 msgstr "发起人"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:240
+#: src/pages/stock/WmsInventoryPanel.tsx:254
 #: src/pages/stock/WmsNativeTools.tsx:80
+#: src/pages/stock/WmsStatisticsPage.tsx:466
 msgid "正式时间"
 msgstr "正式时间"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:242
+#: src/pages/stock/WmsInventoryPanel.tsx:256
 #: src/pages/stock/WmsNativeTools.tsx:84
 msgid "审批状态"
 msgstr "审批状态"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:243
+#: src/pages/stock/WmsInventoryPanel.tsx:257
 #: src/pages/stock/WmsNativeTools.tsx:85
+#: src/tables/stock/StockTrackingTable.tsx:160
 msgid "审批人"
 msgstr "审批人"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:289
+#: src/pages/stock/WmsInventoryPanel.tsx:303
 msgid "库存汇总"
 msgstr "库存汇总"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:290
+#: src/pages/stock/WmsInventoryPanel.tsx:304
 msgid "库存明细"
 msgstr "库存明细"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:295
+#: src/pages/stock/WmsInventoryPanel.tsx:309
 msgid "数量为当前筛选范围内的设备合计；含下级时包含一级直属库存及下级库存。"
 msgstr "数量为当前筛选范围内的设备合计；含下级时包含一级直属库存及下级库存。"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:296
+#: src/pages/stock/WmsInventoryPanel.tsx:310
 msgid "每行对应设备＋项目＋实际存货地点，数量均为直属库存，不包含汇总行。"
 msgstr "每行对应设备＋项目＋实际存货地点，数量均为直属库存，不包含汇总行。"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:306
+#: src/pages/stock/WmsInventoryPanel.tsx:320
 #: src/pages/stock/WmsNativeTools.tsx:180
+#: src/pages/stock/WmsStatisticsPage.tsx:167
 msgid "入库记录"
 msgstr "入库记录"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:307
+#: src/pages/stock/WmsInventoryPanel.tsx:321
 #: src/pages/stock/WmsNativeTools.tsx:181
+#: src/pages/stock/WmsStatisticsPage.tsx:168
 msgid "出库记录"
 msgstr "出库记录"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:310
+#: src/pages/stock/WmsInventoryPanel.tsx:324
 #: src/pages/stock/WmsNativeTools.tsx:218
 msgid "仅统计成功落账的扫码明细，按中国时区正式时间查询，包含结束日全天。盘点调整不计入。"
 msgstr "仅统计成功落账的扫码明细，按中国时区正式时间查询，包含结束日全天。盘点调整不计入。"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:313
+#: src/pages/stock/WmsInventoryPanel.tsx:327
 #: src/pages/stock/WmsNativeTools.tsx:189
 msgid "今天"
 msgstr "今天"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:314
+#: src/pages/stock/WmsInventoryPanel.tsx:328
 #: src/pages/stock/WmsNativeTools.tsx:190
 msgid "昨天"
 msgstr "昨天"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:315
+#: src/pages/stock/WmsInventoryPanel.tsx:329
 #: src/pages/stock/WmsNativeTools.tsx:191
 msgid "本周"
 msgstr "本周"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:316
+#: src/pages/stock/WmsInventoryPanel.tsx:330
 #: src/pages/stock/WmsNativeTools.tsx:192
 msgid "本月"
 msgstr "本月"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:317
+#: src/pages/stock/WmsInventoryPanel.tsx:331
 #: src/pages/stock/WmsNativeTools.tsx:193
 msgid "上月"
 msgstr "上月"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:330
+#: src/pages/stock/WmsInventoryPanel.tsx:344
 #: src/pages/stock/WmsNativeTools.tsx:198
+#: src/pages/stock/WmsReceiptManager.tsx:98
+#: src/pages/stock/WmsStatisticsPage.tsx:218
 msgid "开始日期"
 msgstr "开始日期"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:336
+#: src/pages/stock/WmsInventoryPanel.tsx:350
 #: src/pages/stock/WmsNativeTools.tsx:207
+#: src/pages/stock/WmsReceiptManager.tsx:104
+#: src/pages/stock/WmsStatisticsPage.tsx:226
 msgid "结束日期"
 msgstr "结束日期"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:345
+#: src/pages/stock/WmsInventoryPanel.tsx:359
 msgid "设备ID／名称／关键字"
 msgstr "设备ID／名称／关键字"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:362
+#: src/pages/stock/WmsInventoryPanel.tsx:376
 #: src/pages/stock/WmsNativeTools.tsx:110
-#: src/tables/stock/StockItemTable.tsx:509
+#: src/tables/stock/StockItemTable.tsx:511
 msgid "分类（含下级）"
 msgstr "分类（含下级）"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:370
+#: src/pages/stock/WmsInventoryPanel.tsx:384
 #: src/pages/stock/WmsNativeTools.tsx:118
-#: src/tables/stock/StockItemTable.tsx:502
+#: src/tables/stock/StockItemTable.tsx:504
 msgid "项目（精确匹配）"
 msgstr "项目（精确匹配）"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:407
+#: src/pages/stock/WmsInventoryPanel.tsx:421
 msgid "含下级汇总"
 msgstr "含下级汇总"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:408
+#: src/pages/stock/WmsInventoryPanel.tsx:422
 msgid "仅本地点"
 msgstr "仅本地点"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:412
-#: src/tables/stock/StockItemTable.tsx:519
+#: src/pages/stock/WmsInventoryPanel.tsx:426
+#: src/tables/stock/StockItemTable.tsx:521
 msgid "包含零库存"
 msgstr "包含零库存"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:419
-#: src/tables/stock/StockItemTable.tsx:520
+#: src/pages/stock/WmsInventoryPanel.tsx:433
+#: src/tables/stock/StockItemTable.tsx:522
 msgid "有无库存"
 msgstr "有无库存"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:420
-#: src/tables/stock/StockItemTable.tsx:521
+#: src/pages/stock/WmsInventoryPanel.tsx:434
+#: src/tables/stock/StockItemTable.tsx:523
 msgid "有无冻结"
 msgstr "有无冻结"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:429
+#: src/pages/stock/WmsInventoryPanel.tsx:443
 msgid "有"
 msgstr "有"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:430
+#: src/pages/stock/WmsInventoryPanel.tsx:444
 msgid "无"
 msgstr "无"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:441
+#: src/pages/stock/WmsInventoryPanel.tsx:455
 msgid "匹配记录"
 msgstr "匹配记录"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:447
+#: src/pages/stock/WmsInventoryPanel.tsx:461
+#: src/pages/stock/WmsStatisticsPage.tsx:288
 msgid "刷新"
 msgstr "刷新"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:455
+#: src/pages/stock/WmsInventoryPanel.tsx:469
 msgid "导出全部匹配记录"
 msgstr "导出全部匹配记录"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:467
+#: src/pages/stock/WmsInventoryPanel.tsx:481
 #: src/pages/stock/WmsNativeTools.tsx:288
 msgid "新增设备"
 msgstr "新增设备"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:473
+#: src/pages/stock/WmsInventoryPanel.tsx:487
 #: src/pages/stock/WmsNativeTools.tsx:226
+#: src/pages/stock/WmsStatisticsPage.tsx:273
 msgid "成功记录数"
 msgstr "成功记录数"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:473
+#: src/pages/stock/WmsInventoryPanel.tsx:487
 #: src/pages/stock/WmsNativeTools.tsx:34
+#: src/pages/stock/WmsStatisticsPage.tsx:274
 msgid "设备种类数"
 msgstr "设备种类数"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:474
+#: src/pages/stock/WmsInventoryPanel.tsx:488
 #: src/pages/stock/WmsNativeTools.tsx:34
+#: src/pages/stock/WmsStatisticsPage.tsx:274
 msgid "数量小计"
 msgstr "数量小计"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:476
+#: src/pages/stock/WmsInventoryPanel.tsx:490
 msgid "未填写单位"
 msgstr "未填写单位"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:482
+#: src/pages/stock/WmsInventoryPanel.tsx:496
 msgid "按设备查看数量小计"
 msgstr "按设备查看数量小计"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:511
-#: src/pages/stock/WmsInventoryPanel.tsx:700
+#: src/pages/stock/WmsInventoryPanel.tsx:525
+#: src/pages/stock/WmsInventoryPanel.tsx:716
 #: src/pages/stock/WmsNativeTools.tsx:300
-#: src/tables/stock/StockItemTable.tsx:683
-#: src/tables/stock/StockItemTable.tsx:802
+#: src/tables/stock/StockItemTable.tsx:692
+#: src/tables/stock/StockItemTable.tsx:832
 msgid "设备资料"
 msgstr "设备资料"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:532
+#: src/pages/stock/WmsInventoryPanel.tsx:546
 #: src/pages/stock/WmsNativeTools.tsx:321
 msgid "设备分类完整路径"
 msgstr "设备分类完整路径"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:541
+#: src/pages/stock/WmsInventoryPanel.tsx:555
 #: src/pages/stock/WmsNativeTools.tsx:330
 msgid "启用设备（取消勾选即停用，保留历史记录）"
 msgstr "启用设备（取消勾选即停用，保留历史记录）"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:547
+#: src/pages/stock/WmsInventoryPanel.tsx:561
 #: src/pages/stock/WmsNativeTools.tsx:336
 msgid "保存"
 msgstr "保存"
@@ -12491,41 +13144,33 @@ msgstr "保存"
 #~ msgid "当前数量／原资料"
 #~ msgstr "当前数量／原资料"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:603
+#: src/pages/stock/WmsInventoryPanel.tsx:617
 msgid "行号"
 msgstr "行号"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:612
+#: src/pages/stock/WmsInventoryPanel.tsx:626
 msgid "当前数量"
 msgstr "当前数量"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:612
+#: src/pages/stock/WmsInventoryPanel.tsx:626
 msgid "原设备资料"
 msgstr "原设备资料"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:615
+#: src/pages/stock/WmsInventoryPanel.tsx:629
 msgid "盘点数量"
 msgstr "盘点数量"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:616
+#: src/pages/stock/WmsInventoryPanel.tsx:630
 msgid "调整差额"
 msgstr "调整差额"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:618
+#: src/pages/stock/WmsInventoryPanel.tsx:632
 msgid "盘点日期"
 msgstr "盘点日期"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:619
+#: src/pages/stock/WmsInventoryPanel.tsx:633
 msgid "盘点备注"
 msgstr "盘点备注"
-
-#: src/pages/stock/WmsInventoryPanel.tsx:621
-msgid "更新资料"
-msgstr "更新资料"
-
-#: src/pages/stock/WmsInventoryPanel.tsx:622
-msgid "错误"
-msgstr "错误"
 
 #: src/pages/stock/WmsInventoryPanel.tsx:633
 #~ msgid "可直接上传库存页面导出的CSV或另存的Excel。库存数量填写当前实盘总数（兼容旧列名“盘点数量”），不是增量；仅调整表内指定项目和实际地点。冻结数量、可用数量、最后库存变动时间和库存备注仅供参考，不会回写。上传前请核实最新出入库变化。"
@@ -12539,53 +13184,63 @@ msgstr "错误"
 #~ msgid "设备ID用于匹配。空白可选资料保留旧值；有错误时整批不能提交。清空资料请使用单条编辑。"
 #~ msgstr "设备ID用于匹配。空白可选资料保留旧值；有错误时整批不能提交。清空资料请使用单条编辑。"
 
+#: src/pages/stock/WmsInventoryPanel.tsx:635
+msgid "更新资料"
+msgstr "更新资料"
+
 #: src/pages/stock/WmsInventoryPanel.tsx:636
+msgid "错误"
+msgstr "错误"
+
+#: src/pages/stock/WmsInventoryPanel.tsx:644
+#~ msgid "设备ID用于匹配已有设备；新增设备可留空，系统会自动生成内部ID。空白可选资料保留旧值；有错误时整批不能提交。"
+#~ msgstr "设备ID用于匹配已有设备；新增设备可留空，系统会自动生成内部ID。空白可选资料保留旧值；有错误时整批不能提交。"
+
+#: src/pages/stock/WmsInventoryPanel.tsx:650
 msgid "日常盘点导入"
 msgstr "日常盘点导入"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:637
-#: src/tables/stock/StockItemTable.tsx:685
-#: src/tables/stock/StockItemTable.tsx:755
-msgid "设备资料导入"
-msgstr "设备资料导入"
-
-#: src/pages/stock/WmsInventoryPanel.tsx:643
+#: src/pages/stock/WmsInventoryPanel.tsx:657
 msgid "库存明细导出与本模板使用相同的列名和顺序，可直接导入。盘点数量填写当前实盘总数，不是增量；仅调整表内指定项目和实际地点。上传前请核实最新出入库变化。"
 msgstr "库存明细导出与本模板使用相同的列名和顺序，可直接导入。盘点数量填写当前实盘总数，不是增量；仅调整表内指定项目和实际地点。上传前请核实最新出入库变化。"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:644
-msgid "设备ID用于匹配已有设备；新增设备可留空，系统会自动生成内部ID。空白可选资料保留旧值；有错误时整批不能提交。"
-msgstr "设备ID用于匹配已有设备；新增设备可留空，系统会自动生成内部ID。空白可选资料保留旧值；有错误时整批不能提交。"
+#: src/pages/stock/WmsInventoryPanel.tsx:658
+msgid "设备列表导出与本模板使用相同的列名和顺序，导出的Excel可修改后直接导入。设备ID用于匹配已有设备；新增设备可留空。空白可选资料保留旧值，仅更新设备资料，不改变库存数量；有错误时整批不能提交。"
+msgstr "Equipment exports and this template use the same columns and order. Edit the exported Excel file and import it directly. Equipment IDs match existing devices; leave them blank for new devices. Blank optional fields preserve existing values. Imports update equipment details without changing stock. Resolve all errors before submitting."
 
-#: src/pages/stock/WmsInventoryPanel.tsx:654
+#: src/pages/stock/WmsInventoryPanel.tsx:669
+msgid "下载统一模板"
+msgstr "Download shared template"
+
+#: src/pages/stock/WmsInventoryPanel.tsx:669
 msgid "下载专用模板"
 msgstr "下载专用模板"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:657
+#: src/pages/stock/WmsInventoryPanel.tsx:673
 msgid "上传Excel／CSV并预览"
 msgstr "上传Excel／CSV并预览"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:665
+#: src/pages/stock/WmsInventoryPanel.tsx:681
 msgid "导入任务"
 msgstr "导入任务"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:670
+#: src/pages/stock/WmsInventoryPanel.tsx:686
 msgid "整批导入成功"
 msgstr "整批导入成功"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:679
+#: src/pages/stock/WmsInventoryPanel.tsx:695
 msgid "已核实资料和当前实盘数量，确认按此预览整批落账"
 msgstr "已核实资料和当前实盘数量，确认按此预览整批落账"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:680
+#: src/pages/stock/WmsInventoryPanel.tsx:696
 msgid "已核实设备资料，确认按此预览整批保存"
 msgstr "已核实设备资料，确认按此预览整批保存"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:687
+#: src/pages/stock/WmsInventoryPanel.tsx:703
 msgid "确认整批提交"
 msgstr "确认整批提交"
 
-#: src/pages/stock/WmsInventoryPanel.tsx:701
+#: src/pages/stock/WmsInventoryPanel.tsx:717
 msgid "资料与盘点导入"
 msgstr "资料与盘点导入"
 
@@ -12601,57 +13256,195 @@ msgstr "日期范围"
 msgid "自定义"
 msgstr "自定义"
 
-#: src/pages/stock/WmsProjectSelect.tsx:35
-#: src/pages/stock/WmsProjectSelect.tsx:136
-#: src/pages/stock/WmsProjectSelect.tsx:173
-#: src/pages/stock/WmsReceiptWorkbench.tsx:247
-#: src/pages/stock/WmsReceiptWorkbench.tsx:572
-#: src/pages/stock/WmsReceiptWorkbench.tsx:625
+#: src/pages/stock/WmsProjectSelect.tsx:38
+#: src/pages/stock/WmsProjectSelect.tsx:141
+#: src/pages/stock/WmsProjectSelect.tsx:207
+#: src/pages/stock/WmsProjectSelect.tsx:263
+#: src/pages/stock/WmsReceiptManager.tsx:87
+#: src/pages/stock/WmsReceiptManager.tsx:131
+#: src/pages/stock/WmsReceiptWorkbench.tsx:305
+#: src/pages/stock/WmsReceiptWorkbench.tsx:691
+#: src/pages/stock/WmsReceiptWorkbench.tsx:748
 #: src/pages/stock/WmsStockAttribution.tsx:115
 msgid "项目号"
 msgstr "项目号"
 
-#: src/pages/stock/WmsProjectSelect.tsx:96
+#: src/pages/stock/WmsProjectSelect.tsx:99
 msgid "选择已有项目，没有对应项目时先新建"
 msgstr "选择已有项目，没有对应项目时先新建"
 
-#: src/pages/stock/WmsProjectSelect.tsx:108
+#: src/pages/stock/WmsProjectSelect.tsx:113
 msgid "项目加载失败，请重新打开页面"
 msgstr "项目加载失败，请重新打开页面"
 
-#: src/pages/stock/WmsProjectSelect.tsx:118
 #: src/pages/stock/WmsProjectSelect.tsx:123
+#: src/pages/stock/WmsProjectSelect.tsx:128
 msgid "新建项目"
 msgstr "新建项目"
 
-#: src/pages/stock/WmsProjectSelect.tsx:133
+#: src/pages/stock/WmsProjectSelect.tsx:138
 msgid "项目号唯一；同一项目可被多张入库单和库存记录重复引用。"
 msgstr "项目号唯一；同一项目可被多张入库单和库存记录重复引用。"
 
-#: src/pages/stock/WmsProjectSelect.tsx:142
-#: src/pages/stock/WmsProjectSelect.tsx:174
+#: src/pages/stock/WmsProjectSelect.tsx:147
+#: src/pages/stock/WmsProjectSelect.tsx:207
+#: src/pages/stock/WmsProjectSelect.tsx:270
 msgid "项目说明"
 msgstr "项目说明"
 
-#: src/pages/stock/WmsProjectSelect.tsx:151
+#: src/pages/stock/WmsProjectSelect.tsx:156
 msgid "保存项目"
 msgstr "保存项目"
 
 #: src/pages/stock/WmsProjectSelect.tsx:164
-msgid "项目号统一管理，每个编号仅保存一份。填写入库单时选择已有项目；同一项目可以使用多个合同。"
-msgstr "项目号统一管理，每个编号仅保存一份。填写入库单时选择已有项目；同一项目可以使用多个合同。"
+#~ msgid "项目号统一管理，每个编号仅保存一份。填写入库单时选择已有项目；同一项目可以使用多个合同。"
+#~ msgstr "项目号统一管理，每个编号仅保存一份。填写入库单时选择已有项目；同一项目可以使用多个合同。"
+
+#: src/pages/stock/WmsProjectSelect.tsx:192
+msgid "项目号统一管理；已被使用的项目号不能改名或删除，可以修改说明或停用。"
+msgstr "项目号统一管理；已被使用的项目号不能改名或删除，可以修改说明或停用。"
+
+#: src/pages/stock/WmsProjectSelect.tsx:193
+msgid "项目加载失败，请重试"
+msgstr "项目加载失败，请重试"
+
+#: src/pages/stock/WmsProjectSelect.tsx:200
+msgid "搜索项目号或说明"
+msgstr "搜索项目号或说明"
+
+#: src/pages/stock/WmsProjectSelect.tsx:257
+msgid "编辑项目"
+msgstr "编辑项目"
+
+#: src/pages/stock/WmsProjectSelect.tsx:278
+msgid "启用项目"
+msgstr "启用项目"
+
+#: src/pages/stock/WmsProjectSelect.tsx:289
+#: src/pages/stock/WmsReceiptWorkbench.tsx:736
+msgid "保存修改"
+msgstr "保存修改"
+
+#: src/pages/stock/WmsProjectSelect.tsx:295
+msgid "删除未使用项目"
+msgstr "删除未使用项目"
+
+#: src/pages/stock/WmsProjectSelect.tsx:299
+msgid "仅未被单据或库存引用的项目可以删除，已使用的项目请停用。"
+msgstr "仅未被单据或库存引用的项目可以删除，已使用的项目请停用。"
+
+#: src/pages/stock/WmsReceiptLineEditor.tsx:62
+msgid "仅尚未使用的入库单可增删明细。移除设备后，其原标签失效；新增设备需打印新标签。修改数量不改变库存。"
+msgstr "仅尚未使用的入库单可增删明细。移除设备后，其原标签失效；新增设备需打印新标签。修改数量不改变库存。"
+
+#: src/pages/stock/WmsReceiptLineEditor.tsx:67
+#: src/pages/stock/WmsReceiptWorkbench.tsx:504
+#: src/tables/stock/StockTrackingTable.tsx:361
+msgid "设备"
+msgstr "设备"
+
+#: src/pages/stock/WmsReceiptLineEditor.tsx:96
+#: src/pages/stock/WmsReceiptWorkbench.tsx:448
+msgid "移除"
+msgstr "移除"
+
+#: src/pages/stock/WmsReceiptLineEditor.tsx:103
+#: src/pages/stock/WmsReceiptWorkbench.tsx:351
+msgid "搜索设备编号或名称"
+msgstr "搜索设备编号或名称"
+
+#: src/pages/stock/WmsReceiptLineEditor.tsx:109
+#: src/pages/stock/WmsReceiptWorkbench.tsx:358
+msgid "选择已有设备"
+msgstr "选择已有设备"
+
+#: src/pages/stock/WmsReceiptLineEditor.tsx:121
+msgid "新增准备数量"
+msgstr "新增准备数量"
+
+#: src/pages/stock/WmsReceiptLineEditor.tsx:144
+#: src/pages/stock/WmsReceiptWorkbench.tsx:435
+msgid "添加设备明细"
+msgstr "添加设备明细"
+
+#: src/pages/stock/WmsReceiptLineEditor.tsx:148
+msgid "该设备默认库位与本单不同；如需使用其默认库位，请另建入库单。"
+msgstr "该设备默认库位与本单不同；如需使用其默认库位，请另建入库单。"
+
+#: src/pages/stock/WmsReceiptLineEditor.tsx:150
+#: src/pages/stock/WmsReceiptWorkbench.tsx:393
+msgid "统一使用本单库位"
+msgstr "统一使用本单库位"
+
+#: src/pages/stock/WmsReceiptLineEditor.tsx:185
+msgid "保存设备明细"
+msgstr "保存设备明细"
+
+#: src/pages/stock/WmsReceiptManager.tsx:51
+msgid "待入库"
+msgstr "待入库"
+
+#: src/pages/stock/WmsReceiptManager.tsx:52
+msgid "申请中"
+msgstr "申请中"
+
+#: src/pages/stock/WmsReceiptManager.tsx:53
+msgid "部分入库"
+msgstr "部分入库"
+
+#: src/pages/stock/WmsReceiptManager.tsx:55
+msgid "已作废"
+msgstr "已作废"
+
+#: src/pages/stock/WmsReceiptManager.tsx:67
+msgid "返回入库单列表"
+msgstr "返回入库单列表"
+
+#: src/pages/stock/WmsReceiptManager.tsx:77
+#: src/tables/stock/StockItemTable.tsx:682
+#: src/tables/stock/StockItemTable.tsx:796
+msgid "入库单管理"
+msgstr "入库单管理"
+
+#: src/pages/stock/WmsReceiptManager.tsx:78
+#: src/pages/stock/WmsReceiptWorkbench.tsx:296
+#: src/pages/stock/WmsReceiptWorkbench.tsx:853
+msgid "新建入库单"
+msgstr "新建入库单"
+
+#: src/pages/stock/WmsReceiptManager.tsx:82
+#: src/pages/stock/WmsReceiptManager.tsx:130
+msgid "单号"
+msgstr "单号"
+
+#: src/pages/stock/WmsReceiptManager.tsx:118
+msgid "入库单加载失败，请检查筛选条件后重试"
+msgstr "入库单加载失败，请检查筛选条件后重试"
+
+#: src/pages/stock/WmsReceiptManager.tsx:134
+msgid "创建日期"
+msgstr "创建日期"
+
+#: src/pages/stock/WmsReceiptManager.tsx:164
+msgid "查看与维护"
+msgstr "查看与维护"
+
+#: src/pages/stock/WmsReceiptManager.tsx:172
+msgid "没有符合条件的入库单"
+msgstr "没有符合条件的入库单"
+
+#: src/pages/stock/WmsReceiptManager.tsx:176
+#: src/pages/stock/WmsStatisticsPage.tsx:420
+msgid "共"
+msgstr "共"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:59
+msgid "完整二维码预览"
+msgstr "完整二维码预览"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:64
 #~ msgid "标签版本"
 #~ msgstr "标签版本"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:72
-msgid "完整二维码预览"
-msgstr "完整二维码预览"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:78
-msgid "设备编号"
-msgstr "设备编号"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:185
 #~ msgid "恢复待入库记录"
@@ -12670,21 +13463,8 @@ msgstr "设备编号"
 #~ msgstr "直接扫码"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:216
-msgid "已保存的入库单"
-msgstr "已保存的入库单"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:216
 #~ msgid "新入库填单及打印"
 #~ msgstr "新入库填单及打印"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:217
-msgid "选择已保存的记录"
-msgstr "选择已保存的记录"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:224
-#: src/pages/stock/WmsReceiptWorkbench.tsx:470
-msgid "已取消"
-msgstr "已取消"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:226
 #~ msgid "1 填写及打印"
@@ -12694,30 +13474,30 @@ msgstr "已取消"
 #~ msgid "2 扫码核对"
 #~ msgstr "2 扫码核对"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:238
-msgid "新建入库单"
-msgstr "新建入库单"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:241
-msgid "用于新到货填单、生成标签及补打。保存不会增加库存，日常扫码请使用出入库申请页面。"
-msgstr "用于新到货填单、生成标签及补打。保存不会增加库存，日常扫码请使用出入库申请页面。"
-
 #: src/pages/stock/WmsReceiptWorkbench.tsx:263
 #~ msgid "合同默认验收日期"
 #~ msgstr "合同默认验收日期"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:278
-#: src/pages/stock/WmsReceiptWorkbench.tsx:636
-msgid "入库库位"
-msgstr "入库库位"
+#: src/pages/stock/WmsReceiptWorkbench.tsx:269
+msgid "入库单加载失败，请重试"
+msgstr "入库单加载失败，请重试"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:289
-msgid "搜索设备编号或名称"
-msgstr "搜索设备编号或名称"
+#: src/pages/stock/WmsReceiptWorkbench.tsx:274
+msgid "已保存的入库单"
+msgstr "已保存的入库单"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:296
-msgid "选择已有设备"
-msgstr "选择已有设备"
+#: src/pages/stock/WmsReceiptWorkbench.tsx:275
+msgid "选择已保存的记录"
+msgstr "选择已保存的记录"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:282
+#: src/pages/stock/WmsReceiptWorkbench.tsx:581
+msgid "已取消"
+msgstr "已取消"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:299
+msgid "用于新到货填单、生成标签及补打。保存不会增加库存，日常扫码请使用出入库申请页面。"
+msgstr "用于新到货填单、生成标签及补打。保存不会增加库存，日常扫码请使用出入库申请页面。"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:304
 #~ msgid "此明细单独设置验收或质保"
@@ -12731,13 +13511,10 @@ msgstr "选择已有设备"
 #~ msgid "质保月数（留空跟随合同）"
 #~ msgstr "质保月数（留空跟随合同）"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:331
-msgid "添加设备明细"
-msgstr "添加设备明细"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:344
-msgid "移除"
-msgstr "移除"
+#: src/pages/stock/WmsReceiptWorkbench.tsx:337
+#: src/pages/stock/WmsReceiptWorkbench.tsx:762
+msgid "入库库位"
+msgstr "入库库位"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:356
 #~ msgid "验收跟随合同"
@@ -12747,140 +13524,158 @@ msgstr "移除"
 #~ msgid "质保跟随合同"
 #~ msgstr "质保跟随合同"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:369
+#: src/pages/stock/WmsReceiptWorkbench.tsx:390
+msgid "该设备默认库位与本单库位不同，请确认处理方式。"
+msgstr "该设备默认库位与本单库位不同，请确认处理方式。"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:403
+#~ msgid "准备 / 实际数量"
+#~ msgstr "准备 / 实际数量"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:405
+msgid "分开填单"
+msgstr "分开填单"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:410
+msgid "已保留本单内容。请先保存本单，再新建入库单添加刚才的设备。"
+msgstr "已保留本单内容。请先保存本单，再新建入库单添加刚才的设备。"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:473
 msgid "保存并准备打印"
 msgstr "保存并准备打印"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:393
-#: src/pages/stock/WmsReceiptWorkbench.tsx:620
+#: src/pages/stock/WmsReceiptWorkbench.tsx:497
+#: src/pages/stock/WmsReceiptWorkbench.tsx:742
 msgid "修改待入库公共信息"
 msgstr "修改待入库公共信息"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:394
+#: src/pages/stock/WmsReceiptWorkbench.tsx:498
 msgid "标签份数与准备数量分别设置；打印和补打不会增加库存。到期日当天仍在质保期，次日过保。"
 msgstr "标签份数与准备数量分别设置；打印和补打不会增加库存。到期日当天仍在质保期，次日过保。"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:399
+#: src/pages/stock/WmsReceiptWorkbench.tsx:503
 msgid "打印选择"
 msgstr "打印选择"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:400
-msgid "设备"
-msgstr "设备"
+#: src/pages/stock/WmsReceiptWorkbench.tsx:507
+msgid "单次准备 / 累计入库"
+msgstr "单次准备 / 累计入库"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:403
-msgid "准备 / 实际数量"
-msgstr "准备 / 实际数量"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:404
+#: src/pages/stock/WmsReceiptWorkbench.tsx:508
 msgid "验收 / 质保 / 到期"
 msgstr "验收 / 质保 / 到期"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:405
-msgid "状态"
-msgstr "状态"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:414
-msgid "选择打印明细"
-msgstr "选择打印明细"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:465
-msgid "待核对"
-msgstr "待核对"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:467
-msgid "已核对 / 申请中"
-msgstr "已核对 / 申请中"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:469
-msgid "已入库"
-msgstr "已入库"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:479
-msgid "标签预览"
-msgstr "标签预览"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:491
-msgid "修改"
-msgstr "修改"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:501
-msgid "补打"
-msgstr "补打"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:508
 #~ msgid "扫描其他设备"
 #~ msgstr "扫描其他设备"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:515
-msgid "打印所选完整标签"
-msgstr "打印所选完整标签"
+#: src/pages/stock/WmsReceiptWorkbench.tsx:518
+msgid "选择打印明细"
+msgstr "选择打印明细"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:524
-msgid "转到实物扫码核对"
-msgstr "转到实物扫码核对"
+#: src/pages/stock/WmsReceiptWorkbench.tsx:562
+msgid "待入库数量"
+msgstr "待入库数量"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:533
-#: src/pages/stock/WmsReceiptWorkbench.tsx:674
-msgid "取消待入库记录"
-msgstr "取消待入库记录"
+#: src/pages/stock/WmsReceiptWorkbench.tsx:576
+msgid "待核对"
+msgstr "待核对"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:536
-msgid "本地打印尚未启用，请管理员配置打印服务后重试。"
-msgstr "本地打印尚未启用，请管理员配置打印服务后重试。"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:559
-msgid "完整标签预览"
-msgstr "完整标签预览"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:566
-msgid "修改当前明细"
-msgstr "修改当前明细"
-
-#: src/pages/stock/WmsReceiptWorkbench.tsx:570
-msgid "修改项目或合同后须更换标签。验收日期即合同起始时间，在合同中统一维护。存在有效申请或库存占用时不能修改归属。"
-msgstr "修改项目或合同后须更换标签。验收日期即合同起始时间，在合同中统一维护。存在有效申请或库存占用时不能修改归属。"
+#: src/pages/stock/WmsReceiptWorkbench.tsx:578
+msgid "已核对 / 申请中"
+msgstr "已核对 / 申请中"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:586
 #~ msgid "修改项目或合同后须更换标签。验收和质保留空表示恢复跟随合同。存在有效申请或库存占用时不能修改归属。"
 #~ msgstr "修改项目或合同后须更换标签。验收和质保留空表示恢复跟随合同。存在有效申请或库存占用时不能修改归属。"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:590
+msgid "标签预览"
+msgstr "标签预览"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:602
+msgid "修改"
+msgstr "修改"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:607
 #~ msgid "验收覆盖日期"
 #~ msgstr "验收覆盖日期"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:612
+msgid "补打"
+msgstr "补打"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:612
 #~ msgid "质保覆盖月数"
 #~ msgstr "质保覆盖月数"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:614
-msgid "保存修改"
-msgstr "保存修改"
+#: src/pages/stock/WmsReceiptWorkbench.tsx:624
+#: src/pages/stock/WmsReceiptWorkbench.tsx:829
+msgid "修改记录"
+msgstr "修改记录"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:624
 #: src/pages/stock/WmsStockAttribution.tsx:163
 #~ msgid "恢复合同默认设置"
 #~ msgstr "恢复合同默认设置"
 
+#: src/pages/stock/WmsReceiptWorkbench.tsx:632
+#: src/pages/stock/WmsReceiptWorkbench.tsx:870
+msgid "增删设备明细"
+msgstr "增删设备明细"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:638
+msgid "打印所选完整标签"
+msgstr "打印所选完整标签"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:643
+msgid "转到实物扫码核对"
+msgstr "转到实物扫码核对"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:652
+#: src/pages/stock/WmsReceiptWorkbench.tsx:801
+msgid "取消待入库记录"
+msgstr "取消待入库记录"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:655
+msgid "本地打印尚未启用，请管理员配置打印服务后重试。"
+msgstr "本地打印尚未启用，请管理员配置打印服务后重试。"
+
 #: src/pages/stock/WmsReceiptWorkbench.tsx:668
-msgid "保存并更换归属标签"
-msgstr "保存并更换归属标签"
+#~ msgid "保存并更换归属标签"
+#~ msgstr "保存并更换归属标签"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:678
-msgid "取消原因"
-msgstr "取消原因"
+msgid "完整标签预览"
+msgstr "完整标签预览"
 
-#: src/pages/stock/WmsReceiptWorkbench.tsx:696
-msgid "确认取消"
-msgstr "确认取消"
+#: src/pages/stock/WmsReceiptWorkbench.tsx:685
+msgid "修改当前明细"
+msgstr "修改当前明细"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:689
+msgid "修改项目或合同后须更换标签。验收日期即合同起始时间，在合同中统一维护。存在有效申请或库存占用时不能修改归属。"
+msgstr "修改项目或合同后须更换标签。验收日期即合同起始时间，在合同中统一维护。存在有效申请或库存占用时不能修改归属。"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:746
+msgid "仅改变项目或关联合同时需要更换标签；修改实际库位不改变二维码。"
+msgstr "仅改变项目或关联合同时需要更换标签；修改实际库位不改变二维码。"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:771
 #~ msgid "默认验收日期（可待验收）"
 #~ msgstr "默认验收日期（可待验收）"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:795
+msgid "保存公共信息"
+msgstr "保存公共信息"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:795
 #~ msgid "默认质保月数"
 #~ msgstr "默认质保月数"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:805
+msgid "取消原因"
+msgstr "取消原因"
 
 #: src/pages/stock/WmsReceiptWorkbench.tsx:815
 #~ msgid "验收日期跟随明细数"
@@ -12894,6 +13689,144 @@ msgstr "确认取消"
 #~ msgid "独立覆盖字段保持原值。合同号变化需重打所有关联标签。"
 #~ msgstr "独立覆盖字段保持原值。合同号变化需重打所有关联标签。"
 
+#: src/pages/stock/WmsReceiptWorkbench.tsx:823
+msgid "确认取消"
+msgstr "确认取消"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:833
+msgid "记录加载失败"
+msgstr "记录加载失败"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:837
+msgid "时间"
+msgstr "时间"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:837
+msgid "操作人"
+msgstr "操作人"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:837
+msgid "原因"
+msgstr "原因"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:854
+msgid "修改公共信息"
+msgstr "修改公共信息"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:855
+msgid "修改设备明细"
+msgstr "修改设备明细"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:856
+msgid "作废入库单"
+msgstr "作废入库单"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:857
+msgid "修改明细"
+msgstr "修改明细"
+
+#: src/pages/stock/WmsReceiptWorkbench.tsx:858
+msgid "其他操作"
+msgstr "其他操作"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:136
+msgid "开始日期不能晚于结束日期"
+msgstr "开始日期不能晚于结束日期"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:151
+msgid "按项目、合同和设备查询已完成的出入库记录。"
+msgstr "按项目、合同和设备查询已完成的出入库记录。"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:154
+msgid "没有查看库存记录的权限"
+msgstr "没有查看库存记录的权限"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:190
+msgid "输入项目号（含历史项目）"
+msgstr "输入项目号（含历史项目）"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:211
+msgid "设备型号"
+msgstr "设备型号"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:242
+msgid "查询"
+msgstr "查询"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:252
+msgid "重置"
+msgstr "重置"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:258
+msgid "型号和品牌按当前基础资料展示及筛选；项目、合同和数量使用落账时的业务记录。"
+msgstr "型号和品牌按当前基础资料展示及筛选；项目、合同和数量使用落账时的业务记录。"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:262
+msgid "仅统计成功落账的扫码明细，按中国时区正式时间查询，包含结束日全天。待审批、驳回、撤销和盘点调整不计入；不同单位分别汇总。"
+msgstr "仅统计成功落账的扫码明细，按中国时区正式时间查询，包含结束日全天。待审批、驳回、撤销和盘点调整不计入；不同单位分别汇总。"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:268
+msgid "筛选选项加载失败，请刷新重试"
+msgstr "筛选选项加载失败，请刷新重试"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:307
+msgid "导出查询结果"
+msgstr "导出查询结果"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:319
+msgid "项目 / 合同号"
+msgstr "项目 / 合同号"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:324
+msgid "申请人 / 审核人"
+msgstr "申请人 / 审核人"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:369
+msgid "查看附件"
+msgstr "查看附件"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:370
+msgid "查看 / 补充"
+msgstr "查看 / 补充"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:378
+#: src/pages/stock/WmsStatisticsPage.tsx:497
+msgid "无单据查看权限"
+msgstr "无单据查看权限"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:379
+#: src/pages/stock/WmsStatisticsPage.tsx:447
+msgid "历史直接落账记录"
+msgstr "历史直接落账记录"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:407
+msgid "查看"
+msgstr "查看"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:420
+msgid "条记录"
+msgstr "条记录"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:441
+msgid "单据详情"
+msgstr "单据详情"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:455
+msgid "收起审批单"
+msgstr "收起审批单"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:455
+msgid "查看审批单"
+msgstr "查看审批单"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:479
+msgid "待补充"
+msgstr "待补充"
+
+#: src/pages/stock/WmsStatisticsPage.tsx:498
+msgid "该历史记录没有关联审批单，不能在此补充单据附件。"
+msgstr "该历史记录没有关联审批单，不能在此补充单据附件。"
+
 #: src/pages/stock/WmsStockAttribution.tsx:96
 msgid "已保存当前归属。项目或合同变化后请更换完整标签。"
 msgstr "已保存当前归属。项目或合同变化后请更换完整标签。"
@@ -12906,49 +13839,49 @@ msgstr "当前库存数量"
 msgid "请核对本行来源。若包含多个合同，只填写本次确认归属的数量，系统拆分库存后分别补录；补录不增加库存、不生成入库流水。"
 msgstr "请核对本行来源。若包含多个合同，只填写本次确认归属的数量，系统拆分库存后分别补录；补录不增加库存、不生成入库流水。"
 
-#: src/pages/stock/WmsStockAttribution.tsx:132
+#: src/pages/stock/WmsStockAttribution.tsx:143
 msgid "本次确认归属数量"
 msgstr "本次确认归属数量"
-
-#: src/pages/stock/WmsStockAttribution.tsx:139
-msgid "已核对当前整行数量，确认本次数量属于所选合同；其余数量另行核对补录。"
-msgstr "已核对当前整行数量，确认本次数量属于所选合同；其余数量另行核对补录。"
 
 #: src/pages/stock/WmsStockAttribution.tsx:146
 #~ msgid "验收日期覆盖（留空跟随合同）"
 #~ msgstr "验收日期覆盖（留空跟随合同）"
 
+#: src/pages/stock/WmsStockAttribution.tsx:150
+msgid "已核对当前整行数量，确认本次数量属于所选合同；其余数量另行核对补录。"
+msgstr "已核对当前整行数量，确认本次数量属于所选合同；其余数量另行核对补录。"
+
 #: src/pages/stock/WmsStockAttribution.tsx:153
 #~ msgid "质保月数覆盖（留空跟随合同）"
 #~ msgstr "质保月数覆盖（留空跟随合同）"
-
-#: src/pages/stock/WmsStockAttribution.tsx:156
-msgid "更新合同验收日期及质保"
-msgstr "更新合同验收日期及质保"
-
-#: src/pages/stock/WmsStockAttribution.tsx:160
-msgid "入库后可在此补填或修改验收日期，同一合同的关联设备统一更新。"
-msgstr "入库后可在此补填或修改验收日期，同一合同的关联设备统一更新。"
-
-#: src/pages/stock/WmsStockAttribution.tsx:164
-msgid "修改或补录原因"
-msgstr "修改或补录原因"
 
 #: src/pages/stock/WmsStockAttribution.tsx:165
 #~ msgid "当前到期日（当天仍在保）"
 #~ msgstr "当前到期日（当天仍在保）"
 
-#: src/pages/stock/WmsStockAttribution.tsx:181
-msgid "保存归属"
-msgstr "保存归属"
+#: src/pages/stock/WmsStockAttribution.tsx:167
+msgid "更新合同验收日期及质保"
+msgstr "更新合同验收日期及质保"
 
-#: src/pages/stock/WmsStockAttribution.tsx:186
-msgid "打印完整标签"
-msgstr "打印完整标签"
+#: src/pages/stock/WmsStockAttribution.tsx:171
+msgid "入库后可在此补填或修改验收日期，同一合同的关联设备统一更新。"
+msgstr "入库后可在此补填或修改验收日期，同一合同的关联设备统一更新。"
+
+#: src/pages/stock/WmsStockAttribution.tsx:175
+msgid "修改或补录原因"
+msgstr "修改或补录原因"
 
 #: src/pages/stock/WmsStockAttribution.tsx:187
 #~ msgid "保存归属及质保"
 #~ msgstr "保存归属及质保"
+
+#: src/pages/stock/WmsStockAttribution.tsx:192
+msgid "保存归属"
+msgstr "保存归属"
+
+#: src/pages/stock/WmsStockAttribution.tsx:197
+msgid "打印完整标签"
+msgstr "打印完整标签"
 
 #: src/states/IconState.tsx:47
 #: src/states/IconState.tsx:77
@@ -13271,7 +14204,7 @@ msgstr "Bill of materials cannot be edited, as the part is locked"
 #: src/tables/build/BuildLineTable.tsx:226
 #: src/tables/part/PartBuildAllocationsTable.tsx:61
 #: src/tables/part/PartTableFilters.tsx:25
-#: src/tables/stock/StockItemTable.tsx:241
+#: src/tables/stock/StockItemTable.tsx:242
 msgid "Assembly"
 msgstr "Assembly"
 
@@ -13438,7 +14371,7 @@ msgid "Testable"
 msgstr "Testable"
 
 #: src/tables/build/BuildLineTable.tsx:236
-#: src/tables/stock/StockItemTable.tsx:296
+#: src/tables/stock/StockItemTable.tsx:297
 msgid "Tracked"
 msgstr "Tracked"
 
@@ -13658,7 +14591,7 @@ msgstr "Serialize Build Output"
 
 #: src/tables/build/BuildOutputTable.tsx:499
 #: src/tables/part/PartTestResultTable.tsx:329
-#: src/tables/stock/StockItemTable.tsx:236
+#: src/tables/stock/StockItemTable.tsx:237
 msgid "Filter by stock status"
 msgstr "Filter by stock status"
 
@@ -14419,22 +15352,22 @@ msgstr "Show outstanding orders"
 msgid "Show completed line items"
 msgstr "Show completed line items"
 
-#: src/tables/part/PartTable.tsx:214
-#: src/tables/part/PartTable.tsx:257
+#: src/tables/part/PartTable.tsx:235
+#: src/tables/part/PartTable.tsx:278
 msgid "Set Category"
 msgstr "Set Category"
 
-#: src/tables/part/PartTable.tsx:259
+#: src/tables/part/PartTable.tsx:280
 msgid "Set category for selected parts"
 msgstr "Set category for selected parts"
-
-#: src/tables/part/PartTable.tsx:269
-msgid "Order selected parts"
-msgstr "Order selected parts"
 
 #: src/tables/part/PartTable.tsx:287
 #~ msgid "Not Virtual"
 #~ msgstr "Not Virtual"
+
+#: src/tables/part/PartTable.tsx:290
+msgid "Order selected parts"
+msgstr "Order selected parts"
 
 #: src/tables/part/PartTable.tsx:322
 #~ msgid "Has Stocktake"
@@ -14961,7 +15894,7 @@ msgid "Sample"
 msgstr "Sample"
 
 #: src/tables/plugin/PluginListTable.tsx:447
-#: src/tables/stock/StockItemTable.tsx:280
+#: src/tables/stock/StockItemTable.tsx:281
 msgid "Installed"
 msgstr "Installed"
 
@@ -15990,132 +16923,132 @@ msgstr "Delete Location Type"
 msgid "Icon"
 msgstr "Icon"
 
-#: src/tables/stock/StockItemTable.tsx:212
+#: src/tables/stock/StockItemTable.tsx:213
 msgid "Stocktake Date"
 msgstr "Stocktake Date"
 
-#: src/tables/stock/StockItemTable.tsx:231
+#: src/tables/stock/StockItemTable.tsx:232
 msgid "Show stock for active parts"
 msgstr "Show stock for active parts"
 
-#: src/tables/stock/StockItemTable.tsx:242
+#: src/tables/stock/StockItemTable.tsx:243
 msgid "Show stock for assembled parts"
 msgstr "Show stock for assembled parts"
 
-#: src/tables/stock/StockItemTable.tsx:247
+#: src/tables/stock/StockItemTable.tsx:248
 msgid "Show items which have been allocated"
 msgstr "Show items which have been allocated"
 
-#: src/tables/stock/StockItemTable.tsx:252
+#: src/tables/stock/StockItemTable.tsx:253
 msgid "Show items which are available"
 msgstr "Show items which are available"
 
-#: src/tables/stock/StockItemTable.tsx:256
+#: src/tables/stock/StockItemTable.tsx:257
 #: src/tables/stock/StockLocationTable.tsx:41
 msgid "Include Sublocations"
 msgstr "Include Sublocations"
 
-#: src/tables/stock/StockItemTable.tsx:257
+#: src/tables/stock/StockItemTable.tsx:258
 msgid "Include stock in sublocations"
 msgstr "Include stock in sublocations"
 
-#: src/tables/stock/StockItemTable.tsx:261
+#: src/tables/stock/StockItemTable.tsx:262
 msgid "Depleted"
 msgstr "Depleted"
 
-#: src/tables/stock/StockItemTable.tsx:262
+#: src/tables/stock/StockItemTable.tsx:263
 msgid "Show depleted stock items"
 msgstr "Show depleted stock items"
 
-#: src/tables/stock/StockItemTable.tsx:268
+#: src/tables/stock/StockItemTable.tsx:269
 msgid "Show items which are in production"
 msgstr "Show items which are in production"
 
-#: src/tables/stock/StockItemTable.tsx:276
+#: src/tables/stock/StockItemTable.tsx:277
 msgid "Show items which have been consumed by a build order"
 msgstr "Show items which have been consumed by a build order"
 
-#: src/tables/stock/StockItemTable.tsx:281
+#: src/tables/stock/StockItemTable.tsx:282
 msgid "Show stock items which are installed in other items"
 msgstr "Show stock items which are installed in other items"
 
-#: src/tables/stock/StockItemTable.tsx:285
+#: src/tables/stock/StockItemTable.tsx:286
 msgid "Sent to Customer"
 msgstr "Sent to Customer"
 
-#: src/tables/stock/StockItemTable.tsx:286
+#: src/tables/stock/StockItemTable.tsx:287
 msgid "Show items which have been sent to a customer"
 msgstr "Show items which have been sent to a customer"
 
-#: src/tables/stock/StockItemTable.tsx:297
+#: src/tables/stock/StockItemTable.tsx:298
 msgid "Show tracked items"
 msgstr "Show tracked items"
-
-#: src/tables/stock/StockItemTable.tsx:301
-msgid "Has Purchase Price"
-msgstr "Has Purchase Price"
 
 #: src/tables/stock/StockItemTable.tsx:301
 #~ msgid "Show stock for assmebled parts"
 #~ msgstr "Show stock for assmebled parts"
 
 #: src/tables/stock/StockItemTable.tsx:302
+msgid "Has Purchase Price"
+msgstr "Has Purchase Price"
+
+#: src/tables/stock/StockItemTable.tsx:303
 msgid "Show items which have a purchase price"
 msgstr "Show items which have a purchase price"
 
-#: src/tables/stock/StockItemTable.tsx:307
+#: src/tables/stock/StockItemTable.tsx:308
 msgid "Show items which have expired"
 msgstr "Show items which have expired"
 
-#: src/tables/stock/StockItemTable.tsx:313
+#: src/tables/stock/StockItemTable.tsx:314
 msgid "Show items which are stale"
 msgstr "Show items which are stale"
 
-#: src/tables/stock/StockItemTable.tsx:318
+#: src/tables/stock/StockItemTable.tsx:319
 msgid "Expired Before"
 msgstr "Expired Before"
 
-#: src/tables/stock/StockItemTable.tsx:319
+#: src/tables/stock/StockItemTable.tsx:320
 msgid "Show items which expired before this date"
 msgstr "Show items which expired before this date"
 
-#: src/tables/stock/StockItemTable.tsx:325
+#: src/tables/stock/StockItemTable.tsx:326
 msgid "Expired After"
 msgstr "Expired After"
 
-#: src/tables/stock/StockItemTable.tsx:326
+#: src/tables/stock/StockItemTable.tsx:327
 msgid "Show items which expired after this date"
 msgstr "Show items which expired after this date"
 
-#: src/tables/stock/StockItemTable.tsx:336
+#: src/tables/stock/StockItemTable.tsx:337
 msgid "Stocktake Before"
 msgstr "Stocktake Before"
 
-#: src/tables/stock/StockItemTable.tsx:337
+#: src/tables/stock/StockItemTable.tsx:338
 msgid "Show items counted before this date"
 msgstr "Show items counted before this date"
 
-#: src/tables/stock/StockItemTable.tsx:342
+#: src/tables/stock/StockItemTable.tsx:343
 msgid "Stocktake After"
 msgstr "Stocktake After"
 
-#: src/tables/stock/StockItemTable.tsx:343
+#: src/tables/stock/StockItemTable.tsx:344
 msgid "Show items counted after this date"
 msgstr "Show items counted after this date"
 
-#: src/tables/stock/StockItemTable.tsx:348
+#: src/tables/stock/StockItemTable.tsx:349
 msgid "Has Stocktake Date"
 msgstr "Has Stocktake Date"
 
-#: src/tables/stock/StockItemTable.tsx:349
+#: src/tables/stock/StockItemTable.tsx:350
 msgid "Show items which have a stocktake date"
 msgstr "Show items which have a stocktake date"
 
-#: src/tables/stock/StockItemTable.tsx:353
+#: src/tables/stock/StockItemTable.tsx:354
 msgid "External Location"
 msgstr "External Location"
 
-#: src/tables/stock/StockItemTable.tsx:354
+#: src/tables/stock/StockItemTable.tsx:355
 msgid "Show items in an external location"
 msgstr "Show items in an external location"
 
@@ -16131,19 +17064,19 @@ msgstr "Show items in an external location"
 #~ msgid "Serial Number GTE"
 #~ msgstr "Serial Number GTE"
 
-#: src/tables/stock/StockItemTable.tsx:441
+#: src/tables/stock/StockItemTable.tsx:443
 msgid "明细标识"
 msgstr "明细标识"
 
-#: src/tables/stock/StockItemTable.tsx:444
+#: src/tables/stock/StockItemTable.tsx:446
 msgid "质保到期日（当天仍在保）"
 msgstr "质保到期日（当天仍在保）"
 
-#: src/tables/stock/StockItemTable.tsx:516
+#: src/tables/stock/StockItemTable.tsx:518
 msgid "含下级地点"
 msgstr "含下级地点"
 
-#: src/tables/stock/StockItemTable.tsx:517
+#: src/tables/stock/StockItemTable.tsx:519
 msgid "关闭后仅本地点"
 msgstr "关闭后仅本地点"
 
@@ -16151,7 +17084,7 @@ msgstr "关闭后仅本地点"
 #~ msgid "Delete stock items"
 #~ msgstr "Delete stock items"
 
-#: src/tables/stock/StockItemTable.tsx:564
+#: src/tables/stock/StockItemTable.tsx:566
 msgid "Stock item created"
 msgstr "Stock item created"
 
@@ -16160,18 +17093,18 @@ msgstr "Stock item created"
 #~ msgid "合同与质保 / 历史补录"
 #~ msgstr "合同与质保 / 历史补录"
 
-#: src/tables/stock/StockItemTable.tsx:590
-#: src/tables/stock/StockItemTable.tsx:647
+#: src/tables/stock/StockItemTable.tsx:592
+#: src/tables/stock/StockItemTable.tsx:649
 msgid "合同与验收"
 msgstr "合同与验收"
 
 #: src/tables/stock/StockItemTable.tsx:595
-msgid "Order items"
-msgstr "Order items"
-
-#: src/tables/stock/StockItemTable.tsx:595
 #~ msgid "Add a new stock item"
 #~ msgstr "Add a new stock item"
+
+#: src/tables/stock/StockItemTable.tsx:597
+msgid "Order items"
+msgstr "Order items"
 
 #: src/tables/stock/StockItemTable.tsx:604
 #~ msgid "Remove some quantity from a stock item"
@@ -16181,11 +17114,6 @@ msgstr "Order items"
 #: src/tables/stock/StockItemTable.tsx:655
 #~ msgid "新增库存（入库）"
 #~ msgstr "新增库存（入库）"
-
-#: src/tables/stock/StockItemTable.tsx:614
-#: src/tables/stock/StockItemTable.tsx:675
-msgid "入库填单与打印"
-msgstr "入库填单与打印"
 
 #: src/tables/stock/StockItemTable.tsx:615
 #~ msgid "Move Stock items to new locations"
@@ -16223,33 +17151,41 @@ msgstr "入库填单与打印"
 #~ msgid "Delete stock"
 #~ msgstr "Delete stock"
 
-#: src/tables/stock/StockItemTable.tsx:677
-#: src/tables/stock/StockItemTable.tsx:785
+#: src/tables/stock/StockItemTable.tsx:667
+#: src/tables/stock/StockItemTable.tsx:791
+#: src/tables/stock/StockItemTable.tsx:821
+msgid "合同管理"
+msgstr "合同管理"
+
+#: src/tables/stock/StockItemTable.tsx:686
+#: src/tables/stock/StockItemTable.tsx:786
+#: src/tables/stock/StockItemTable.tsx:815
 msgid "项目管理"
 msgstr "项目管理"
 
-#: src/tables/stock/StockItemTable.tsx:679
-#: src/tables/stock/StockItemTable.tsx:796
+#: src/tables/stock/StockItemTable.tsx:688
+#: src/tables/stock/StockItemTable.tsx:826
 msgid "按设备汇总"
 msgstr "按设备汇总"
 
-#: src/tables/stock/StockItemTable.tsx:686
-#: src/tables/stock/StockItemTable.tsx:759
+#: src/tables/stock/StockItemTable.tsx:690
+#: src/tables/stock/StockItemTable.tsx:829
+msgid "期间入出库记录"
+msgstr "期间入出库记录"
+
+#: src/tables/stock/StockItemTable.tsx:695
+#: src/tables/stock/StockItemTable.tsx:770
 msgid "库存盘点导入"
 msgstr "库存盘点导入"
 
-#: src/tables/stock/StockItemTable.tsx:745
-#: src/tables/stock/StockItemTable.tsx:746
+#: src/tables/stock/StockItemTable.tsx:756
+#: src/tables/stock/StockItemTable.tsx:757
 msgid "导入"
 msgstr "导入"
 
-#: src/tables/stock/StockItemTable.tsx:776
+#: src/tables/stock/StockItemTable.tsx:806
 msgid "库存工具"
 msgstr "库存工具"
-
-#: src/tables/stock/StockItemTable.tsx:791
-msgid "合同管理"
-msgstr "合同管理"
 
 #: src/tables/stock/StockItemTestResultTable.tsx:141
 msgid "Test"
@@ -16370,52 +17306,96 @@ msgstr "Set Parent Location"
 msgid "Set parent location for the selected items"
 msgstr "Set parent location for the selected items"
 
-#: src/tables/stock/StockTrackingTable.tsx:92
-#: src/tables/stock/StockTrackingTable.tsx:94
+#: src/tables/stock/StockTrackingTable.tsx:100
+#: src/tables/stock/StockTrackingTable.tsx:102
 msgid "Unknown location"
 msgstr "Unknown location"
 
-#: src/tables/stock/StockTrackingTable.tsx:100
+#: src/tables/stock/StockTrackingTable.tsx:108
 msgid "Stock after operation"
 msgstr "Stock after operation"
 
-#: src/tables/stock/StockTrackingTable.tsx:102
+#: src/tables/stock/StockTrackingTable.tsx:110
 msgid "Quantity moved"
 msgstr "Quantity moved"
 
-#: src/tables/stock/StockTrackingTable.tsx:135
+#: src/tables/stock/StockTrackingTable.tsx:117
+msgid "设备编号 / 名称（落账时）"
+msgstr "设备编号 / 名称（落账时）"
+
+#: src/tables/stock/StockTrackingTable.tsx:132
+msgid "来源明细标识"
+msgstr "来源明细标识"
+
+#: src/tables/stock/StockTrackingTable.tsx:137
+msgid "实际入出库数量"
+msgstr "实际入出库数量"
+
+#: src/tables/stock/StockTrackingTable.tsx:142
+msgid "库存项实物量（操作前 → 后）"
+msgstr "库存项实物量（操作前 → 后）"
+
+#: src/tables/stock/StockTrackingTable.tsx:147
+msgid "实际库位（落账时）"
+msgstr "实际库位（落账时）"
+
+#: src/tables/stock/StockTrackingTable.tsx:165
+msgid "出库用途"
+msgstr "出库用途"
+
+#: src/tables/stock/StockTrackingTable.tsx:200
 msgid "Old Status"
 msgstr "Old Status"
 
-#: src/tables/stock/StockTrackingTable.tsx:151
+#: src/tables/stock/StockTrackingTable.tsx:216
 msgid "Added"
 msgstr "Added"
 
-#: src/tables/stock/StockTrackingTable.tsx:156
+#: src/tables/stock/StockTrackingTable.tsx:221
 msgid "Removed"
 msgstr "Removed"
 
-#: src/tables/stock/StockTrackingTable.tsx:174
+#: src/tables/stock/StockTrackingTable.tsx:239
 msgid "Source and destination"
 msgstr "Source and destination"
 
-#: src/tables/stock/StockTrackingTable.tsx:246
-#: src/tables/stock/StockTrackingTable.tsx:350
+#: src/tables/stock/StockTrackingTable.tsx:311
+#: src/tables/stock/StockTrackingTable.tsx:425
 msgid "Scan event"
 msgstr "Scan event"
 
-#: src/tables/stock/StockTrackingTable.tsx:305
+#: src/tables/stock/StockTrackingTable.tsx:371
+msgid "库存项（当前）"
+msgstr "库存项（当前）"
+
+#: src/tables/stock/StockTrackingTable.tsx:374
 msgid "Stock item no longer exists"
 msgstr "Stock item no longer exists"
 
+#: src/tables/stock/StockTrackingTable.tsx:385
+msgid "扫码入库（已落账）"
+msgstr "扫码入库（已落账）"
+
+#: src/tables/stock/StockTrackingTable.tsx:386
+msgid "扫码出库（已落账）"
+msgstr "扫码出库（已落账）"
+
+#: src/tables/stock/StockTrackingTable.tsx:403
+msgid "落账操作人"
+msgstr "落账操作人"
+
 #. placeholder {0}: record.operator_user_id_snapshot
-#: src/tables/stock/StockTrackingTable.tsx:338
+#: src/tables/stock/StockTrackingTable.tsx:413
 msgid "User #{0}"
 msgstr "User #{0}"
 
-#: src/tables/stock/StockTrackingTable.tsx:344
+#: src/tables/stock/StockTrackingTable.tsx:419
 msgid "No user information"
 msgstr "No user information"
+
+#: src/tables/stock/StockTrackingTable.tsx:438
+msgid "库存流水记录实际库存操作。扫码记录中的项目、合同、库位和人员使用落账时快照；未关联扫码的原生记录不补填当前业务字段。申请人、审批人与落账操作人分别显示。"
+msgstr "库存流水记录实际库存操作。扫码记录中的项目、合同、库位和人员使用落账时快照；未关联扫码的原生记录不补填当前业务字段。申请人、审批人与落账操作人分别显示。"
 
 #: src/tables/stock/TestStatisticsTable.tsx:34
 #: src/tables/stock/TestStatisticsTable.tsx:64

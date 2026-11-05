@@ -84,6 +84,9 @@ export function PartDetailsPanel({
       copy: true,
       hidden: !instance?.IPN
     },
+    { type: 'string', name: 'brand', label: t`品牌`, copy: true },
+    { type: 'string', name: 'specification', label: t`规格`, copy: true },
+    { type: 'string', name: 'model_number', label: t`型号`, copy: true },
     { type: 'string', name: 'description', label: t`Description`, copy: true },
     {
       type: 'link',

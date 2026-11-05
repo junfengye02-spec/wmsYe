@@ -7,6 +7,7 @@ import {
   NumberInput,
   Select,
   Stack,
+  Switch,
   TextInput
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
@@ -14,13 +15,16 @@ import { useEffect, useState } from 'react';
 import { api, queryClient } from '../../App';
 import type { WmsContract } from './WmsContractTypes';
 import { wmsError, wmsUrl } from './WmsInventoryPanel';
+import { WmsProjectSelect } from './WmsProjectSelect';
 
 export function WmsContractEditor({
   opened,
   contract,
   onClose,
-  onSaved
+  onSaved,
+  initialProject = ''
 }: {
+  initialProject?: string;
   opened: boolean;
   contract: WmsContract | null;
   onClose: () => void;
@@ -33,6 +37,9 @@ export function WmsContractEditor({
   const [editingContract, setEditingContract] = useState<WmsContract | null>(
     null
   );
+  const [project, setProject] = useState('');
+  const [projectId, setProjectId] = useState<number | null>(null);
+  const [active, setActive] = useState(true);
   const [number, setNumber] = useState('');
   const [date, setDate] = useState('');
   const [months, setMonths] = useState<number | string>(12);
@@ -42,7 +49,10 @@ export function WmsContractEditor({
   const [busy, setBusy] = useState(false);
   function loadContract(value: WmsContract | null) {
     setEditingContract(value);
+    setProject(value?.project ?? (value ? '' : initialProject));
+    setProjectId(value?.project_id ?? null);
     setNumber(value?.number ?? '');
+    setActive(value?.active !== false);
     setDate(value?.acceptance_date ?? '');
     setMonths(value?.warranty_months ?? 12);
     setImpact(null);
@@ -51,7 +61,7 @@ export function WmsContractEditor({
   }
   useEffect(() => {
     if (opened) loadContract(contract);
-  }, [opened, contract]);
+  }, [opened, contract, initialProject]);
   async function run(action: () => Promise<void>) {
     if (busy) return;
     setBusy(true);
@@ -64,6 +74,15 @@ export function WmsContractEditor({
       setBusy(false);
     }
   }
+  const projects = useQuery<{ results: Array<{ pk: number; code: string }> }>({
+    queryKey: ['wms-projects'],
+    queryFn: async () =>
+      (await api.get(wmsUrl('projects'), { params: { all: true } })).data
+  });
+  const selectedProjectId =
+    projectId ??
+    projects.data?.results.find((p) => p.code === project)?.pk ??
+    null;
   const contractOptions = (contracts.data?.results ?? []).map((c) => ({
     value: String(c.pk),
     label: c.number
@@ -99,6 +118,19 @@ export function WmsContractEditor({
             setImpact(null);
           }}
         />
+        <WmsProjectSelect
+          label={t`所属项目`}
+          required={!editingContract || !!editingContract.project_id}
+          value={project}
+          onChange={(code, id) => {
+            setProject(code);
+            setProjectId(id ?? null);
+            setImpact(null);
+          }}
+        />
+        {editingContract && !editingContract.project_id && (
+          <Alert color='yellow'>{t`历史合同尚未确定所属项目，请核对关联单据后补充；不会自动改写历史单据。`}</Alert>
+        )}
         <TextInput
           type='date'
           label={t`验收日期（合同起始时间）`}
@@ -144,16 +176,29 @@ export function WmsContractEditor({
             onChange={(e) => setReason(e.currentTarget.value)}
           />
         )}
+        <Switch
+          label={t`启用合同`}
+          description={t`停用后不再供新单据选择，历史单据和原标签继续有效。`}
+          checked={active}
+          onChange={(e) => {
+            setActive(e.currentTarget.checked);
+            setImpact(null);
+          }}
+        />
         {impact && (
           <Alert color='yellow'>
             {t`关联设备明细数`}：{impact.before.acceptance_followers} ·{' '}
-            {t`保存后统一更新验收日期和质保到期日。修改合同号需更换关联标签。`}
+            {number.trim() !== editingContract?.number
+              ? t`合同号发生变化，关联标签需更换；原标签将失效。`
+              : t`更新验收日期、质保月数或启用状态无需更换标签，原二维码继续有效。`}
           </Alert>
         )}
         <Button
           loading={busy}
           disabled={
             !number.trim() ||
+            ((!editingContract || !!editingContract.project_id) &&
+              !selectedProjectId) ||
             Number(months) < 1 ||
             (!!editingContract && !reason.trim())
           }
@@ -162,6 +207,8 @@ export function WmsContractEditor({
               const values = {
                 pk: editingContract?.pk,
                 number,
+                project_id: selectedProjectId,
+                active,
                 acceptance_date: date || null,
                 warranty_months: Number(months),
                 reason,
@@ -188,7 +235,10 @@ export function WmsContractEditor({
                 queryClient.invalidateQueries({
                   queryKey: ['wms-stock-detail']
                 }),
-                queryClient.invalidateQueries({ queryKey: ['wms-options'] })
+                queryClient.invalidateQueries({ queryKey: ['wms-options'] }),
+                queryClient.invalidateQueries({
+                  queryKey: ['wms-direct-label']
+                })
               ]);
               onSaved(data);
               onClose();

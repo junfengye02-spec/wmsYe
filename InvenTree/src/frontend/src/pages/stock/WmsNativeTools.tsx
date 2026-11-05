@@ -19,10 +19,10 @@ import { api } from '../../App';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useUserState } from '../../states/UserState';
 import {
-  type WmsOptions,
   cellText,
   chinaDay,
   equipmentColumns,
+  type WmsOptions,
   wmsDownload,
   wmsError,
   wmsUrl
@@ -348,6 +348,19 @@ export async function nativeInventoryDownload(params: Record<string, any>) {
   const link = document.createElement('a');
   link.href = url;
   link.download = 'inventory.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+export async function nativeEquipmentDownload(params: Record<string, any>) {
+  const response = await api.get('/api/part/', {
+    params: { ...params, wms: 'true', export: 'xlsx' },
+    responseType: 'blob'
+  });
+  const url = URL.createObjectURL(response.data);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = '设备基础资料.xlsx';
   link.click();
   URL.revokeObjectURL(url);
 }

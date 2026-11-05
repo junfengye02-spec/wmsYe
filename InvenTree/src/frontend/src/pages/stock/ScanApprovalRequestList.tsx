@@ -22,7 +22,6 @@ import { api } from '../../App';
 import {
   ScanApprovalRequestDetails,
   approvalLocationLabel,
-  approvalOwnerLabel,
   approvalStatusColor,
   approvalStatusLabel
 } from './ScanApprovalRequestDetails';
@@ -127,10 +126,6 @@ export function ScanApprovalRequestListPanel({
                 <Table.Th>{t`项目 / 合同`}</Table.Th>
                 <Table.Th>{t`验收 / 质保月数 / 到期`}</Table.Th>
                 <Table.Th>{t`Requester`}</Table.Th>
-                <Table.Th>{t`Approval route`}</Table.Th>
-                <Table.Th>{t`Lines`}</Table.Th>
-                <Table.Th>{t`Quantity`}</Table.Th>
-                <Table.Th>{t`Expires`}</Table.Th>
                 <Table.Th>{t`Details`}</Table.Th>
               </Table.Tr>
             </Table.Thead>
@@ -169,10 +164,6 @@ export function ScanApprovalRequestListPanel({
                     {request.requester_display_name_snapshot ||
                       request.requester_username_snapshot}
                   </Table.Td>
-                  <Table.Td>{approvalOwnerLabel(request)}</Table.Td>
-                  <Table.Td>{request.active_line_count}</Table.Td>
-                  <Table.Td>{request.total_quantity}</Table.Td>
-                  <Table.Td>{displayTime(request.expires_at)}</Table.Td>
                   <Table.Td>
                     <Button
                       size='compact-xs'
@@ -193,7 +184,7 @@ export function ScanApprovalRequestListPanel({
         opened={selected !== null}
         onClose={() => setSelected(null)}
         title={selected?.reference ?? t`Approval request`}
-        size='90%'
+        fullScreen
       >
         {selected && (
           <ScanApprovalRequestDetails

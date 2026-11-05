@@ -1,12 +1,13 @@
+import { Boundary } from '@lib/components/Boundary';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import {
   Alert,
-  Badge,
   Button,
   Card,
   Checkbox,
+  Collapse,
   Group,
   Modal,
   NumberInput,
@@ -14,35 +15,37 @@ import {
   Select,
   SimpleGrid,
   Stack,
+  Tabs,
   Text,
   TextInput,
-  ThemeIcon,
   Title
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
   IconAlertCircle,
-  IconArrowDown,
-  IconArrowUp,
   // IconCamera,
   IconCheck,
-  IconClock,
   IconMapPin,
   IconQrcode,
   IconSwitchHorizontal
 } from '@tabler/icons-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
+import {
+  type KeyboardEvent,
+  Suspense,
+  lazy,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 
 import { api } from '../../App';
 import BarcodeCameraInput from '../../components/barcodes/BarcodeCameraInput';
+
 import { createUuid } from '../../functions/uuid';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
-import {
-  ScanApprovalRequestDetails,
-  approvalLocationLabel,
-  approvalOwnerLabel
-} from './ScanApprovalRequestDetails';
+import { ScanApprovalRequestDetails } from './ScanApprovalRequestDetails';
+import { ScanManualPicker } from './ScanManualPicker';
 import { ScanResultList } from './ScanResultList';
 import type {
   ScanMode,
@@ -55,6 +58,13 @@ import type {
 import type { WmsReceiptDetail } from './WmsContractTypes';
 import { type WmsOptions, wmsError, wmsUrl } from './WmsInventoryPanel';
 import { WmsProjectSelect } from './WmsProjectSelect';
+
+// Preparation and printing are optional; their assets must not gate scanning.
+const WmsReceiptWorkbench = lazy(() =>
+  import('./WmsReceiptWorkbench').then((module) => ({
+    default: module.WmsReceiptWorkbench
+  }))
+);
 
 type LocationList = {
   results: Array<{ pk: number; name: string; pathstring: string }>;
@@ -81,33 +91,14 @@ function errorData(error: any): ScanStockResponse | undefined {
   return error?.response?.data ?? error?.data;
 }
 
-function remainingTime(value?: string): string {
-  if (!value) return '-';
-  const seconds = Math.max(
-    0,
-    Math.floor((new Date(value).getTime() - Date.now()) / 1000)
-  );
-  if (seconds <= 0) return t`Expired`;
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const remainder = seconds % 60;
-  const unit = (value: number, name: 'hour' | 'minute' | 'second') =>
-    new Intl.NumberFormat(undefined, {
-      style: 'unit',
-      unit: name,
-      unitDisplay: 'short'
-    }).format(value);
-  return hours > 0
-    ? `${unit(hours, 'hour')} ${unit(minutes, 'minute')}`
-    : `${unit(minutes, 'minute')} ${unit(remainder, 'second')}`;
-}
-
 export function ScanWorkPanel({
   mode,
   initialLocationId = null,
-  onDraftChange
+  onDraftChange,
+  focusRequest = 0
 }: Readonly<{
   mode: ScanMode;
+  focusRequest?: number;
   initialLocationId?: string | null;
   onDraftChange?: (draft: ScanStockApprovalRequest | null) => void;
 }>) {
@@ -115,17 +106,34 @@ export function ScanWorkPanel({
   const globalSettings = useGlobalSettingsState();
   const approvalEnabled = globalSettings.isSet('SCAN_APPROVAL_ENABLED');
   const inputRef = useRef<HTMLInputElement>(null);
+  const [entryMode, setEntryMode] = useState<string | null>('scan');
+  const [showLog, setShowLog] = useState(false);
+  const [detailsOpened, setDetailsOpened] = useState(false);
+  const manualQuantity = useRef<{
+    barcode: string;
+    quantity: number | string;
+  } | null>(null);
+  const [prepareOpened, setPrepareOpened] = useState(false);
+  useEffect(() => {
+    setEntryMode('scan');
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 0);
+    return () => window.clearTimeout(timer);
+  }, [mode, focusRequest]);
+  const scanArmed = useRef(true);
+  const lastQuantityScope = useRef('');
   const [locationId, setLocationId] = useState<string | null>(null);
   const [locationBarcode, setLocationBarcode] = useState('');
   const [locationProcessing, setLocationProcessing] = useState(false);
   const [locationMessage, setLocationMessage] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [barcode, setBarcode] = useState('');
+  const [queuedBarcode, setQueuedBarcode] = useState<string | null>(null);
+  const [initializedLabel, setInitializedLabel] = useState('');
   const completeCode = /^WMS[0-9]+:/.test(barcode.trim());
   const [stableBarcode] = useDebouncedValue(barcode.trim(), 150);
   const [quantityConfirmed, setQuantityConfirmed] = useState(false);
   const completeDetail = useQuery<WmsReceiptDetail>({
-    queryKey: ['wms-direct-label', barcode.trim(), locationId],
+    queryKey: ['wms-direct-label', mode, barcode.trim()],
     enabled: completeCode && stableBarcode === barcode.trim(),
     retry: false,
     queryFn: async ({ signal }) =>
@@ -133,8 +141,7 @@ export function ScanWorkPanel({
         await api.post(
           wmsUrl('labels/resolve'),
           {
-            barcode: barcode.trim(),
-            location: locationId ? Number(locationId) : undefined
+            barcode: barcode.trim()
           },
           { signal }
         )
@@ -196,6 +203,10 @@ export function ScanWorkPanel({
   const stockStatus = projectOptions.data?.stock_status;
   const label =
     completeCode && !completeDetail.isError ? completeDetail.data : undefined;
+  const labelStock = (label?.stock ?? []).filter(
+    (item) => item.location === Number(locationId)
+  );
+  const labelScope = JSON.stringify([mode, barcode.trim(), locationId]);
   const scannedPart =
     !completeCode &&
     !projectOptions.isError &&
@@ -283,7 +294,6 @@ export function ScanWorkPanel({
   const [pendingLocationId, setPendingLocationId] = useState<string | null>(
     null
   );
-  const [, setClock] = useState(() => Date.now());
 
   const locations = useQuery<LocationList>({
     queryKey: ['scan-stock-locations'],
@@ -328,6 +338,12 @@ export function ScanWorkPanel({
     setLocationMessage(null);
     setLocationError(null);
     setBarcode('');
+    setDetailsOpened(false);
+    manualQuantity.current = null;
+    scanArmed.current = true;
+    lastQuantityScope.current = '';
+    setQueuedBarcode(null);
+    setInitializedLabel('');
     setProjectSelection({ value: '', scope: '' });
     setPurpose('');
     setRemark('');
@@ -366,12 +382,66 @@ export function ScanWorkPanel({
   }, [draft, onDraftChange]);
 
   useEffect(() => {
-    setQuantityConfirmed(false);
-    if (mode === 'inbound' && completeDetail.data) {
-      setLocationId(String(completeDetail.data.receipt_location));
-      setQuantity(Number(completeDetail.data.prepared_quantity));
+    if (!label || completeDetail.isFetching || activeDraft.isPending) return;
+    // A draft is tied to one actual location. Never silently move it when
+    // scanning another receipt, or assume a receipt's original outbound location.
+    if (draft) return;
+    if (mode === 'inbound') {
+      setLocationId(String(label.receipt_location));
+    } else {
+      const availableLocations = Array.from(
+        new Set(
+          (label.stock ?? [])
+            .filter((item) => Number(item.available) > 0)
+            .map((item) => item.location)
+        )
+      );
+      if (availableLocations.length === 1) {
+        setLocationId(String(availableLocations[0]));
+      }
     }
-  }, [mode, completeDetail.data?.pk]);
+  }, [
+    mode,
+    label?.pk,
+    completeDetail.isFetching,
+    activeDraft.isPending,
+    draft?.pk
+  ]);
+
+  useEffect(() => {
+    if (!label) {
+      setInitializedLabel('');
+      return;
+    }
+    if (
+      !locationId ||
+      completeDetail.isFetching ||
+      activeDraft.isPending ||
+      initializedLabel === labelScope
+    )
+      return;
+    if (mode !== 'inbound' || lastQuantityScope.current !== labelScope) {
+      setQuantityConfirmed(false);
+      setQuantity(
+        manualQuantity.current?.barcode === barcode.trim()
+          ? manualQuantity.current.quantity
+          : mode === 'inbound'
+            ? Number(label.prepared_quantity)
+            : labelStock.reduce(
+                (total, item) => total + Number(item.available),
+                0
+              )
+      );
+      lastQuantityScope.current = labelScope;
+    }
+    setInitializedLabel(labelScope);
+  }, [
+    label,
+    labelScope,
+    completeDetail.isFetching,
+    activeDraft.isPending,
+    initializedLabel
+  ]);
 
   useEffect(() => {
     if (
@@ -392,25 +462,6 @@ export function ScanWorkPanel({
     projectOptions.isFetching,
     selectionScope
   ]);
-
-  useEffect(() => {
-    if (
-      mode !== 'outbound' ||
-      locationId ||
-      !label ||
-      completeDetail.isFetching
-    )
-      return;
-    const actualLocations = Array.from(
-      new Set((label.stock ?? []).map((item) => item.location))
-    );
-    if (actualLocations.length === 1) setLocationId(String(actualLocations[0]));
-  }, [mode, locationId, label, completeDetail.isFetching]);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setClock(Date.now()), 1000);
-    return () => window.clearInterval(timer);
-  }, []);
 
   const locationOptions = (locations.data?.results ?? []).map((location) => ({
     value: String(location.pk),
@@ -511,6 +562,20 @@ export function ScanWorkPanel({
     const normalized = locationBarcode.trim();
     if (!normalized) return;
 
+    // Both inputs accept scanner keystrokes. A complete equipment label must
+    // use the same validation and pending-stock flow, even in the location field.
+    if (/^WMS[0-9]+:/.test(normalized)) {
+      setLocationBarcode('');
+      setLocationMessage(null);
+      setLocationError(null);
+      setScanError('');
+      scanArmed.current = true;
+      setBarcode(normalized);
+      setQueuedBarcode(normalized);
+      inputRef.current?.focus();
+      return;
+    }
+
     setLocationProcessing(true);
     setLocationMessage(null);
     setLocationError(null);
@@ -591,6 +656,15 @@ export function ScanWorkPanel({
       const data = response.data;
       setRetryPayload(null);
       setScanError('');
+      if (data.success) {
+        if (detailsOpened) setDetailsOpened(false);
+        manualQuantity.current = null;
+      }
+      if (data.success && mode === 'inbound') {
+        setBarcode((current) =>
+          current.trim() === scan.barcode ? '' : current
+        );
+      }
 
       if (
         !data.terminal &&
@@ -626,11 +700,11 @@ export function ScanWorkPanel({
             ? t`This scan was already processed; the request quantity was not changed again.`
             : t`This scan was already processed; stock was not changed again.`
           : (!data.success ? wmsError({ data }) : '') ||
-            data.message ||
+            (!approvalEnabled ? data.message : '') ||
             (approvalEnabled
               ? mode === 'outbound'
-                ? t`Stock reserved for approval.`
-                : t`Stock added to the pending inbound request.`
+                ? t`已加入待出库`
+                : t`已加入待入库`
               : t`Stock updated.`)
       });
       void refreshPostedResult(data, selectedLocation);
@@ -655,7 +729,19 @@ export function ScanWorkPanel({
     } finally {
       processingRef.current = false;
       setProcessing(false);
-      window.setTimeout(() => inputRef.current?.focus(), 0);
+      window.setTimeout(() => {
+        // Do not interrupt a different field or modal while a network reply arrives.
+        const active = document.activeElement;
+        if (
+          !document.querySelector('[role="dialog"]') &&
+          (active === inputRef.current ||
+            active === document.body ||
+            active?.tagName === 'BUTTON')
+        ) {
+          inputRef.current?.focus();
+          inputRef.current?.select();
+        }
+      }, 0);
     }
   };
 
@@ -674,19 +760,16 @@ export function ScanWorkPanel({
         completeDetail.isError
       )
         return;
-      const duplicate = draft?.lines?.find(
-        (line) =>
-          line.source_detail === completeDetail.data.pk &&
-          line.outcome === 'PENDING'
-      );
-      if (duplicate) {
-        setScanError(
-          t`同一码已加入，已定位原申请行：` + duplicate.request_line_number
-        );
+      if (
+        mode === 'inbound' &&
+        draft &&
+        draft.location !== completeDetail.data.receipt_location
+      ) {
+        setScanError(t`当前草稿属于其他库位，请先提交或取消该草稿。`);
         return;
       }
-      if (mode === 'inbound' && completeDetail.data.state !== 'READY') {
-        setScanError(t`该明细已核对或已入库，请查看原申请。`);
+      if (mode === 'inbound' && completeDetail.data.state === 'CANCELLED') {
+        setScanError(t`该明细已作废，不能继续扫码。`);
         return;
       }
       if (
@@ -695,16 +778,26 @@ export function ScanWorkPanel({
         !quantityConfirmed
       ) {
         setScanError(t`实际数量与准备数量不同，请明确核对确认。`);
+        setDetailsOpened(true);
         return;
       }
     }
     if (
       mode === 'outbound' &&
       (normalized !== barcode.trim() || !outboundReady)
-    )
+    ) {
+      setScanError(t`请选择有可用库存的实际库位。`);
+      setDetailsOpened(true);
       return;
-    if (!project.trim() || (mode === 'outbound' && !purpose.trim())) {
-      setScanError(t`项目必填，出库还须填写用途`);
+    }
+    if (!locationId || !(Number(quantity) > 0)) {
+      setScanError(t`请选择实际库位并填写有效数量。`);
+      setDetailsOpened(true);
+      return;
+    }
+    if (!project.trim()) {
+      setScanError(t`请选择项目`);
+      setDetailsOpened(true);
       return;
     }
     if (retryPayload) {
@@ -731,17 +824,70 @@ export function ScanWorkPanel({
           }
         : {})
     };
-    if (mode === 'inbound') setBarcode('');
+    scanArmed.current = false;
     void submitScan(scan);
   };
 
   const startScan = () => startScanValue(barcode);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key.length === 1) scanArmed.current = true;
     if (event.key === 'Enter') {
       event.preventDefault();
+      if (!scanArmed.current) return;
+      if (completeCode && (!retryPayload || processingRef.current)) {
+        setQueuedBarcode(barcode.trim());
+      } else if (!completeCode && barcode.trim()) {
+        setDetailsOpened(true);
+      }
     }
   };
+
+  // HID scanners send Enter before the debounced lookup has finished. Keep
+  // that scan pending until its own data and defaults are ready, never the
+  // previous label's data. Editing the input cancels the pending scan.
+  useEffect(() => {
+    if (!queuedBarcode || queuedBarcode !== barcode.trim()) return;
+    if (processing || retryPayload) return;
+    if (
+      stableBarcode !== queuedBarcode ||
+      completeDetail.isFetching ||
+      activeDraft.isPending
+    )
+      return;
+    if (completeDetail.isError) {
+      setQueuedBarcode(null);
+      return;
+    }
+    if (label && !draft) {
+      const automaticLocations =
+        mode === 'inbound'
+          ? [label.receipt_location]
+          : Array.from(
+              new Set(
+                (label.stock ?? [])
+                  .filter((item) => Number(item.available) > 0)
+                  .map((item) => item.location)
+              )
+            );
+      if (automaticLocations.length === 1 && !locationId) return;
+    }
+    if (!label || (locationId && initializedLabel !== labelScope)) return;
+    setQueuedBarcode(null);
+    startScanValue(queuedBarcode);
+  }, [
+    queuedBarcode,
+    processing,
+    retryPayload,
+    stableBarcode,
+    completeDetail.isFetching,
+    completeDetail.isError,
+    label,
+    locationId,
+    initializedLabel,
+    labelScope,
+    activeDraft.isPending
+  ]);
 
   const confirmSetup = () => {
     if (
@@ -765,7 +911,7 @@ export function ScanWorkPanel({
   };
 
   return (
-    <Stack gap='lg'>
+    <Stack gap='sm'>
       {scanError && <Alert color='red'>{scanError}</Alert>}
       {retryPayload && !processing && (
         <Alert color='orange'>
@@ -812,35 +958,122 @@ export function ScanWorkPanel({
         </Alert>
       )}
 
-      <Alert
-        color={mode === 'inbound' ? 'blue' : 'orange'}
-        icon={mode === 'inbound' ? <IconArrowDown /> : <IconArrowUp />}
-        title={mode === 'inbound' ? t`Inbound mode` : t`Outbound mode`}
+      <Tabs
+        value={entryMode}
+        onChange={(value) => {
+          setEntryMode(value);
+          if (value === 'scan')
+            window.setTimeout(() => inputRef.current?.focus(), 0);
+        }}
       >
-        {mode === 'inbound'
-          ? approvalEnabled
-            ? t`Review the scanned information, then add a pending inbound line. Physical stock changes only after the whole request is approved.`
-            : t`Review the scanned information, then confirm to add stock to the destination location.`
-          : approvalEnabled
-            ? t`Review the scanned information, then add an outbound line to reserve stock. Physical stock changes only after the whole request is approved.`
-            : t`Review the scanned information, then confirm to remove unallocated stock from the source location.`}
-      </Alert>
-
-      <SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-        <Paper withBorder p='lg' radius='md'>
-          <Stack>
-            <Group gap='sm'>
-              <ThemeIcon
-                color={mode === 'inbound' ? 'blue' : 'orange'}
-                variant='light'
-              >
-                <IconQrcode />
-              </ThemeIcon>
-              <Title order={2} size='h3'>
-                {t`Scan stock`}
-              </Title>
-            </Group>
-
+        <Tabs.List>
+          <Tabs.Tab value='scan'>{t`扫码录入`}</Tabs.Tab>
+          <Tabs.Tab value='manual'>{t`按名称 / 型号添加`}</Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value='scan' pt='sm'>
+          <TextInput
+            ref={inputRef}
+            data-testid='equipment-scan-input'
+            autoFocus
+            aria-label={t`扫码（二维码／设备ID／库存项码）`}
+            value={barcode}
+            onChange={(event) => {
+              scanArmed.current = true;
+              manualQuantity.current = null;
+              setQueuedBarcode(null);
+              setBarcode(event.currentTarget.value);
+            }}
+            onPaste={() => {
+              scanArmed.current = true;
+            }}
+            onFocus={(event) => event.currentTarget.select()}
+            onKeyDown={handleKeyDown}
+            placeholder={t`扫描设备标签，回车自动加入`}
+            leftSection={<IconQrcode size={20} />}
+            maxLength={2000}
+            size='md'
+          />
+        </Tabs.Panel>
+        <Tabs.Panel value='manual' pt='sm'>
+          <ScanManualPicker
+            mode={mode}
+            location={locationId}
+            processing={processing || Boolean(queuedBarcode)}
+            onPrepare={() => setPrepareOpened(true)}
+            onSelect={(detail, selectedQuantity) => {
+              manualQuantity.current = {
+                barcode: detail.barcode,
+                quantity: selectedQuantity
+              };
+              scanArmed.current = true;
+              setBarcode(detail.barcode);
+              setQuantity(selectedQuantity);
+              setQuantityConfirmed(false);
+              setInitializedLabel('');
+              lastQuantityScope.current = '';
+              setQueuedBarcode(detail.barcode);
+            }}
+          />
+        </Tabs.Panel>
+      </Tabs>
+      <Group justify='space-between' gap='xs'>
+        <Text
+          size='sm'
+          c={results[0]?.success ? 'green' : 'dimmed'}
+          aria-live='polite'
+        >
+          {processing
+            ? t`正在加入…`
+            : completeDetail.isFetching && barcode
+              ? t`正在识别标签…`
+              : results[0]?.message}
+        </Text>
+        <Group gap='xs'>
+          <Text size='sm' c='dimmed'>
+            {t`当前库位`}：
+            {locationOptions.find((item) => item.value === locationId)?.label ||
+              t`扫码后自动识别`}
+          </Text>
+          <Button
+            variant='subtle'
+            size='compact-sm'
+            onClick={() => {
+              setQueuedBarcode(null);
+              setDetailsOpened(true);
+            }}
+          >
+            {barcode ? t`核对信息` : t`修改库位`}
+          </Button>
+        </Group>
+      </Group>
+      {completeCode && completeDetail.isError && (
+        <Alert color='red'>{wmsError(completeDetail.error)}</Alert>
+      )}
+      <Modal
+        opened={detailsOpened}
+        returnFocus={false}
+        onExitTransitionEnd={() => {
+          window.setTimeout(() => {
+            const active = document.activeElement;
+            if (
+              entryMode === 'scan' &&
+              !document.querySelector('[role="dialog"]') &&
+              (active === document.body || active?.tagName === 'BUTTON')
+            )
+              inputRef.current?.focus();
+          }, 0);
+        }}
+        onClose={() => {
+          setDetailsOpened(false);
+          if (entryMode === 'scan')
+            window.setTimeout(() => inputRef.current?.focus(), 0);
+        }}
+        title={barcode ? t`核对设备与出入库信息` : t`设置实际库位`}
+        size='xl'
+      >
+        <Stack gap='sm'>
+          {scanError && <Alert color='red'>{scanError}</Alert>}
+          <SimpleGrid cols={{ base: 1, md: 2 }} spacing='sm'>
             <Select
               searchable
               clearable={!draft}
@@ -888,49 +1121,56 @@ export function ScanWorkPanel({
                 {t`Set location`}
               </Button>
             </Group>
+          </SimpleGrid>
+          {locationMessage && (
+            <Alert color='green' icon={<IconCheck size={18} />}>
+              {locationMessage}
+            </Alert>
+          )}
+          {locationError && (
+            <Alert color='red' icon={<IconAlertCircle size={18} />}>
+              {locationError}
+            </Alert>
+          )}
 
-            {locationMessage && (
-              <Alert color='green' icon={<IconCheck size={18} />}>
-                {locationMessage}
-              </Alert>
-            )}
-            {locationError && (
-              <Alert color='red' icon={<IconAlertCircle size={18} />}>
-                {locationError}
-              </Alert>
-            )}
+          {(completeCode || scannedPart) && (
+            <SimpleGrid cols={{ base: 1, sm: 3, lg: 6 }} spacing='sm'>
+              <TextInput
+                label={t`设备ID`}
+                readOnly
+                value={label?.equipment ?? scannedPart?.IPN ?? ''}
+                placeholder={t`扫码后自动填充`}
+              />
+              <TextInput
+                label={t`设备名称`}
+                readOnly
+                value={label?.name ?? scannedPart?.name ?? ''}
+                placeholder={t`扫码后自动填充`}
+              />
+              <TextInput
+                label={t`品牌`}
+                readOnly
+                value={label?.brand ?? scannedPart?.brand ?? ''}
+              />
+              <TextInput
+                label={t`规格`}
+                readOnly
+                value={label?.specification ?? scannedPart?.specification ?? ''}
+              />
+              <TextInput
+                label={t`型号`}
+                readOnly
+                value={label?.model_number ?? scannedPart?.model_number ?? ''}
+              />
+              <TextInput
+                label={t`单位`}
+                readOnly
+                value={label?.units ?? scannedPart?.units ?? ''}
+              />
+            </SimpleGrid>
+          )}
 
-            <TextInput
-              ref={inputRef}
-              required
-              value={barcode}
-              onChange={(event) => setBarcode(event.currentTarget.value)}
-              onKeyDown={handleKeyDown}
-              label={t`扫码（二维码／设备ID／库存项码）`}
-              description={t`扫码后自动填充，请核对信息和数量后加入申请。`}
-              placeholder={t`扫描标签或输入设备编号`}
-              leftSection={<IconQrcode size={20} />}
-              maxLength={2000}
-              size='lg'
-            />
-
-            {(completeCode || scannedPart) && (
-              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing='sm'>
-                <TextInput
-                  label={t`设备ID`}
-                  readOnly
-                  value={label?.equipment ?? scannedPart?.IPN ?? ''}
-                  placeholder={t`扫码后自动填充`}
-                />
-                <TextInput
-                  label={t`设备名称`}
-                  readOnly
-                  value={label?.name ?? scannedPart?.name ?? ''}
-                  placeholder={t`扫码后自动填充`}
-                />
-              </SimpleGrid>
-            )}
-
+          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing='sm'>
             {completeCode ? (
               <TextInput
                 label={t`项目`}
@@ -979,116 +1219,115 @@ export function ScanWorkPanel({
                   : t`扫描完整二维码后自动填充`
               }
             />
-
-            {completeCode && (
-              <Stack gap='xs'>
-                {completeDetail.isFetching && <Text>{t`正在识别标签…`}</Text>}
-                {completeDetail.error && (
-                  <Alert color='red'>{wmsError(completeDetail.error)}</Alert>
-                )}
-                {label && (
-                  <Alert>
+          </SimpleGrid>
+          {completeCode && (
+            <Stack gap='xs'>
+              {completeDetail.isFetching && <Text>{t`正在识别标签…`}</Text>}
+              {completeDetail.error && (
+                <Alert color='red'>{wmsError(completeDetail.error)}</Alert>
+              )}
+              {label && (
+                <Alert>
+                  <Text>
+                    {t`验收日期（合同起始时间）`}：
+                    {label.acceptance_date || t`待验收`} · {t`质保到期日`}：
+                    {label.warranty_end || t`待验收`}
+                  </Text>
+                  {mode === 'inbound' && (
                     <Text>
-                      {t`验收日期（合同起始时间）`}：
-                      {label.acceptance_date || t`待验收`} · {t`质保到期日`}：
-                      {label.warranty_end || t`待验收`}
+                      {t`准备数量`}：{label.prepared_quantity}
                     </Text>
-                    {mode === 'inbound' && (
+                  )}
+                  {mode === 'outbound' && (
+                    <Text>
+                      {t`当前库存`}：
+                      {labelStock.reduce((n, s) => n + Number(s.quantity), 0) ??
+                        0}{' '}
+                      · {t`可用数量`}：
+                      {labelStock.reduce(
+                        (n, s) => n + Number(s.available),
+                        0
+                      ) ?? 0}
+                    </Text>
+                  )}
+                </Alert>
+              )}
+            </Stack>
+          )}
+          {mode === 'outbound' && !completeCode && (
+            <Alert
+              color={
+                projectOptions.isError
+                  ? 'red'
+                  : outboundReady
+                    ? 'blue'
+                    : 'orange'
+              }
+              aria-live='polite'
+            >
+              <Stack gap='xs'>
+                {!locationId || !barcode.trim() ? (
+                  <Text>{t`请选择实际库位并输入设备码查看库存。`}</Text>
+                ) : projectOptions.isFetching ? (
+                  <Text>{t`正在查询库存…`}</Text>
+                ) : projectOptions.isError ? (
+                  <Text>{t`库存查询失败，请重试。`}</Text>
+                ) : stockStatus && 'quantity' in stockStatus ? (
+                  <>
+                    <Text>
+                      {stockStatus.scope === 'all_projects'
+                        ? t`当前库位该设备所有项目合计`
+                        : t`当前设备、项目及实际库位`}
+                    </Text>
+                    <Text>
+                      {t`当前库存`}: {stockStatus.quantity} {stockStatus.units}{' '}
+                      · {t`可用数量`}: {stockStatus.available}{' '}
+                      {stockStatus.units}
+                    </Text>
+                    <Text size='sm'>
+                      {t`冻结数量`}: {stockStatus.frozen} · {t`业务占用数量`}:{' '}
+                      {stockStatus.allocated}
+                    </Text>
+                    {stockStatus.state === 'NO_STOCK' ? (
                       <Text>
-                        {t`准备数量`}：{label.prepared_quantity}
+                        {stockStatus.scope === 'project'
+                          ? t`当前项目在此库位暂无该设备库存，无法出库。`
+                          : t`当前库位该设备暂无库存，无法出库。`}
                       </Text>
+                    ) : stockStatus.state === 'NO_AVAILABLE_STOCK' ? (
+                      <Text>{t`当前无可用库存，库存已冻结或占用。`}</Text>
+                    ) : null}
+                    {!project && stockStatus.state !== 'NO_STOCK' && (
+                      <Text>{t`请选择项目查看可用库存`}</Text>
                     )}
-                    {mode === 'outbound' && (
-                      <Text>
-                        {t`当前库存`}：
-                        {label.stock?.reduce(
-                          (n, s) => n + Number(s.quantity),
-                          0
-                        ) ?? 0}{' '}
-                        · {t`可用数量`}：
-                        {label.stock?.reduce(
-                          (n, s) => n + Number(s.available),
-                          0
-                        ) ?? 0}
-                      </Text>
-                    )}
-                  </Alert>
+                  </>
+                ) : (
+                  <Text>
+                    {stockStatus?.error_message ||
+                      t`设备码无法识别，请检查设备ID或库存项码。`}
+                  </Text>
+                )}
+                {locationId && barcode.trim() && (
+                  <Button
+                    size='xs'
+                    variant='subtle'
+                    loading={projectOptions.isFetching}
+                    onClick={() => void projectOptions.refetch()}
+                  >{t`重新查询库存`}</Button>
                 )}
               </Stack>
-            )}
-            {mode === 'outbound' && !completeCode && (
-              <Alert
-                color={
-                  projectOptions.isError
-                    ? 'red'
-                    : outboundReady
-                      ? 'blue'
-                      : 'orange'
-                }
-                aria-live='polite'
-              >
-                <Stack gap='xs'>
-                  {!locationId || !barcode.trim() ? (
-                    <Text>{t`请选择实际库位并输入设备码查看库存。`}</Text>
-                  ) : projectOptions.isFetching ? (
-                    <Text>{t`正在查询库存…`}</Text>
-                  ) : projectOptions.isError ? (
-                    <Text>{t`库存查询失败，请重试。`}</Text>
-                  ) : stockStatus && 'quantity' in stockStatus ? (
-                    <>
-                      <Text>
-                        {stockStatus.scope === 'all_projects'
-                          ? t`当前库位该设备所有项目合计`
-                          : t`当前设备、项目及实际库位`}
-                      </Text>
-                      <Text>
-                        {t`当前库存`}: {stockStatus.quantity}{' '}
-                        {stockStatus.units} · {t`可用数量`}:{' '}
-                        {stockStatus.available} {stockStatus.units}
-                      </Text>
-                      <Text size='sm'>
-                        {t`冻结数量`}: {stockStatus.frozen} · {t`业务占用数量`}:{' '}
-                        {stockStatus.allocated}
-                      </Text>
-                      {stockStatus.state === 'NO_STOCK' ? (
-                        <Text>
-                          {stockStatus.scope === 'project'
-                            ? t`当前项目在此库位暂无该设备库存，无法出库。`
-                            : t`当前库位该设备暂无库存，无法出库。`}
-                        </Text>
-                      ) : stockStatus.state === 'NO_AVAILABLE_STOCK' ? (
-                        <Text>{t`当前无可用库存，库存已冻结或占用。`}</Text>
-                      ) : null}
-                      {!project && stockStatus.state !== 'NO_STOCK' && (
-                        <Text>{t`请选择项目查看可用库存`}</Text>
-                      )}
-                    </>
-                  ) : (
-                    <Text>
-                      {stockStatus?.error_message ||
-                        t`设备码无法识别，请检查设备ID或库存项码。`}
-                    </Text>
-                  )}
-                  {locationId && barcode.trim() && (
-                    <Button
-                      size='xs'
-                      variant='subtle'
-                      loading={projectOptions.isFetching}
-                      onClick={() => void projectOptions.refetch()}
-                    >{t`重新查询库存`}</Button>
-                  )}
-                </Stack>
-              </Alert>
-            )}
-            {mode === 'outbound' && (
-              <TextInput
-                required
-                label={t`用途`}
-                maxLength={250}
-                value={purpose}
-                onChange={(e) => setPurpose(e.currentTarget.value)}
-              />
-            )}
+            </Alert>
+          )}
+          {mode === 'outbound' && (
+            <TextInput
+              label={t`用途`}
+              description={t`选填`}
+              maxLength={250}
+              value={purpose}
+              onChange={(e) => setPurpose(e.currentTarget.value)}
+            />
+          )}
+          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing='sm'>
             <TextInput
               label={t`本次扫码备注`}
               maxLength={2000}
@@ -1105,22 +1344,21 @@ export function ScanWorkPanel({
               min={0.00001}
               decimalScale={5}
             />
-            {completeCode &&
-              mode === 'inbound' &&
-              completeDetail.data &&
-              Number(quantity) !==
-                Number(completeDetail.data.prepared_quantity) && (
-                <Checkbox
-                  label={t`已核对实际数量与准备数量的差异`}
-                  checked={quantityConfirmed}
-                  onChange={(e) =>
-                    setQuantityConfirmed(e.currentTarget.checked)
-                  }
-                />
-              )}
+          </SimpleGrid>
+          {completeCode &&
+            mode === 'inbound' &&
+            completeDetail.data &&
+            Number(quantity) !==
+              Number(completeDetail.data.prepared_quantity) && (
+              <Checkbox
+                label={t`已核对实际数量与准备数量的差异`}
+                checked={quantityConfirmed}
+                onChange={(e) => setQuantityConfirmed(e.currentTarget.checked)}
+              />
+            )}
 
-            <SimpleGrid cols={1} spacing='sm'>
-              {/* 摄像头入口暂时停用，恢复时取消注释并恢复 IconCamera 导入。
+          <Group justify='flex-end'>
+            {/* 摄像头入口暂时停用，恢复时取消注释并恢复 IconCamera 导入。
               {globalSettings.isSet('BARCODE_WEBCAM_SUPPORT', true) && (
                 <Button
                   size='lg'
@@ -1132,119 +1370,56 @@ export function ScanWorkPanel({
                 </Button>
               )}
               */}
-              <Button
-                size='lg'
-                color={mode === 'inbound' ? 'blue' : 'orange'}
-                loading={processing}
-                disabled={
-                  !barcode.trim() ||
-                  !locationId ||
-                  !project.trim() ||
-                  (completeCode &&
-                    (completeDetail.isFetching ||
-                      completeDetail.isError ||
-                      !completeDetail.data)) ||
-                  (mode === 'outbound' &&
-                    (!purpose.trim() || !outboundReady)) ||
-                  !(Number(quantity) > 0)
-                }
-                leftSection={<IconCheck size={20} />}
-                onClick={startScan}
-              >
-                {approvalEnabled
-                  ? mode === 'inbound'
-                    ? t`Add pending inbound`
-                    : t`加入待出库`
-                  : mode === 'inbound'
-                    ? t`Add stock`
-                    : t`Remove stock`}
-              </Button>
-            </SimpleGrid>
-          </Stack>
-        </Paper>
+            <Button
+              color={mode === 'inbound' ? 'blue' : 'orange'}
+              loading={processing}
+              disabled={
+                !barcode.trim() ||
+                !locationId ||
+                !project.trim() ||
+                (completeCode &&
+                  (completeDetail.isFetching ||
+                    completeDetail.isError ||
+                    !completeDetail.data)) ||
+                (mode === 'outbound' && !outboundReady) ||
+                !(Number(quantity) > 0)
+              }
+              leftSection={<IconCheck size={20} />}
+              onClick={startScan}
+            >
+              {approvalEnabled
+                ? mode === 'inbound'
+                  ? t`Add pending inbound`
+                  : t`加入待出库`
+                : mode === 'inbound'
+                  ? t`Add stock`
+                  : t`Remove stock`}
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
 
-        <Card withBorder p='lg' radius='md'>
-          <Stack>
-            <Group justify='space-between'>
-              <Title order={2} size='h3'>
-                {approvalEnabled && draft
-                  ? t`Current request`
-                  : t`Session summary`}
-              </Title>
-              <Group gap='xs'>
-                <Badge color='blue'>
-                  {approvalEnabled ? t`Accepted` : t`Success`}:{' '}
-                  {results.filter((result) => result.success).length}
-                </Badge>
-                <Badge color='red'>
-                  {t`Failed`}:{' '}
-                  {results.filter((result) => !result.success).length}
-                </Badge>
-              </Group>
-            </Group>
-            {approvalEnabled && draft ? (
-              <Stack gap='xs'>
-                <Group justify='space-between'>
-                  <Text size='sm' c='dimmed'>
-                    {t`Request`}
-                  </Text>
-                  <Text fw={600}>{draft.reference}</Text>
-                </Group>
-                <Group justify='space-between'>
-                  <Text size='sm' c='dimmed'>
-                    {t`Location`}
-                  </Text>
-                  <Text fw={600}>{approvalLocationLabel(draft)}</Text>
-                </Group>
-                <Group justify='space-between'>
-                  <Text size='sm' c='dimmed'>
-                    {t`Approval route`}
-                  </Text>
-                  <Text fw={600}>{approvalOwnerLabel(draft)}</Text>
-                </Group>
-                <Group justify='space-between'>
-                  <Text size='sm' c='dimmed'>
-                    {mode === 'outbound'
-                      ? t`Frozen quantity`
-                      : t`Pending inbound quantity`}
-                  </Text>
-                  <Text fw={600}>
-                    {mode === 'outbound'
-                      ? (draft.scan_frozen ?? draft.total_quantity)
-                      : (draft.pending_inbound ?? draft.total_quantity)}{' '}
-                    ({draft.active_line_count} {t`lines`})
-                  </Text>
-                </Group>
-                <Group justify='space-between'>
-                  <Text size='sm' c='dimmed'>
-                    {t`Draft time remaining`}
-                  </Text>
-                  <Badge
-                    color={
-                      remainingTime(draft.expires_at) === t`Expired`
-                        ? 'red'
-                        : 'yellow'
-                    }
-                    leftSection={<IconClock size={12} />}
-                  >
-                    {remainingTime(draft.expires_at)}
-                  </Badge>
-                </Group>
-              </Stack>
-            ) : (
-              <Text size='sm' c='dimmed'>
-                {approvalEnabled
-                  ? activeDraft.isLoading
-                    ? t`Restoring your most recent draft…`
-                    : t`A draft request is created when you first confirm and add a line.`
-                  : t`Changing mode clears the location and current session results.`}
-              </Text>
-            )}
-          </Stack>
-        </Card>
-      </SimpleGrid>
-
-      <ScanResultList results={results} />
+      <Modal
+        opened={prepareOpened}
+        onClose={() => {
+          setPrepareOpened(false);
+          void queryClient.invalidateQueries({
+            queryKey: ['wms-scan-candidates']
+          });
+        }}
+        title={t`入库填单与打印`}
+        size='90%'
+      >
+        {prepareOpened && (
+          <Boundary label='receipt-preparation'>
+            <Suspense
+              fallback={<Text component='output'>{t`Loading...`}</Text>}
+            >
+              <WmsReceiptWorkbench />
+            </Suspense>
+          </Boundary>
+        )}
+      </Modal>
 
       <Modal
         opened={cameraOpened}
@@ -1262,9 +1437,22 @@ export function ScanWorkPanel({
         />
       </Modal>
 
+      {approvalEnabled && !draft && (
+        <Paper withBorder p='md' radius='sm'>
+          <Title order={3}>
+            {mode === 'inbound' ? t`待入库明细` : t`待出库明细`}
+          </Title>
+          <Text c='dimmed' size='sm' mt='sm'>
+            {activeDraft.isLoading
+              ? t`正在恢复待办明细…`
+              : t`扫描设备标签或按名称、型号添加设备。`}
+          </Text>
+        </Paper>
+      )}
       {approvalEnabled && draft && (
-        <Paper withBorder p='lg' radius='md'>
+        <Paper withBorder p='md' radius='sm'>
           <ScanApprovalRequestDetails
+            compact
             requestId={draft.pk}
             initialRequest={draft}
             onChanged={(request) => {
@@ -1275,11 +1463,26 @@ export function ScanWorkPanel({
                 setDraft(null);
                 setResults([]);
                 void activeDraft.refetch();
+                window.setTimeout(() => inputRef.current?.focus(), 0);
               }
             }}
           />
         </Paper>
       )}
+
+      <Group justify='flex-end'>
+        <Button
+          variant='subtle'
+          size='compact-sm'
+          onClick={() => setShowLog((value) => !value)}
+          aria-expanded={showLog}
+        >
+          {showLog ? t`收起扫码日志` : t`查看扫码日志`}
+        </Button>
+      </Group>
+      <Collapse expanded={showLog}>
+        <ScanResultList results={results} />
+      </Collapse>
 
       <Modal
         opened={Boolean(pendingScan && candidates.length > 0)}

@@ -16,13 +16,10 @@ import {
   IconArrowDown,
   IconArrowUp,
   IconChecks,
-  IconClipboardList,
   IconHistory,
-  IconPackage,
   IconQrcode,
   IconUser
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { api, queryClient } from '../../App';
@@ -30,18 +27,13 @@ import PageTitle from '../../components/nav/PageTitle';
 import { wmsAccess } from '../../functions/wms';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 import { ScanApprovalRequestListPanel } from './ScanApprovalRequestList';
-import { ScanStockEventTable } from './ScanStockEventTable';
 import type {
   ScanMode,
   ScanStockApprovalRequest,
   ScanStockResponse
 } from './ScanStockTypes';
 import { ScanWorkPanel } from './ScanWorkPanel';
-import { WmsCompleteScan } from './WmsCompleteScan';
-import type { WmsReceipt } from './WmsContractTypes';
-import { wmsError, wmsUrl } from './WmsInventoryPanel';
 
 export default function ScanStockPage() {
   const location = useLocation();
@@ -53,6 +45,8 @@ export default function ScanStockPage() {
   const mode: ScanMode = location.pathname.includes('/outbound')
     ? 'outbound'
     : 'inbound';
+  const [focusRequest, setFocusRequest] = useState(0);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
   const [nextMode, setNextMode] = useState<ScanMode | null>(null);
   const [currentDraft, setCurrentDraft] =
     useState<ScanStockApprovalRequest | null>(null);
@@ -61,23 +55,19 @@ export default function ScanStockPage() {
   const canViewStock = user.hasViewPermission(ModelType.stockitem);
   const canScanStock =
     canViewStock && user.hasChangePermission(ModelType.stockitem);
-  const receiptId = mode === 'inbound' ? location.state?.wmsReceiptId : null;
-  const receiptQuery = useQuery<{ results: WmsReceipt[] }>({
-    queryKey: ['wms-receipts', receiptId],
-    enabled: !!receiptId && canScanStock && approvalEnabled,
-    queryFn: async () =>
-      (await api.get(wmsUrl('receipts'), { params: { pk: receiptId } })).data
-  });
-  const receipt = receiptQuery.data?.results.find((r) => r.pk === receiptId);
-
   const switchMode = (target: ScanMode) => {
-    if (target !== mode) {
+    if (target !== mode && currentDraft) {
       setNextMode(target);
+      return;
     }
+    setActiveTab('work');
+    if (target !== mode) navigate(`/stock/scan/${target}/`);
+    setFocusRequest((value) => value + 1);
   };
 
   const confirmModeSwitch = () => {
     if (!nextMode) return;
+    setActiveTab('work');
     navigate(`/stock/scan/${nextMode}/`);
     setNextMode(null);
   };
@@ -114,7 +104,7 @@ export default function ScanStockPage() {
   };
 
   return (
-    <Stack gap='lg'>
+    <Stack gap='sm' data-testid='scan-workbench'>
       <PageTitle
         title={
           mode === 'inbound' ? t`Scan stock inbound` : t`Scan stock outbound`
@@ -123,14 +113,15 @@ export default function ScanStockPage() {
 
       <Group justify='space-between' align='flex-start'>
         <div>
-          <Title order={1}>{t`Scan stock`}</Title>
-          <Text c='dimmed'>
-            {t`Use one workspace for inbound, outbound, current stock, and audit records.`}
+          <Title order={2}>{t`Scan stock`}</Title>
+          <Text c='dimmed' size='sm'>
+            {t`扫码核对设备，提交整单审批；收发记录请前往统计查询。`}
           </Text>
         </div>
         <Group gap='xs'>
           <Button
             color='blue'
+            disabled={!canScanStock}
             variant={mode === 'inbound' ? 'filled' : 'light'}
             leftSection={<IconArrowDown size={18} />}
             onClick={() => switchMode('inbound')}
@@ -139,6 +130,7 @@ export default function ScanStockPage() {
           </Button>
           <Button
             color='orange'
+            disabled={!canScanStock}
             variant={mode === 'outbound' ? 'filled' : 'light'}
             leftSection={<IconArrowUp size={18} />}
             onClick={() => switchMode('outbound')}
@@ -148,31 +140,42 @@ export default function ScanStockPage() {
         </Group>
       </Group>
 
+      {!canScanStock && !canApprove && (
+        <Alert>
+          {t`出入库作业需要操作权限。`}{' '}
+          {canViewStock && (
+            <Button
+              variant='subtle'
+              onClick={() => navigate('/stock/statistics/')}
+            >{t`前往统计查询`}</Button>
+          )}
+        </Alert>
+      )}
       <Tabs
-        defaultValue={
-          canApprove &&
+        value={
+          activeTab ??
+          (canApprove &&
           (!canScanStock ||
             new URLSearchParams(location.search).get('tab') === 'approval')
             ? 'approval'
             : canScanStock
               ? 'work'
               : canViewStock
-                ? 'stock'
+                ? 'mine'
                 : approvalEnabled
                   ? 'approval'
-                  : undefined
+                  : undefined)
         }
+        onChange={(value) => {
+          setActiveTab(value);
+          if (value === 'work') setFocusRequest((n) => n + 1);
+        }}
         keepMounted={false}
       >
         <Tabs.List>
           {canScanStock && (
             <Tabs.Tab value='work' leftSection={<IconQrcode size={16} />}>
               {t`Scan work`}
-            </Tabs.Tab>
-          )}
-          {canViewStock && (
-            <Tabs.Tab value='stock' leftSection={<IconPackage size={16} />}>
-              {t`Current stock`}
             </Tabs.Tab>
           )}
           {approvalEnabled && canScanStock && (
@@ -193,68 +196,20 @@ export default function ScanStockPage() {
               {t`审批记录`}
             </Tabs.Tab>
           )}
-          {canViewStock && (
-            <Tabs.Tab value='records' leftSection={<IconHistory size={16} />}>
-              {t`Operation records`}
-            </Tabs.Tab>
-          )}
         </Tabs.List>
 
         {canScanStock && (
-          <Tabs.Panel value='work' pt='lg'>
+          <Tabs.Panel value='work' pt='sm'>
             {approvalEnabled ? (
-              receiptId ? (
-                <Stack>
-                  <Group justify='space-between'>
-                    <Text>
-                      {t`入库单`} #{receiptId}
-                      {receipt ? ` · ${receipt.project}` : ''}
-                    </Text>
-                    <Button
-                      variant='subtle'
-                      disabled={!!currentDraft?.active_line_count}
-                      onClick={() =>
-                        navigate('/stock/scan/inbound/', {
-                          replace: true,
-                          state: null
-                        })
-                      }
-                    >{t`切换为普通扫码`}</Button>
-                  </Group>
-                  {receiptQuery.isError ? (
-                    <Alert color='red'>{wmsError(receiptQuery.error)}</Alert>
-                  ) : receiptQuery.isPending ? (
-                    <Text>{t`正在加载入库单…`}</Text>
-                  ) : !receipt || receipt.cancelled ? (
-                    <Alert color='red'>{t`入库单不存在或已取消。`}</Alert>
-                  ) : (
-                    <WmsCompleteScan
-                      key={receipt.pk}
-                      mode='inbound'
-                      receipt={receipt}
-                      onDraftChange={setCurrentDraft}
-                    />
-                  )}
-                </Stack>
-              ) : (
-                <ScanWorkPanel
-                  key={mode}
-                  mode={mode}
-                  onDraftChange={setCurrentDraft}
-                />
-              )
+              <ScanWorkPanel
+                key={mode}
+                focusRequest={focusRequest}
+                mode={mode}
+                onDraftChange={setCurrentDraft}
+              />
             ) : (
               <Alert color='yellow'>{t`请管理员启用扫码审批后使用完整标签业务。`}</Alert>
             )}
-          </Tabs.Panel>
-        )}
-
-        {canViewStock && (
-          <Tabs.Panel value='stock' pt='lg'>
-            <Button
-              variant='light'
-              onClick={() => navigate('/stock/location/index/stock-items')}
-            >{t`前往库存页面`}</Button>
           </Tabs.Panel>
         )}
 
@@ -272,41 +227,6 @@ export default function ScanStockPage() {
         {canApprove && (
           <Tabs.Panel value='approval-history' pt='lg'>
             <ScanApprovalRequestListPanel scope='history' mode={mode} />
-          </Tabs.Panel>
-        )}
-
-        {canViewStock && (
-          <Tabs.Panel value='records' pt='lg'>
-            <Tabs defaultValue='posted' keepMounted={false} variant='outline'>
-              <Tabs.List>
-                <Tabs.Tab value='posted'>{t`期间入出库记录`}</Tabs.Tab>
-                <Tabs.Tab
-                  value='tracking'
-                  leftSection={<IconClipboardList size={16} />}
-                >
-                  {t`Stock tracking`}
-                </Tabs.Tab>
-                <Tabs.Tab value='scans' leftSection={<IconQrcode size={16} />}>
-                  {t`Scan records`}
-                </Tabs.Tab>
-              </Tabs.List>
-              <Tabs.Panel value='posted' pt='md'>
-                <Button
-                  variant='light'
-                  onClick={() =>
-                    navigate('/stock/location/index/stock-items', {
-                      state: { wmsTool: 'records' }
-                    })
-                  }
-                >{t`查询期间入出库记录`}</Button>
-              </Tabs.Panel>
-              <Tabs.Panel value='tracking' pt='md'>
-                <StockTrackingTable scope='global' />
-              </Tabs.Panel>
-              <Tabs.Panel value='scans' pt='md'>
-                <ScanStockEventTable mode={mode} />
-              </Tabs.Panel>
-            </Tabs>
           </Tabs.Panel>
         )}
       </Tabs>

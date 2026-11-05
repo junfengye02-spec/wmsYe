@@ -4095,6 +4095,14 @@ class WmsContract(InvenTree.models.InvenTreeModel):
     """Contract defaults are inherited independently by receipt detail fields."""
 
     number = models.CharField(max_length=100, unique=True)
+    project = models.ForeignKey(
+        'common.ProjectCode',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name='wms_contracts',
+    )
+    active = models.BooleanField(default=True)
     acceptance_date = models.DateField(null=True, blank=True)
     warranty_months = models.PositiveIntegerField(
         default=12, validators=[MinValueValidator(1)]
@@ -4186,6 +4194,7 @@ class WmsReceiptDetail(
     uid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     label_version = models.PositiveIntegerField(default=1, editable=False)
     legacy = models.BooleanField(default=False)
+    cancelled = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -4234,7 +4243,7 @@ class WmsBusinessChange(InvenTree.models.InvenTreeModel):
     """Append-only before/after audit for preparation, attribution and printing."""
 
     contract = models.ForeignKey(
-        WmsContract, null=True, on_delete=models.PROTECT, related_name='changes'
+        WmsContract, null=True, on_delete=models.SET_NULL, related_name='changes'
     )
     receipt = models.ForeignKey(
         WmsReceipt, null=True, on_delete=models.PROTECT, related_name='changes'
@@ -4475,15 +4484,6 @@ class ScanStockEvent(InvenTree.models.InvenTreeModel):
             ),
         ]
         constraints = [
-            models.UniqueConstraint(
-                fields=['source_detail'],
-                condition=Q(
-                    source_detail__isnull=False,
-                    operation='INBOUND',
-                    outcome__in=['PENDING', 'SUCCESS'],
-                ),
-                name='wms_detail_one_inbound',
-            ),
             models.CheckConstraint(
                 condition=Q(operation__in=['INBOUND', 'OUTBOUND']),
                 name='scan_stock_operation_valid',
@@ -4893,3 +4893,30 @@ class WmsImportTask(InvenTree.models.InvenTreeModel):
     result = models.JSONField(default=list)
     created_at = models.DateTimeField(default=InvenTree.helpers.current_time)
     completed_at = models.DateTimeField(null=True, blank=True)
+
+
+class WmsBusinessAttachment(models.Model):
+    """Private, append-only evidence attached to a business approval request.
+
+    Payloads live in the database rather than public media storage. Bounded uploads
+    are only returned by the authenticated download view; metadata is the audit.
+    """
+
+    request = models.ForeignKey(
+        ScanStockApprovalRequest,
+        on_delete=models.PROTECT,
+        related_name='business_attachments',
+    )
+    name = models.CharField(max_length=200)
+    content = models.BinaryField(editable=False)
+    size = models.PositiveIntegerField()
+    content_type = models.CharField(max_length=100)
+    note = models.CharField(max_length=1000, blank=True)
+    uploaded_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    uploader_name = models.CharField(max_length=200)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        """Keep supporting documents in upload order."""
+
+        ordering = ['uploaded_at', 'pk']

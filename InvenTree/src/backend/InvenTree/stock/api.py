@@ -68,6 +68,7 @@ from order.serializers import (
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from stock.generators import generate_batch_code, generate_serial_number
+from stock.history_permissions import StockHistoryAccessMixin
 from stock.models import (
     ScanStockApprovalRequest,
     ScanStockEvent,
@@ -2252,10 +2253,10 @@ class StockItemTestResultList(
         serializer.save(user=self.request.user)
 
 
-class StockTrackingDetail(RetrieveAPI):
+class StockTrackingDetail(StockHistoryAccessMixin, RetrieveAPI):
     """Detail API endpoint for StockItemTracking model."""
 
-    queryset = StockItemTracking.objects.all()
+    queryset = StockItemTracking.objects.select_related('scan_event')
     serializer_class = StockSerializers.StockTrackingSerializer
 
 
@@ -2318,7 +2319,11 @@ class StockTrackingFilter(FilterSet):
 
 
 class StockTrackingList(
-    SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin, ListAPI
+    StockHistoryAccessMixin,
+    SerializerContextMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListAPI,
 ):
     """API endpoint for list view of StockItemTracking objects.
 
@@ -2328,7 +2333,9 @@ class StockTrackingList(
     - GET: Return list of StockItemTracking objects
     """
 
-    queryset = StockItemTracking.objects.all().prefetch_related('item', 'part')
+    queryset = StockItemTracking.objects.select_related('scan_event').prefetch_related(
+        'item', 'part'
+    )
     serializer_class = StockSerializers.StockTrackingSerializer
     filterset_class = StockTrackingFilter
     output_options = StockTrackingOutputOptions
@@ -2409,6 +2416,7 @@ class StockTrackingList(
     search_fields = ['notes']
 
 
+from stock.business_documents import WmsBusinessDocumentDownload, WmsBusinessDocuments
 from stock.contract_api import (
     WmsChangeHistory,
     WmsContracts,
@@ -2418,18 +2426,40 @@ from stock.contract_api import (
     WmsProjects,
     WmsReceiptCancel,
     WmsReceiptChange,
+    WmsReceiptLines,
     WmsReceipts,
+    WmsScanCandidates,
 )
 
 from .wms import WmsImports, WmsInventory, WmsOptions, WmsParts, WmsRecords
 
 stock_api_urls = [
     path(
+        'wms/scan-candidates/',
+        WmsScanCandidates.as_view(),
+        name='api-wms-scan-candidates',
+    ),
+    path(
+        'scan/requests/<int:pk>/attachments/',
+        WmsBusinessDocuments.as_view(),
+        name='api-stock-business-documents',
+    ),
+    path(
+        'scan/requests/<int:pk>/attachments/<int:attachment_pk>/download/',
+        WmsBusinessDocumentDownload.as_view(),
+        name='api-stock-business-document-download',
+    ),
+    path(
         'wms/receipts/<int:pk>/',
         WmsReceiptChange.as_view(),
         name='api-wms-receipt-change',
     ),
     path('wms/contracts/', WmsContracts.as_view(), name='api-wms-contracts'),
+    path(
+        'wms/receipts/<int:pk>/lines/',
+        WmsReceiptLines.as_view(),
+        name='api-wms-receipt-lines',
+    ),
     path('wms/projects/', WmsProjects.as_view(), name='api-wms-projects'),
     path('wms/receipts/', WmsReceipts.as_view(), name='api-wms-receipts'),
     path(

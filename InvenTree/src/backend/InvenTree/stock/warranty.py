@@ -112,7 +112,7 @@ def resolve_label(value, *, lock=False):
         detail = query.get(uid=data['id'])
     except WmsReceiptDetail.DoesNotExist as error:
         raise ValidationError('Receipt detail does not exist') from error
-    if detail.receipt.cancelled:
+    if detail.receipt.cancelled or detail.cancelled:
         raise ValidationError('Receipt was cancelled; this label cannot be used')
     if not label_matches(detail, data):
         raise ValidationError(

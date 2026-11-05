@@ -5,7 +5,10 @@
 
 from decimal import Decimal
 
+from django.core.exceptions import ValidationError as ModelValidationError
 from django.db import IntegrityError, transaction
+from django.db.models import Case, CharField, Exists, OuterRef, Q, Sum, Value, When
+from django.db.models.deletion import ProtectedError
 from django.shortcuts import get_object_or_404
 
 from drf_spectacular.types import OpenApiTypes
@@ -49,11 +52,43 @@ class ContractBusinessView(WmsView):
 class ContractInput(serializers.ModelSerializer):
     """Validate positive defaults and normalized, unique contract numbers."""
 
+    project_id = serializers.PrimaryKeyRelatedField(
+        source='project',
+        queryset=ProjectCode.objects.filter(active=True),
+        required=False,
+        allow_null=True,
+    )
+
+    def validate(self, attrs):
+        """Reject reparenting that would contradict existing document attribution."""
+        if not self.instance and not attrs.get('project'):
+            raise ValidationError({'project_id': '新建合同必须选择归属项目'})
+        if (
+            self.instance
+            and 'project' in attrs
+            and attrs['project'] != self.instance.project
+        ):
+            project = attrs['project']
+            if project is None and self.instance.project_id:
+                raise ValidationError('已归属的合同不能清空项目')
+            if project and (
+                self.instance.receipts.exclude(project_code=project).exists()
+                or self.instance.details.exclude(project_code=project).exists()
+            ):
+                raise ValidationError('合同历史单据存在其他或未确认项目，请先核对归属')
+        return attrs
+
     class Meta:
         """Writable contract business fields."""
 
         model = WmsContract
-        fields = ['number', 'acceptance_date', 'warranty_months']
+        fields = [
+            'number',
+            'acceptance_date',
+            'warranty_months',
+            'active',
+            'project_id',
+        ]
 
     def validate_number(self, value):
         """Trim before enforcing uniqueness."""
@@ -119,7 +154,9 @@ class ReceiptInput(serializers.Serializer):
     request_key = serializers.UUIDField()
     project = serializers.CharField(max_length=100, allow_blank=False, required=False)
     project_id = serializers.IntegerField(min_value=1, required=False)
-    contract = serializers.PrimaryKeyRelatedField(queryset=WmsContract.objects.all())
+    contract = serializers.PrimaryKeyRelatedField(
+        queryset=WmsContract.objects.filter(active=True)
+    )
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.filter(structural=False)
     )
@@ -127,7 +164,9 @@ class ReceiptInput(serializers.Serializer):
 
     def validate(self, attrs):
         """Bind every new preparation to an existing active project archive."""
-        return bind_project(attrs)
+        attrs = bind_project(attrs)
+        validate_contract_project(attrs['contract'], attrs['project_code'])
+        return attrs
 
 
 class DetailChangeInput(serializers.Serializer):
@@ -147,7 +186,28 @@ class DetailChangeInput(serializers.Serializer):
     def validate(self, attrs):
         """Reject item-level dates instead of reporting a misleading success."""
         reject_warranty_overrides(self.initial_data)
-        return bind_project(attrs, required=False)
+        detail = self.context.get('detail')
+        same_project = detail and (
+            (attrs.get('project') == detail.project)
+            or (
+                attrs.get('project_id') is not None
+                and attrs['project_id'] == detail.project_code_id
+            )
+        )
+        if (
+            detail
+            and attrs.get('contract')
+            and attrs['contract'].pk != detail.contract_id
+            and not attrs['contract'].active
+        ):
+            raise ValidationError('合同已停用，不能用于新归属')
+        attrs = bind_project(attrs, required=False, allow_inactive=bool(same_project))
+        if detail:
+            validate_contract_project(
+                attrs.get('contract', detail.contract),
+                attrs.get('project_code', detail.project_code),
+            )
+        return attrs
 
 
 class ProjectInput(serializers.Serializer):
@@ -157,12 +217,17 @@ class ProjectInput(serializers.Serializer):
     description = serializers.CharField(
         max_length=200, required=False, allow_blank=True
     )
+    active = serializers.BooleanField(required=False)
 
     def validate_code(self, value):
         """Duplicate project numbers must be selected rather than created again."""
-        if ProjectCode.objects.filter(code=value).exists():
+        if (
+            ProjectCode.objects.filter(code=value.strip())
+            .exclude(pk=getattr(self.instance, 'pk', None))
+            .exists()
+        ):
             raise ValidationError('项目号已存在，请选择已有项目')
-        return value
+        return value.strip()
 
 
 class WmsProjects(ContractBusinessView):
@@ -172,35 +237,70 @@ class WmsProjects(ContractBusinessView):
     def get(self, request):
         """Return reusable active project records independently of current stock."""
         require(request, StockItem, 'view')
+        query = ProjectCode.objects.order_by('code')
+        if request.query_params.get('all') != 'true':
+            query = query.filter(active=True)
         return Response(
-            {
-                'results': list(
-                    ProjectCode.objects.filter(active=True)
-                    .order_by('code')
-                    .values('pk', 'code', 'description', 'active')
-                )
-            }
+            {'results': list(query.values('pk', 'code', 'description', 'active'))}
         )
 
     @extend_schema(request=ProjectInput, responses={201: OpenApiTypes.OBJECT})
     def post(self, request):
-        """Create one archive record; a duplicate never creates a second project."""
+        """Maintain unique project archives without destroying referenced identities."""
         require(request, StockItem, 'change')
-        serializer = ProjectInput(data=request.data)
-        serializer.is_valid(raise_exception=True)
         try:
             with transaction.atomic():
-                project = ProjectCode.objects.create(**serializer.validated_data)
+                project = None
+                if request.data.get('pk'):
+                    project = get_object_or_404(
+                        ProjectCode.objects.select_for_update(),
+                        pk=serializers.IntegerField(min_value=1).run_validation(
+                            request.data['pk']
+                        ),
+                    )
+                before = (
+                    {
+                        'pk': project.pk,
+                        'code': project.code,
+                        'description': project.description,
+                        'active': project.active,
+                    }
+                    if project
+                    else {}
+                )
+                if request.data.get('action') == 'delete':
+                    if not project:
+                        raise ValidationError('请选择要删除的项目')
+                    project.delete()
+                    audit(request.user, 'project_delete', before=before)
+                    return Response({'deleted': True})
+                serializer = ProjectInput(
+                    project, data=request.data, partial=project is not None
+                )
+                serializer.is_valid(raise_exception=True)
+                project = project or ProjectCode()
+                for key, value in serializer.validated_data.items():
+                    setattr(project, key, value)
+                project.save()
                 row = {
                     'pk': project.pk,
                     'code': project.code,
                     'description': project.description,
                     'active': project.active,
                 }
-                audit(request.user, 'project_create', after=row)
+                audit(
+                    request.user,
+                    'project_update' if before else 'project_create',
+                    before=before,
+                    after=row,
+                )
+        except ProtectedError as exc:
+            raise ValidationError('项目已被使用，请停用，不能删除') from exc
+        except ModelValidationError as exc:
+            raise ValidationError(exc.message_dict) from exc
         except IntegrityError as exc:
             raise ValidationError({'code': '项目号已存在，请选择已有项目'}) from exc
-        return Response(row, status=201)
+        return Response(row, status=200 if before else 201)
 
 
 def reject_warranty_overrides(data):
@@ -238,11 +338,20 @@ def audit(
     )
 
 
+def validate_contract_project(contract, project):
+    """Enforce explicit ownership while keeping legacy unassigned contracts usable."""
+    if contract.project_id and contract.project_id != getattr(project, 'pk', None):
+        raise ValidationError('合同不属于所选项目，请选择该项目的合同')
+
+
 def contract_row(contract):
     """Include impact counts for a review before changing defaults."""
     return {
         'pk': contract.pk,
         'number': contract.number,
+        'project_id': contract.project_id,
+        'project': contract.project.code if contract.project_id else '',
+        'active': contract.active,
         'acceptance_date': contract.acceptance_date,
         'warranty_months': contract.warranty_months,
         'updated_at': contract.updated_at.isoformat(),
@@ -253,12 +362,21 @@ def contract_row(contract):
 
 def detail_row(detail):
     """Expose current effective values separately from immutable event snapshots."""
+    from report.label_layout import equipment_label_font_size
+
     events = (
         detail.events.filter(operation='INBOUND')
         .exclude(outcome='FAILED')
         .order_by('-pk')
     )
     event = events.first()
+    totals = events.aggregate(
+        received=Sum('requested_quantity', filter=Q(outcome='SUCCESS')),
+        pending=Sum('requested_quantity', filter=Q(outcome='PENDING')),
+    )
+    received_quantity = (totals['received'] or Decimal(0)) + (
+        detail.prepared_quantity if detail.legacy else Decimal(0)
+    )
     return {
         'pk': detail.pk,
         'receipt': detail.receipt_id,
@@ -266,6 +384,11 @@ def detail_row(detail):
         'part': detail.part_id,
         'equipment': detail.part.IPN or detail.part.barcode,
         'name': detail.part.name,
+        'brand': detail.part.brand,
+        'specification': detail.part.specification,
+        'model_number': detail.part.model_number,
+        'units': detail.part.units,
+        'label_font_size': equipment_label_font_size(detail.part),
         'project': detail.project,
         'project_id': detail.project_code_id,
         'contract': detail.contract_id,
@@ -273,18 +396,20 @@ def detail_row(detail):
         'label_version': detail.label_version,
         'barcode': encode_label(detail),
         'legacy': detail.legacy,
-        'cancelled': detail.receipt.cancelled,
+        'cancelled': detail.receipt.cancelled or detail.cancelled,
         'state': 'CANCELLED'
-        if detail.receipt.cancelled
+        if detail.receipt.cancelled or detail.cancelled
         else (
-            'RECEIVED'
-            if detail.legacy or (event and event.outcome == 'SUCCESS')
-            else ('IN_REQUEST' if event else 'READY')
+            'IN_REQUEST'
+            if totals['pending']
+            else ('RECEIVED' if detail.legacy or totals['received'] else 'READY')
         ),
         'active_request': event.approval_request_id
         if event and event.outcome == 'PENDING'
         else None,
         'actual_quantity': event.requested_quantity if event else None,
+        'received_quantity': received_quantity,
+        'pending_quantity': totals['pending'] or Decimal(0),
         **warranty_values(detail),
     }
 
@@ -301,11 +426,14 @@ def receipt_row(receipt):
         'operator': receipt.operator_id,
         'cancelled': receipt.cancelled,
         'created_at': receipt.created_at,
+        'updated_at': receipt.updated_at.isoformat(),
+        'contract_number': receipt.contract.number,
+        'location_name': receipt.location.pathstring,
         'details': [
             detail_row(detail)
-            for detail in receipt.details.select_related(
-                'part', 'contract', 'receipt'
-            ).order_by('pk')
+            for detail in receipt.details.filter(cancelled=False)
+            .select_related('part', 'contract', 'receipt')
+            .order_by('pk')
         ],
     }
 
@@ -330,6 +458,12 @@ def ensure_changeable(detail):
     return items
 
 
+def require_receipt_owner(receipt, user):
+    """Only the owner or an authorized administrator may maintain a receipt."""
+    if receipt.operator_id != user.pk and not user.is_superuser:
+        raise PermissionDenied('只能维护自己的入库单')
+
+
 class WmsContracts(ContractBusinessView):
     """Operators can maintain contract data without gaining catalogue edit rights."""
 
@@ -340,7 +474,14 @@ class WmsContracts(ContractBusinessView):
     def get(self, request):
         """Search contracts, or read one contract and its change history."""
         require(request, StockItem, 'view')
-        query = WmsContract.objects.order_by('number')
+        query = WmsContract.objects.select_related('project').order_by('number')
+        if request.query_params.get('project_id'):
+            project_id = serializers.IntegerField(min_value=1).run_validation(
+                request.query_params['project_id']
+            )
+            query = query.filter(Q(project_id=project_id) | Q(project__isnull=True))
+        if request.query_params.get('active') == 'true':
+            query = query.filter(active=True)
         if request.query_params.get('search'):
             query = query.filter(number__icontains=request.query_params['search'])
         return Response({'results': [contract_row(c) for c in query[:500]]})
@@ -362,6 +503,15 @@ class WmsContracts(ContractBusinessView):
             seed = get_object_or_404(WmsContract, pk=pk)
             lock_parts(seed.details.values_list('part_id', flat=True))
             instance = WmsContract.objects.select_for_update().get(pk=seed.pk)
+        if request.data.get('action') == 'delete':
+            if not instance:
+                raise ValidationError('请选择要删除的合同')
+            if instance.receipts.exists() or instance.details.exists():
+                raise ValidationError('合同已被使用，请停用，不能删除')
+            before = contract_row(instance)
+            instance.delete()
+            audit(request.user, 'contract_delete', before=before)
+            return Response({'deleted': True})
         serializer = ContractInput(
             instance, data=request.data, partial=instance is not None
         )
@@ -370,7 +520,15 @@ class WmsContracts(ContractBusinessView):
             before = contract_row(instance)
             if request.data.get('preview') is True:
                 return Response(
-                    {'before': before, 'after': clean_json(serializer.validated_data)}
+                    {
+                        'before': before,
+                        'after': clean_json(
+                            {
+                                key: value.pk if key == 'project' and value else value
+                                for key, value in serializer.validated_data.items()
+                            }
+                        ),
+                    }
                 )
             if not str(request.data.get('reason', '')).strip():
                 raise ValidationError('修改原因必填')
@@ -431,7 +589,9 @@ class WmsReceipts(ContractBusinessView):
     def get(self, request):
         """Read only owned preparations; administrators may inspect all."""
         require(request, StockItem, 'view')
-        query = WmsReceipt.objects.order_by('-pk')
+        query = WmsReceipt.objects.select_related('contract', 'location').order_by(
+            '-pk'
+        )
         if not request.user.is_superuser:
             query = query.filter(operator=request.user)
         if request.query_params.get('pk'):
@@ -439,7 +599,67 @@ class WmsReceipts(ContractBusinessView):
                 request.query_params['pk']
             )
             query = query.filter(pk=pk)
-        return Response({'results': [receipt_row(r) for r in query[:100]]})
+        if request.query_params.get('manage') != 'true':
+            return Response({'results': [receipt_row(r) for r in query[:100]]})
+        params = request.query_params
+        if params.get('number'):
+            number = serializers.IntegerField(min_value=1).run_validation(
+                params['number'].lstrip('#')
+            )
+            query = query.filter(pk=number)
+        if params.get('project'):
+            query = query.filter(project__icontains=params['project'])
+        if params.get('contract'):
+            query = query.filter(contract__number__icontains=params['contract'])
+        for key, lookup in [
+            ('start', 'created_at__date__gte'),
+            ('end', 'created_at__date__lte'),
+        ]:
+            if params.get(key):
+                query = query.filter(
+                    **{lookup: serializers.DateField().run_validation(params[key])}
+                )
+        details = WmsReceiptDetail.objects.filter(
+            receipt_id=OuterRef('pk'), cancelled=False
+        )
+        received = Q(legacy=True) | Q(
+            events__outcome='SUCCESS', events__operation='INBOUND'
+        )
+        query = query.annotate(
+            has_pending=Exists(details.filter(events__outcome='PENDING')),
+            has_received=Exists(details.filter(received)),
+            has_unused=Exists(details.exclude(received)),
+        ).annotate(
+            management_state=Case(
+                When(cancelled=True, then=Value('CANCELLED')),
+                When(has_pending=True, then=Value('IN_REQUEST')),
+                When(has_received=True, has_unused=True, then=Value('PARTIAL')),
+                When(has_received=True, then=Value('RECEIVED')),
+                default=Value('READY'),
+                output_field=CharField(),
+            )
+        )
+        if params.get('status'):
+            query = query.filter(
+                management_state=serializers.ChoiceField(
+                    choices=['READY', 'IN_REQUEST', 'PARTIAL', 'RECEIVED', 'CANCELLED']
+                ).run_validation(params['status'])
+            )
+        offset = serializers.IntegerField(min_value=0).run_validation(
+            params.get('offset', 0)
+        )
+        limit = serializers.IntegerField(min_value=1, max_value=100).run_validation(
+            params.get('limit', 25)
+        )
+        return Response(
+            {
+                'count': query.count(),
+                'results': [
+                    dict(receipt_row(r), status=r.management_state)
+                    for r in query[offset : offset + limit]
+                ],
+            }
+        )
 
     @extend_schema(
         request=ReceiptInput,
@@ -457,6 +677,10 @@ class WmsReceipts(ContractBusinessView):
         if not values['location'].check_ownership(request.user):
             raise PermissionDenied('没有此库位的业务权限')
         lock_parts([d['part'].pk for d in details])
+        values['contract'] = WmsContract.objects.select_for_update().get(
+            pk=values['contract'].pk
+        )
+        validate_contract_project(values['contract'], values['project_code'])
         existing = WmsReceipt.objects.filter(request_key=values['request_key']).first()
         fingerprint = clean_json(
             {
@@ -512,8 +736,7 @@ class WmsReceiptCancel(ContractBusinessView):
         """Require removal of active requests before cancellation."""
         require(request, StockItem, 'change')
         receipt = get_object_or_404(WmsReceipt.objects.select_for_update(), pk=pk)
-        if receipt.operator_id != request.user.pk:
-            raise PermissionDenied('仅填单人可取消待入库记录')
+        require_receipt_owner(receipt, request.user)
         reason = str(request.data.get('reason', '')).strip()
         if not reason:
             raise ValidationError('取消原因必填')
@@ -552,13 +775,21 @@ class WmsDetailChange(ContractBusinessView):
     def post(self, request, pk):
         """Replace label version only when project or contract attribution changes."""
         require(request, StockItem, 'change')
-        serializer = DetailChangeInput(data=request.data)
+        seed = get_object_or_404(WmsReceiptDetail, pk=pk)
+        serializer = DetailChangeInput(data=request.data, context={'detail': seed})
         serializer.is_valid(raise_exception=True)
         values = dict(serializer.validated_data)
-        seed = get_object_or_404(WmsReceiptDetail, pk=pk)
+        if not seed.legacy:
+            require_receipt_owner(seed.receipt, request.user)
         lock_parts([seed.part_id])
         detail = WmsReceiptDetail.objects.select_for_update().get(pk=pk)
-        if detail.receipt.cancelled:
+        current_contract = WmsContract.objects.select_for_update().get(
+            pk=values.get('contract', detail.contract).pk
+        )
+        validate_contract_project(
+            current_contract, values.get('project_code', detail.project_code)
+        )
+        if detail.receipt.cancelled or detail.cancelled:
             raise ValidationError('已取消记录不能修改')
         if values.pop('label_version') != detail.label_version:
             raise ValidationError('标签版本已变化，请刷新')
@@ -585,6 +816,7 @@ class WmsDetailChange(ContractBusinessView):
         if attribution:
             detail.label_version += 1
         detail.save()
+        detail.receipt.save(update_fields=['updated_at'])
         if attribution:
             StockItem.objects.filter(source_detail=detail).update(
                 batch=detail.project, project_code=detail.project_code
@@ -593,6 +825,7 @@ class WmsDetailChange(ContractBusinessView):
             request.user,
             'detail_update',
             detail=detail,
+            receipt=detail.receipt,
             before=before,
             after=detail_row(detail),
             reason=reason,
@@ -622,10 +855,14 @@ class WmsReceiptChange(ContractBusinessView):
         """Update every prepared label together, requiring replacement on attribution changes."""
         require(request, StockItem, 'change')
         receipt = get_object_or_404(WmsReceipt.objects.select_for_update(), pk=pk)
-        if receipt.operator_id != request.user.pk:
-            raise PermissionDenied('仅填单人可修改待入库公共信息')
+        require_receipt_owner(receipt, request.user)
         if receipt.cancelled:
             raise ValidationError('已取消记录不能修改')
+        if (
+            request.data.get('expected_updated_at')
+            and request.data['expected_updated_at'] != receipt.updated_at.isoformat()
+        ):
+            raise ValidationError('入库单已变化，请刷新后重试')
         project_values = bind_project(
             {
                 **(
@@ -646,12 +883,19 @@ class WmsReceiptChange(ContractBusinessView):
                     if 'project_id' in request.data
                     else {}
                 ),
-            }
+            },
+            allow_inactive=(
+                request.data.get('project') == receipt.project
+                or request.data.get('project_id') == receipt.project_code_id
+            ),
         )
         project = project_values['project']
         contract = serializers.PrimaryKeyRelatedField(
             queryset=WmsContract.objects.all()
         ).run_validation(request.data.get('contract'))
+        validate_contract_project(contract, project_values['project_code'])
+        if contract.pk != receipt.contract_id and not contract.active:
+            raise ValidationError('合同已停用，不能用于新归属')
         location = serializers.PrimaryKeyRelatedField(
             queryset=StockLocation.objects.filter(structural=False)
         ).run_validation(request.data.get('location'))
@@ -661,7 +905,11 @@ class WmsReceiptChange(ContractBusinessView):
         if not location.check_ownership(request.user):
             raise PermissionDenied('没有此库位的业务权限')
         lock_parts(receipt.details.values_list('part_id', flat=True))
-        details = list(receipt.details.select_for_update().order_by('pk'))
+        contract = WmsContract.objects.select_for_update().get(pk=contract.pk)
+        validate_contract_project(contract, project_values['project_code'])
+        details = list(
+            receipt.details.filter(cancelled=False).select_for_update().order_by('pk')
+        )
         before = receipt_row(receipt)
         for detail in details:
             ensure_changeable(detail)
@@ -692,6 +940,99 @@ class WmsReceiptChange(ContractBusinessView):
             before=before,
             after=receipt_row(receipt),
             reason=reason,
+        )
+        return Response(receipt_row(receipt))
+
+
+class ReceiptLineInput(DetailInput):
+    """Existing line IDs retain identity; omitted IDs create new lines."""
+
+    pk = serializers.IntegerField(min_value=1, required=False)
+
+    class Meta(DetailInput.Meta):
+        """Retain identity when editing an existing equipment line."""
+
+        fields = ['pk', *DetailInput.Meta.fields]
+
+
+class ReceiptLinesInput(serializers.Serializer):
+    """Require an unchanged document revision before replacing unused lines."""
+
+    details = ReceiptLineInput(many=True, allow_empty=False, max_length=100)
+    expected_updated_at = serializers.CharField()
+    reason = serializers.CharField(max_length=2000, allow_blank=False)
+
+
+class WmsReceiptLines(ContractBusinessView):
+    """Edit unused equipment lines, retaining removed identities and audit history."""
+
+    @extend_schema(request=ReceiptLinesInput, responses=OpenApiTypes.OBJECT)
+    @transaction.atomic
+    def post(self, request, pk):
+        """Lock stock identities and reject all edits once any line is in use."""
+        require(request, StockItem, 'change')
+        receipt = get_object_or_404(WmsReceipt.objects.select_for_update(), pk=pk)
+        require_receipt_owner(receipt, request.user)
+        if receipt.cancelled:
+            raise ValidationError('已作废入库单不能修改')
+        serializer = ReceiptLinesInput(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        values = serializer.validated_data
+        if receipt.updated_at.isoformat() != values['expected_updated_at']:
+            raise ValidationError('入库单已变化，请刷新后重试')
+        incoming = values['details']
+        lock_parts(
+            [
+                *receipt.details.values_list('part_id', flat=True),
+                *[d['part'].pk for d in incoming],
+            ]
+        )
+        old = {
+            d.pk: d for d in receipt.details.filter(cancelled=False).select_for_update()
+        }
+        ids = [d['pk'] for d in incoming if 'pk' in d]
+        if len(ids) != len(set(ids)) or any(pk not in old for pk in ids):
+            raise ValidationError('设备明细重复或不属于此入库单')
+        for detail in old.values():
+            ensure_changeable(detail)
+            if (
+                detail.legacy
+                or detail.stock_items.exists()
+                or detail.events.filter(outcome='SUCCESS').exists()
+            ):
+                raise ValidationError('已入库单据不能增删设备或修改准备数量')
+        before = receipt_row(receipt)
+        for row in incoming:
+            line_id = row.get('pk')
+            if line_id:
+                detail = old[line_id]
+                if detail.part_id != row['part'].pk:
+                    detail.label_version += 1
+                detail.part = row['part']
+                detail.prepared_quantity = row['prepared_quantity']
+                detail.save()
+            else:
+                WmsReceiptDetail.objects.create(
+                    receipt=receipt,
+                    project=receipt.project,
+                    project_code=receipt.project_code,
+                    contract=receipt.contract,
+                    part=row['part'],
+                    prepared_quantity=row['prepared_quantity'],
+                )
+        for line_id, detail in old.items():
+            if line_id not in ids:
+                detail.cancelled = True
+                detail.label_version += 1
+                detail.save(update_fields=['cancelled', 'label_version', 'updated_at'])
+        receipt.save(update_fields=['updated_at'])
+        audit(
+            request.user,
+            'receipt_lines_update',
+            receipt=receipt,
+            before=before,
+            after=receipt_row(receipt),
+            reason=values['reason'],
         )
         return Response(receipt_row(receipt))
 
@@ -886,6 +1227,10 @@ class WmsChangeHistory(ContractBusinessView):
         }
         if not filters:
             raise ValidationError('请选择合同、待入库记录或明细')
+        if filters.get('receipt_id'):
+            require_receipt_owner(
+                get_object_or_404(WmsReceipt, pk=filters['receipt_id']), request.user
+            )
         return Response(
             {
                 'results': [
@@ -901,4 +1246,68 @@ class WmsChangeHistory(ContractBusinessView):
                     for row in query.filter(**filters)[:100]
                 ]
             }
+        )
+
+
+class WmsScanCandidates(ContractBusinessView):
+    """Find existing prepared sources for the same label-based scanning workflow."""
+
+    @extend_schema(responses=OpenApiTypes.OBJECT)
+    def get(self, request):
+        """Search by catalogue name/model without creating or changing any stock."""
+        require(request, StockItem, 'view')
+        search = str(request.query_params.get('search', '')).strip()
+        operation = request.query_params.get('operation', 'INBOUND')
+        if operation not in ('INBOUND', 'OUTBOUND'):
+            raise ValidationError('请选择入库或出库')
+        query = (
+            WmsReceiptDetail.objects.filter(cancelled=False, receipt__cancelled=False)
+            .filter(
+                Q(part__name__icontains=search)
+                | Q(part__IPN__icontains=search)
+                | Q(part__model_number__icontains=search)
+            )
+            .select_related('part', 'contract', 'receipt', 'project_code')
+        )
+        location = request.query_params.get('location')
+        if location:
+            location = serializers.IntegerField(min_value=1).run_validation(location)
+        if operation == 'INBOUND':
+            query = query.filter(legacy=False)
+            if not request.user.is_superuser:
+                query = query.filter(receipt__operator=request.user)
+            if location:
+                query = query.filter(receipt__location_id=location)
+        rows = []
+        for detail in query.order_by('-pk')[:100]:
+            stock = StockItem.objects.filter(
+                current_stock_filter(), source_detail=detail
+            ).select_related('location')
+            if location:
+                stock = stock.filter(location_id=location)
+            balances = [
+                {
+                    'pk': item.pk,
+                    'location': item.location_id,
+                    'location_name': item.location.pathstring if item.location else '',
+                    'quantity': item.quantity,
+                    'frozen': item.scan_frozen_quantity(),
+                    'allocated': item.allocation_count(),
+                    'available': item.unallocated_quantity(),
+                }
+                for item in stock
+            ]
+            if operation == 'OUTBOUND' and not any(
+                item['available'] > 0 for item in balances
+            ):
+                continue
+            rows.append(
+                {
+                    **detail_row(detail),
+                    'receipt_location_name': detail.receipt.location.pathstring,
+                    'stock': balances,
+                }
+            )
+        return Response(
+            {'results': rows, 'limit': 100, 'has_more': query.count() > 100}
         )

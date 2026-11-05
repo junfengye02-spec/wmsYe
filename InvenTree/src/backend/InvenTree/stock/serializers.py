@@ -195,13 +195,12 @@ class ScanStockRequestSerializer(serializers.Serializer):
                     'project_id': attrs['project_id'],
                     **({'project': attrs['batch']} if attrs.get('batch') else {}),
                 },
-                allow_inactive=operation == ScanStockEvent.Operation.OUTBOUND,
+                allow_inactive=operation == ScanStockEvent.Operation.OUTBOUND
+                or attrs['barcode'].startswith('WMS1:'),
             )
             attrs['batch'] = selected.code
         if not attrs.get('batch') and not attrs['barcode'].startswith('WMS1:'):
             raise ValidationError({'batch': _('项目必填')})
-        if operation == ScanStockEvent.Operation.OUTBOUND and not attrs.get('purpose'):
-            raise ValidationError({'purpose': _('出库用途必填')})
 
         if attrs.get('stock_item_id') and attrs.get('create_stock_item'):
             raise ValidationError(
@@ -263,6 +262,10 @@ class ScanStockRequestSerializer(serializers.Serializer):
 class ScanStockEventSerializer(DataExportSerializerMixin, serializers.ModelSerializer):
     """Read-only scan business event representation."""
 
+    brand = serializers.CharField(source='part.brand', read_only=True, default='')
+    model_number = serializers.CharField(
+        source='part.model_number', read_only=True, default=''
+    )
     barcode = serializers.SerializerMethodField()
     replayed = serializers.SerializerMethodField()
     tracking_entries = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -273,6 +276,8 @@ class ScanStockEventSerializer(DataExportSerializerMixin, serializers.ModelSeria
         model = ScanStockEvent
         fields = [
             'pk',
+            'brand',
+            'model_number',
             'client_event_id',
             'fingerprint_version',
             'operation',
@@ -2049,6 +2054,36 @@ class StockTrackingSerializer(
 ):
     """Serializer for StockItemTracking model."""
 
+    wms_context = serializers.SerializerMethodField()
+
+    def get_wms_context(self, obj):
+        """Use posting snapshots; never substitute the stock item's current metadata."""
+        event = obj.scan_event
+        if event is None or event.outcome != ScanStockEvent.Outcome.SUCCESS:
+            return None
+        return {
+            'part_ipn': event.part_ipn_snapshot,
+            'part_name': event.part_name_snapshot,
+            'project': event.batch_snapshot,
+            'contract_number': event.contract_number_snapshot,
+            'detail_uid': str(event.detail_uid_snapshot or ''),
+            'units': event.units_snapshot,
+            'operation': event.operation,
+            'applied_quantity': str(event.applied_quantity),
+            'quantity_before': str(event.stock_item_quantity_before)
+            if event.stock_item_quantity_before is not None
+            else None,
+            'quantity_after': str(event.stock_item_quantity_after)
+            if event.stock_item_quantity_after is not None
+            else None,
+            'source_location': event.source_location_path_snapshot,
+            'destination_location': event.destination_location_path_snapshot,
+            'applicant': event.operator_display_name_snapshot
+            or event.operator_username_snapshot,
+            'approver': event.approver_snapshot,
+            'purpose': event.purpose,
+        }
+
     class Meta:
         """Metaclass options."""
 
@@ -2064,6 +2099,7 @@ class StockTrackingSerializer(
             'label',
             'notes',
             'tracking_type',
+            'wms_context',
             'user',
             'user_detail',
             'operator_user_id_snapshot',

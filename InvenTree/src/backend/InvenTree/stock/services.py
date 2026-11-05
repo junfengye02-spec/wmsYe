@@ -459,10 +459,6 @@ class ScanStockService:
                 'COMPLETE_LABEL_REQUIRES_APPROVAL', _('完整标签业务必须提交审批')
             )
         if self.operation == ScanStockEvent.Operation.INBOUND:
-            if detail.legacy:
-                raise ScanStockError(
-                    'LEGACY_DETAIL_ALREADY_RECEIVED', _('历史补录明细不能再次入库')
-                )
             if not self.context.get('approval_application'):
                 if detail.receipt.operator_id != self.user.pk:
                     raise ScanStockError(
@@ -482,13 +478,6 @@ class ScanStockService:
             if detail.receipt.location_id != self.data['destination_location'].pk:
                 raise ScanStockError(
                     'RECEIPT_LOCATION_MISMATCH', _('入库库位与准备记录不一致')
-                )
-            active = detail.events.filter(operation='INBOUND').exclude(outcome='FAILED')
-            active = active.exclude(client_event_id=self.data['client_event_id'])
-            if active.exists():
-                raise ScanStockError(
-                    'RECEIPT_ALREADY_REQUESTED',
-                    _('同一码已核对或已入库，请定位原行；后续到货请另建明细'),
                 )
         elif (
             not detail.legacy
@@ -1235,41 +1224,60 @@ class ScanStockService:
             )
 
         if self.source_detail is not None:
-            self.data['create_stock_item'] = True
-
-        item = self._selected_stock_item(resolved)
-        if item is not None:
-            if self.data.get('create_stock_item'):
-                raise ScanStockError(
-                    'STOCK_ITEM_CREATE_CONFLICT',
-                    _('A scanned stock item cannot also request a new stock item'),
-                )
-            self._validate_part_and_item(part, item, destination)
-        elif self.data.get('create_stock_item'):
-            self._require_add_stockitem_permission()
-            item = self._create_stock_item(part, destination)
-        else:
-            candidates = list(
+            # Repeated intentional scans share the same source/location balance.
+            # The Part lock serializes approvals; event IDs still make retries idempotent.
+            candidates = (
                 StockItem.objects.select_for_update()
                 .filter(
+                    StockItem.IN_STOCK_FILTER,
                     part=part,
                     location=destination,
-                    batch=self.data.get('batch') or '',
                     source_detail=self.source_detail,
+                    batch=self.source_detail.project,
                 )
                 .order_by('pk')
             )
-            if not candidates:
+            item = next(
+                (candidate for candidate in candidates if self._is_neutral(candidate)),
+                None,
+            )
+            if item is None:
                 self._require_add_stockitem_permission()
                 item = self._create_stock_item(part, destination)
-            elif (
-                not self._has_explicit_stock_context()
-                and len(candidates) == 1
-                and self._is_neutral(candidates[0])
-            ):
-                item = candidates[0]
+        else:
+            item = self._selected_stock_item(resolved)
+            if item is not None:
+                if self.data.get('create_stock_item'):
+                    raise ScanStockError(
+                        'STOCK_ITEM_CREATE_CONFLICT',
+                        _('A scanned stock item cannot also request a new stock item'),
+                    )
+                self._validate_part_and_item(part, item, destination)
+            elif self.data.get('create_stock_item'):
+                self._require_add_stockitem_permission()
+                item = self._create_stock_item(part, destination)
             else:
-                raise self._selection_required(candidates)
+                candidates = list(
+                    StockItem.objects.select_for_update()
+                    .filter(
+                        part=part,
+                        location=destination,
+                        batch=self.data.get('batch') or '',
+                        source_detail=self.source_detail,
+                    )
+                    .order_by('pk')
+                )
+                if not candidates:
+                    self._require_add_stockitem_permission()
+                    item = self._create_stock_item(part, destination)
+                elif (
+                    not self._has_explicit_stock_context()
+                    and len(candidates) == 1
+                    and self._is_neutral(candidates[0])
+                ):
+                    item = candidates[0]
+                else:
+                    raise self._selection_required(candidates)
 
         self._apply_event_context(event, resolved, item=item)
         before = item.quantity
@@ -2093,17 +2101,13 @@ class ApprovalRequestService:
         except ScanStockApprovalRequest.DoesNotExist:  # pragma: no cover
             return
         users = User.objects.filter(pk__in=user_ids, is_active=True)
-        name = str(
-            _('Scan stock request %(reference)s') % {'reference': request.reference}
+        from stock.ui_notifications import approval_summary
+
+        name, message = approval_summary(
+            request,
+            event_name,
+            stock_notifications._approval_lines(request, event_name),
         )
-        message = str(
-            _('%(direction)s request for %(location)s was %(event)s')
-            % {
-                'direction': request.get_direction_display(),
-                'location': request.location_path_snapshot,
-                'event': event_name,
-            }
-        )[:250]
         NotificationMessage.objects.bulk_create(
             [
                 NotificationMessage(

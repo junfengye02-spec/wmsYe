@@ -113,6 +113,121 @@ class ContractWarrantyTest(TestCase):
         ApprovalRequestService.approve(request_id=request.pk, user=self.approver)
         return StockItem.objects.get(source_detail=detail), request
 
+    def check_grouped_scan_accounting(self, direction, undo=False):
+        """Display grouping must conserve event, approval, stock and report totals."""
+        detail = self.prepare()
+        if direction == 'OUTBOUND':
+            item, _ = self.receive(detail, quantity=20)
+        request = self.request(direction)
+        quantity = 10 if direction == 'INBOUND' else 3
+        keys = [str(uuid.uuid4()), str(uuid.uuid4())]
+        for key in keys:
+            response = self.scan(detail, request, quantity, client_event_id=key)
+            self.assertEqual(response.status_code, 201, response.data)
+        replay = self.scan(detail, request, quantity, client_event_id=keys[1])
+        self.assertTrue(replay.data['replayed'], replay.data)
+        self.assertEqual(request.lines.filter(outcome='PENDING').count(), 2)
+        if undo:
+            latest = request.lines.order_by('-pk').first()
+            response = self.client.delete(
+                f'/api/stock/scan/requests/{request.pk}/lines/{latest.pk}/'
+            )
+            self.assertEqual(response.status_code, 200, response.data)
+        expected = Decimal(quantity * (1 if undo else 2))
+
+        def records():
+            response = self.client.get(
+                '/api/stock/wms/records/', {'operation': direction, 'limit': 100}
+            )
+            self.assertEqual(response.status_code, 200, response.data)
+            rows = response.data['results']
+            self.assertEqual(
+                Decimal(response.data['statistics']['units'].get('count', 0)),
+                sum((Decimal(row['quantity']) for row in rows), Decimal(0)),
+            )
+            return [row for row in rows if row['approval_request'] == request.pk]
+
+        self.assertEqual(records(), [])
+        pending = request.lines.filter(outcome='PENDING')
+        self.assertEqual(sum(line.requested_quantity for line in pending), expected)
+        if direction == 'OUTBOUND':
+            item.refresh_from_db()
+            self.assertEqual(item.quantity, 20)
+            self.assertEqual(item.scan_frozen_quantity(), expected)
+        else:
+            self.assertFalse(StockItem.objects.filter(source_detail=detail).exists())
+        ApprovalRequestService.submit(request_id=request.pk, user=self.user)
+        self.assertEqual(records(), [])
+        with self.assertRaises(ScanApprovalError):
+            ApprovalRequestService.submit(request_id=request.pk, user=self.user)
+        ApprovalRequestService.approve(request_id=request.pk, user=self.approver)
+        with self.assertRaises(ScanApprovalError):
+            ApprovalRequestService.approve(request_id=request.pk, user=self.approver)
+        # Even replaying a successful scan after approval must not post it again.
+        replay = self.scan(detail, request, quantity, client_event_id=keys[0])
+        self.assertTrue(replay.data['replayed'], replay.data)
+        item = StockItem.objects.get(source_detail=detail)
+        self.assertEqual(
+            item.quantity, expected if direction == 'INBOUND' else 20 - expected
+        )
+        self.assertEqual(item.scan_frozen_quantity(), 0)
+        successful = list(request.lines.filter(outcome='SUCCESS'))
+        self.assertEqual(len(successful), 1 if undo else 2)
+        self.assertEqual(sum(line.applied_quantity for line in successful), expected)
+        rows = records()
+        self.assertEqual(len(rows), len(successful))
+        self.assertEqual(sum(Decimal(row['quantity']) for row in rows), expected)
+        # Batch detail is sourced from this API, independently of display grouping.
+        response = self.client.get(f'/api/stock/scan/requests/{request.pk}/')
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(
+            sum(
+                Decimal(line['applied_quantity'])
+                for line in response.data['lines']
+                if line['outcome'] == 'SUCCESS'
+            ),
+            expected,
+        )
+
+    def test_grouped_inbound_accounting(self):
+        """Two ten-unit scans produce exactly twenty stock and reported units."""
+        self.check_grouped_scan_accounting('INBOUND')
+
+    def test_grouped_outbound_accounting(self):
+        """Two three-unit scans deduct and report exactly six units."""
+        self.check_grouped_scan_accounting('OUTBOUND')
+
+    def test_grouped_inbound_undo_accounting(self):
+        """Removing the latest inbound scan excludes it from posting and reports."""
+        self.check_grouped_scan_accounting('INBOUND', undo=True)
+
+    def test_grouped_outbound_undo_accounting(self):
+        """Removing the latest outbound scan releases only its reservation."""
+        self.check_grouped_scan_accounting('OUTBOUND', undo=True)
+
+    def test_grouped_outbound_rejects_excess_without_reporting_it(self):
+        """Repeated scans cannot reserve or report more than available stock."""
+        detail = self.prepare()
+        item, _ = self.receive(detail)
+        request = self.request('OUTBOUND')
+        first = self.scan(detail, request, quantity=6)
+        self.assertEqual(first.status_code, 201, first.data)
+        excess = self.scan(detail, request, quantity=6)
+        self.assertEqual(excess.status_code, 400, excess.data)
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 10)
+        self.assertEqual(item.scan_frozen_quantity(), 6)
+        self.assertEqual(request.lines.filter(outcome='PENDING').count(), 1)
+        ApprovalRequestService.submit(request_id=request.pk, user=self.user)
+        ApprovalRequestService.approve(request_id=request.pk, user=self.approver)
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(item.scan_frozen_quantity(), 0)
+        response = self.client.get('/api/stock/wms/records/', {'operation': 'OUTBOUND'})
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data['statistics']['record_count'], 1)
+        self.assertEqual(Decimal(response.data['statistics']['units']['count']), 6)
+
     def test_calendar_months_and_protocol_boundaries(self):
         """Leap days and month ends clamp; missing acceptance remains absent."""
         self.assertEqual(warranty_end(date(2024, 2, 29), 12), date(2025, 2, 28))
@@ -205,7 +320,15 @@ class ContractWarrantyTest(TestCase):
     def test_item_warranty_edits_are_rejected_and_direct_label_loads_receipt(self):
         """There is one contract date; direct scans resolve their preparation context."""
         detail = self.prepare()
+        detail.part.brand = '小米'
+        detail.part.specification = '12GB + 256GB'
+        detail.part.model_number = '23127PN0CC'
+        detail.part.save()
         resolved = self.post('wms/labels/resolve/', {'barcode': encode_label(detail)})
+        self.assertEqual(resolved['brand'], '小米')
+        self.assertEqual(resolved['specification'], '12GB + 256GB')
+        self.assertEqual(resolved['model_number'], '23127PN0CC')
+        self.assertGreater(resolved['label_font_size'], 0)
         self.assertEqual(resolved['receipt'], detail.receipt_id)
         self.assertEqual(resolved['receipt_location'], self.location.pk)
         self.post(
@@ -237,7 +360,15 @@ class ContractWarrantyTest(TestCase):
 
     def test_contract_validation_impact_preview_and_stale_edit(self):
         """Normalized uniqueness, positive months and optimistic updates apply on the server."""
-        self.post('wms/contracts/', {'number': ' 新合同 ', 'warranty_months': 24}, 201)
+        self.post(
+            'wms/contracts/',
+            {
+                'number': ' 新合同 ',
+                'warranty_months': 24,
+                'project_id': ProjectCode.objects.get(code='新项目').pk,
+            },
+            201,
+        )
         self.assertTrue(WmsContract.objects.filter(number='新合同').exists())
         self.post('wms/contracts/', {'number': '新合同', 'warranty_months': 12}, 400)
         self.post('wms/contracts/', {'number': '无效', 'warranty_months': 0}, 400)
@@ -262,7 +393,7 @@ class ContractWarrantyTest(TestCase):
         )
 
     def test_quantity_confirmation_duplicate_scan_and_single_posting(self):
-        """Eight of ten require confirmation; rescans never silently add the remainder."""
+        """Quantity changes need confirmation and transport retries post only once."""
         detail = self.prepare()
         request = self.request()
         missing = self.scan(detail, request, 8)
@@ -272,8 +403,14 @@ class ContractWarrantyTest(TestCase):
         response = self.scan(detail, request, 8, quantity_confirmed=True)
         self.assertEqual(response.status_code, 201, response.data)
         self.assertFalse(StockItem.objects.exists())
-        duplicate = self.scan(detail, request, 8, quantity_confirmed=True)
-        self.assertEqual(duplicate.data['error_code'], 'RECEIPT_ALREADY_REQUESTED')
+        duplicate = self.scan(
+            detail,
+            request,
+            8,
+            quantity_confirmed=True,
+            client_event_id=response.data['event']['client_event_id'],
+        )
+        self.assertTrue(duplicate.data['replayed'])
         ApprovalRequestService.submit(request_id=request.pk, user=self.user)
         ApprovalRequestService.approve(request_id=request.pk, user=self.approver)
         self.assertEqual(StockItem.objects.get(source_detail=detail).quantity, 8)
@@ -554,7 +691,13 @@ class ContractWarrantyTest(TestCase):
         self.user = operator
         self.client.force_authenticate(operator)
         self.post(
-            'wms/contracts/', {'number': '操作员合同', 'warranty_months': 24}, 201
+            'wms/contracts/',
+            {
+                'number': '操作员合同',
+                'warranty_months': 24,
+                'project_id': ProjectCode.objects.get(code='新项目').pk,
+            },
+            201,
         )
         detail = self.prepare()
         request = self.request()
@@ -613,7 +756,11 @@ class ContractWarrantyTest(TestCase):
             client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
             response = client.post(
                 '/api/stock/wms/contracts/',
-                {'number': 'OAuth合同', 'warranty_months': 12},
+                {
+                    'number': 'OAuth合同',
+                    'warranty_months': 12,
+                    'project_id': ProjectCode.objects.get(code='新项目').pk,
+                },
                 format='json',
             )
             self.assertEqual(response.status_code, expected, response.data)
@@ -727,7 +874,7 @@ class CompleteLabelConcurrencyTest(TransactionTestCase):
     """Use real PostgreSQL locks to check competing complete-code admissions."""
 
     def test_two_inbounds_for_one_detail(self):
-        """Competing drafts cannot claim the same prepared detail twice."""
+        """Distinct intentional scans can admit the same label in competing drafts."""
         if connection.vendor != 'postgresql':
             self.skipTest('Requires PostgreSQL row locks')
         operator = User.objects.create_superuser(
@@ -790,5 +937,5 @@ class CompleteLabelConcurrencyTest(TransactionTestCase):
         for thread in threads:
             thread.join(timeout=20)
             self.assertFalse(thread.is_alive(), 'Concurrent scan did not finish')
-        self.assertEqual(sorted(outcomes), ['FAILED', 'PENDING'], outcomes)
-        self.assertEqual(detail.events.filter(outcome='PENDING').count(), 1)
+        self.assertEqual(sorted(outcomes), ['PENDING', 'PENDING'], outcomes)
+        self.assertEqual(detail.events.filter(outcome='PENDING').count(), 2)

@@ -47,6 +47,7 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.tasks import offload_task
+from stock.history_permissions import StockHistoryAccessMixin
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -1141,6 +1142,19 @@ class PartList(
         'tags__slug',
     ]
 
+    def list(self, request, *args, **kwargs):
+        """Export the visible equipment scope using the shared import schema."""
+        if request.query_params.get('wms') == 'true' and request.query_params.get(
+            'export'
+        ) in ('csv', 'xlsx'):
+            from stock.wms import export_equipment, part_row
+
+            queryset = self.filter_queryset(self.get_queryset())
+            return export_equipment(
+                (part_row(part) for part in queryset), request.query_params['export']
+            )
+        return super().list(request, *args, **kwargs)
+
 
 class PartDetail(PartMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single Part object."""
@@ -1223,7 +1237,7 @@ class PartStocktakeFilter(FilterSet):
         fields = ['part']
 
 
-class PartStocktakeMixin:
+class PartStocktakeMixin(StockHistoryAccessMixin):
     """Mixin class for PartStocktake API endpoints."""
 
     queryset = PartStocktake.objects.all().prefetch_related('part')
@@ -1259,7 +1273,7 @@ class PartStocktakeDetail(PartStocktakeMixin, RetrieveUpdateDestroyAPI):
     """
 
 
-class PartStocktakeGenerate(CreateAPI):
+class PartStocktakeGenerate(StockHistoryAccessMixin, CreateAPI):
     """API endpoint for generating a PartStocktake instance."""
 
     queryset = PartStocktake.objects.all()

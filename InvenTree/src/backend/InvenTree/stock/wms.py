@@ -11,7 +11,7 @@ from zoneinfo import ZoneInfo
 from django.core.exceptions import ValidationError as ModelValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError, transaction
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.utils import timezone
 
@@ -34,6 +34,7 @@ from users.permissions import check_user_permission
 
 from .models import (
     ScanInboundBarcodeLock,
+    ScanStockApprovalRequest,
     ScanStockEvent,
     StockItem,
     StockLocation,
@@ -98,6 +99,9 @@ INVENTORY_COLUMNS = {
     '库存备注': 'stock_notes',
 }
 RECORD_COLUMNS = {
+    '品牌（当前资料）': 'brand',
+    '型号（当前资料）': 'model_number',
+    '申请号': 'reference',
     '设备ID': 'IPN',
     '设备名称': 'name',
     '单位': 'units',
@@ -163,6 +167,7 @@ def part_row(part):
         'specification': part.specification,
         'notes': part.notes,
         'active': part.active,
+        'default_location': part.default_location_id,
     }
 
 
@@ -331,7 +336,10 @@ def records_rows(params):
         ScanStockEvent.objects.filter(
             outcome='SUCCESS', operation=operation, completed_at__isnull=False
         )
-        .select_related('approval_request')
+        .select_related('approval_request', 'part')
+        .annotate(
+            business_attachment_count=Count('approval_request__business_attachments')
+        )
         .order_by('-completed_at', '-pk')
     )
     try:
@@ -397,6 +405,14 @@ def records_rows(params):
                 'part_id': event.part_pk_snapshot,
                 'IPN': event.part_ipn_snapshot,
                 'name': event.part_name_snapshot,
+                'brand': event.part.brand if event.part else '',
+                'model_number': event.part.model_number if event.part else '',
+                'catalogue_fields_current': True,
+                'approval_request': event.approval_request_id,
+                'reference': event.approval_request.reference
+                if event.approval_request
+                else '',
+                'attachment_count': event.business_attachment_count,
                 'units': event.units_snapshot,
                 'quantity': event.applied_quantity,
                 'batch': event.batch_snapshot,
@@ -448,6 +464,38 @@ def export_csv(rows, columns, filename):
         '\ufeff' + output.getvalue(), content_type='text/csv; charset=utf-8'
     )
     response['Content-Disposition'] = f'attachment; filename="{filename}.csv"'
+    return response
+
+
+def export_equipment(rows, file_format='xlsx', filename='equipment'):
+    """Use one catalogue schema for the blank template and populated exports."""
+    if file_format == 'csv':
+        return export_csv(rows, PART_COLUMNS, filename)
+    from openpyxl import Workbook
+    from openpyxl.styles import Font
+
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = '设备基础资料'
+    sheet.append(list(PART_COLUMNS))
+    for row in rows:
+        sheet.append([str(row.get(field) or '') for field in PART_COLUMNS.values()])
+        # Preserve leading zeroes and formula-like model names as literal text.
+        for cell in sheet[sheet.max_row]:
+            cell.data_type = 's'
+            cell.number_format = '@'
+    for cell in sheet[1]:
+        cell.font = Font(bold=True)
+        sheet.column_dimensions[cell.column_letter].width = 26
+    sheet.freeze_panes = 'A2'
+    sheet.auto_filter.ref = sheet.dimensions
+    output = io.BytesIO()
+    workbook.save(output)
+    response = HttpResponse(
+        output.getvalue(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    )
+    response['Content-Disposition'] = f'attachment; filename="{filename}.xlsx"'
     return response
 
 
@@ -565,6 +613,24 @@ class WmsRecords(WmsView):
         """List successful scans and calculate statistics over all matching rows."""
         require(request, StockItem, 'view')
         rows = records_rows(request.query_params)
+        from stock.services import ApprovalRequestService
+        from users.models import Owner
+
+        visible = ScanStockApprovalRequest.objects.filter(
+            pk__in=[row['approval_request'] for row in rows if row['approval_request']]
+        )
+        if not request.user.has_perm(ApprovalRequestService.AUDIT_PERMISSION):
+            owners = (
+                Owner.get_owners_matching_user(request.user)
+                if request.user.has_perm(ApprovalRequestService.APPROVE_PERMISSION)
+                else []
+            )
+            visible = visible.filter(
+                Q(requester=request.user) | Q(approval_owner__in=owners)
+            )
+        visible_ids = set(visible.values_list('pk', flat=True))
+        for row in rows:
+            row['can_view_attachments'] = row['approval_request'] in visible_ids
         units = defaultdict(Decimal)
         parts = defaultdict(Decimal)
         for row in rows:
@@ -654,6 +720,10 @@ class WmsOptions(WmsView):
                     'pk': resolved.part.pk,
                     'IPN': resolved.part.IPN,
                     'name': resolved.part.name,
+                    'brand': resolved.part.brand,
+                    'specification': resolved.part.specification,
+                    'model_number': resolved.part.model_number,
+                    'units': resolved.part.units,
                 }
                 if location:
                     rows = inventory_rows(
@@ -802,6 +872,8 @@ class WmsParts(WmsView):
                 Q(IPN__icontains=request.query_params['search'])
                 | Q(name__icontains=request.query_params['search'])
             )
+        if request.query_params.get('export') == 'xlsx':
+            return export_equipment(part_row(p) for p in query)
         return list_response(
             request, [part_row(p) for p in query], PART_COLUMNS, 'equipment'
         )
@@ -886,6 +958,14 @@ def read_upload(request, kind):
 def inspect_rows(rows, kind, request):
     """Rebuild every target snapshot; any row error blocks the entire task."""
     results, seen, new_parts = [], set(), {}
+    native_parts = (
+        {
+            part.barcode: part
+            for part in Part.objects.filter(Q(IPN='') | Q(IPN__isnull=True))
+        }
+        if kind == 'parts'
+        else {}
+    )
     for index, row in enumerate(rows, 2):
         result = {
             'row': index,
@@ -898,11 +978,15 @@ def inspect_rows(rows, kind, request):
             if not ipn and kind != 'parts':
                 raise ValidationError('设备ID必填')
             part = Part.objects.filter(IPN__iexact=ipn).first() if ipn else None
+            if part is None and ipn and kind == 'parts':
+                part = native_parts.get(ipn)
             state = {'part': clean_json(part_row(part)) if part else None}
             if kind == 'parts':
                 key = ipn.casefold() if ipn else f'new-{index}'
                 require(request, Part, 'change' if part else 'add')
-                values = equipment_values(row, part)
+                values = equipment_values(
+                    {**row, 'IPN': part.IPN} if part and not part.IPN else row, part
+                )
                 result.update(
                     {
                         'action': '更新设备' if part else '新增设备',
@@ -1102,6 +1186,10 @@ class WmsImports(WmsView):
                     'results': task.result or task.preview,
                 }
             )
+        if kind == 'parts':
+            return export_equipment(
+                [], request.query_params.get('export', 'xlsx'), 'equipment-template'
+            )
         return export_csv(
             [], PART_COLUMNS if kind == 'parts' else COUNT_COLUMNS, f'{kind}-template'
         )
@@ -1136,7 +1224,16 @@ class WmsImports(WmsView):
             )
             list(
                 Part.objects.select_for_update()
-                .filter(IPN__in=[r.get('IPN') for r in task.rows if r.get('IPN')])
+                .filter(
+                    Q(IPN__in=[r.get('IPN') for r in task.rows if r.get('IPN')])
+                    | Q(
+                        pk__in=[
+                            r['state']['part']['pk']
+                            for r in task.preview
+                            if r.get('state', {}).get('part')
+                        ]
+                    )
+                )
                 .order_by('pk')
             )
             for ipn in ipns:
@@ -1160,14 +1257,19 @@ class WmsImports(WmsView):
             for row, preview in zip(task.rows, current, strict=True):
                 ipn = row.get('IPN', '').strip()
                 part = Part.objects.filter(IPN__iexact=ipn).first() if ipn else None
+                if part is None and task.kind == 'parts' and preview['state']['part']:
+                    part = Part.objects.get(pk=preview['state']['part']['pk'])
                 if task.kind == 'parts' or part is None:
-                    values = equipment_values(row, part)
+                    values = equipment_values(
+                        {**row, 'IPN': part.IPN} if part and not part.IPN else row, part
+                    )
+                    creating = part is None
                     if not part:
                         part = Part(description='')
                     for key, value in values.items():
                         setattr(part, key, value)
                     part.save()
-                    if not part.IPN:
+                    if creating and not part.IPN:
                         part.IPN = part.barcode
                         part.save(update_fields=['IPN', 'ipn_hash'])
                 if task.kind == 'count':

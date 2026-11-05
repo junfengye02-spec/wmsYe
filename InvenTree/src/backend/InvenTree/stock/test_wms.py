@@ -15,7 +15,7 @@ from django.db import connection, connections
 from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 from rest_framework.test import APIClient
 
 from common.models import ProjectCode
@@ -65,6 +65,30 @@ class WmsAcceptanceTest(TestCase):
             delete_on_deplete=False,
         )
         set_global_setting('SCAN_APPROVAL_ENABLED', False)
+
+    def test_native_equipment_details_persist_brand_specification_and_model(self):
+        """The list, editor and scan preview read the same saved equipment fields."""
+        fields = {
+            'brand': '测试品牌',
+            'specification': '8口千兆 + 2光口',
+            'model_number': 'SW-10P-POE',
+        }
+        response = self.client.patch(
+            f'/api/part/{self.part.pk}/', fields, format='json'
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+        self.part.refresh_from_db()
+        for key, value in fields.items():
+            self.assertEqual(getattr(self.part, key), value)
+        detail = self.client.get(f'/api/part/{self.part.pk}/')
+        listing = self.client.get('/api/part/', {'search': self.part.IPN, 'limit': 10})
+        preview = self.client.get('/api/stock/wms/options/', {'barcode': self.part.IPN})
+        for response in (detail, listing, preview):
+            self.assertEqual(response.status_code, 200, response.data)
+        row = next(row for row in listing.data['results'] if row['pk'] == self.part.pk)
+        for data in (detail.data, row, preview.data['scanned_part']):
+            for key, value in fields.items():
+                self.assertEqual(data[key], value)
 
     def test_native_inventory_scope_and_export(self):
         """Native pagination, totals, summary and CSV share every native filter."""
@@ -281,6 +305,118 @@ class WmsAcceptanceTest(TestCase):
             [10, 3],
         )
 
+    def test_equipment_template_export_and_edited_reimport(self):
+        """Native exports round-trip through the exact template without stock changes."""
+        # Seed a legacy textual ID before exercising the public import API.
+        Part.objects.filter(pk=self.part.pk).update(IPN='0001234567890123456789')
+        self.part.refresh_from_db()
+        self.part.brand = '原品牌'
+        self.part.specification = '中文规格,含逗号\n第二行'
+        self.part.model_number = '=MODEL-01'
+        self.part.notes = '设备备注'
+        self.part.save()
+        Part.objects.create(
+            name='筛选外设备', IPN='EXCLUDED', category=self.category, units='count'
+        )
+        headers = [
+            '设备ID',
+            '设备名称',
+            '品牌',
+            '设备分类完整路径',
+            '型号',
+            '单位',
+            '规格',
+            '备注',
+        ]
+        template = self.client.get('/api/stock/wms/imports/', {'kind': 'parts'})
+        self.assertEqual(template.status_code, 200)
+        blank = load_workbook(io.BytesIO(template.content))
+        self.assertEqual(list(blank.active.values), [tuple(headers)])
+        exported = self.client.get(
+            '/api/part/',
+            {
+                'wms': 'true',
+                'export': 'xlsx',
+                'search': self.part.IPN,
+                'limit': 1,
+                'offset': 100,
+            },
+        )
+        self.assertEqual(exported.status_code, 200)
+        workbook = load_workbook(io.BytesIO(exported.content))
+        sheet = workbook.active
+        self.assertEqual(
+            list(sheet.values),
+            [
+                tuple(headers),
+                (
+                    self.part.IPN,
+                    self.part.name,
+                    self.part.brand,
+                    self.category.pathstring,
+                    self.part.model_number,
+                    self.part.units,
+                    self.part.specification,
+                    self.part.notes,
+                ),
+            ],
+        )
+        self.assertEqual(sheet['A2'].data_type, 's')
+        self.assertEqual(sheet['E2'].data_type, 's')
+        sheet['C2'] = '更新品牌'
+        sheet['G2'] = '更新规格'
+        upload = io.BytesIO()
+        workbook.save(upload)
+        upload.seek(0)
+        upload.name = '设备基础资料.xlsx'
+        preview = self.client.post(
+            '/api/stock/wms/imports/',
+            {'kind': 'parts', 'file': upload},
+            format='multipart',
+        )
+        self.assertEqual(preview.status_code, 201, preview.data)
+        self.assertTrue(preview.data['can_commit'], preview.data)
+        self.assertEqual(preview.data['results'][0]['action'], '更新设备')
+        self.post('wms/imports', {'task': preview.data['task']})
+        self.part.refresh_from_db()
+        self.assertEqual(
+            (self.part.brand, self.part.specification), ('更新品牌', '更新规格')
+        )
+        self.assertEqual(self.part.model_number, '=MODEL-01')
+        self.assertEqual(self.part.IPN, '0001234567890123456789')
+        self.assertEqual(Part.objects.count(), 2)
+        self.assertEqual(
+            list(StockItem.objects.order_by('pk').values_list('quantity', flat=True)),
+            [10, 3],
+        )
+        # Both formats and both equipment entry points share the column schema.
+        for url in ('/api/part/', '/api/stock/wms/parts/'):
+            response = self.client.get(url, {'wms': 'true', 'export': 'csv'})
+            rows = list(csv.reader(io.StringIO(response.content.decode('utf-8-sig'))))
+            self.assertEqual(rows[0], headers)
+            self.assertEqual(len(rows), 3)
+
+    def test_equipment_export_reimport_native_id_without_ipn(self):
+        """An existing device with only its native barcode must not be duplicated."""
+        Part.objects.filter(pk=self.part.pk).update(IPN='')
+        self.part.refresh_from_db()
+        exported = self.client.get('/api/part/', {'wms': 'true', 'export': 'xlsx'})
+        upload = io.BytesIO(exported.content)
+        upload.name = '设备基础资料.xlsx'
+        preview = self.client.post(
+            '/api/stock/wms/imports/',
+            {'kind': 'parts', 'file': upload},
+            format='multipart',
+        )
+        self.assertEqual(preview.status_code, 201, preview.data)
+        self.assertTrue(preview.data['can_commit'], preview.data)
+        self.assertEqual(preview.data['results'][0]['action'], '更新设备')
+        self.post('wms/imports', {'task': preview.data['task']})
+        self.part.refresh_from_db()
+        self.assertEqual(self.part.IPN, '')
+        self.assertEqual(Part.objects.count(), 1)
+        self.assertEqual(StockItem.objects.count(), 2)
+
     def test_equipment_duplicate_file_rows_block_entire_import(self):
         """A valid new row cannot be saved when another row repeats a device identity."""
         upload = io.BytesIO(
@@ -391,7 +527,15 @@ class WmsAcceptanceTest(TestCase):
                 data = self.options(barcode=code)
                 self.assertEqual(
                     data['scanned_part'],
-                    {'pk': self.part.pk, 'IPN': self.part.IPN, 'name': self.part.name},
+                    {
+                        'pk': self.part.pk,
+                        'IPN': self.part.IPN,
+                        'name': self.part.name,
+                        'brand': self.part.brand,
+                        'specification': self.part.specification,
+                        'model_number': self.part.model_number,
+                        'units': self.part.units,
+                    },
                 )
         inbound = self.client.get('/api/stock/wms/options/', {'barcode': self.part.IPN})
         self.assertEqual(inbound.status_code, 200)
@@ -576,11 +720,10 @@ class WmsAcceptanceTest(TestCase):
         self.assertEqual(Decimal(quantity(batch='P2')['quantity']), 3)
         self.assertEqual(quantity(batch='P2')['project_count'], 1)
 
-    def test_scan_project_and_purpose_required(self):
-        """Blank project, missing purpose and conflicting aliases fail before stock."""
+    def test_scan_project_required(self):
+        """Blank project and conflicting aliases fail before stock."""
         for response in [
             self.scan(batch=' '),
-            self.scan('outbound', purpose=''),
             self.scan(project_number='P2'),
         ]:
             self.assertEqual(response.status_code, 400, response.data)

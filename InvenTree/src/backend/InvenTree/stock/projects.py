@@ -32,9 +32,9 @@ def selected_project(values, *, required=True, allow_inactive=False):
     return project
 
 
-def bind_project(values, *, required=True):
+def bind_project(values, *, required=True, allow_inactive=False):
     """Store a stable foreign key while retaining the printable project-code snapshot."""
-    project = selected_project(values, required=required)
+    project = selected_project(values, required=required, allow_inactive=allow_inactive)
     values.pop('project_id', None)
     if project is not None:
         values.update(project=project.code, project_code=project)

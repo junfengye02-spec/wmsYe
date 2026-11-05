@@ -1,0 +1,22 @@
+{% extends "label/label_base.html" %}
+{% load l10n i18n barcode equipment_label %}
+{% block style %}
+    .equipment-label { position: relative; box-sizing: border-box; width: 50mm; height: 30mm; color: #000; background: #fff; font-family: Arial, Helvetica, sans-serif; }
+    .equipment-company { position: absolute; top: 1.5mm; left: 2mm; right: 2mm; padding-bottom: 0.5mm; border-bottom: 0.15mm solid #000; text-align: center; font-size: 6.5pt; line-height: 1.2; white-space: nowrap; }
+    .equipment-qr { position: absolute; left: 2mm; top: 5.5mm; width: 22.5mm; height: 22.5mm; }
+    .equipment-text { position: absolute; left: 25mm; top: 6mm; right: 2mm; line-height: 1.2; overflow-wrap: anywhere; }
+    .equipment-name { font-weight: 700; }
+    .equipment-field { margin-bottom: 0.3mm; }
+{% endblock style %}
+{% block content %}
+    <div class="equipment-label">
+        <div class="equipment-company">广州南沙智慧城市大数据有限公司</div>
+        {% block equipment_qr %}{% endblock equipment_qr %}
+        <div class="equipment-text" style="font-size: {{ part|equipment_label_font_size|unlocalize }}pt;">
+            <div class="equipment-field equipment-name">{{ part.name }}</div>
+            <div class="equipment-field">品牌：{{ part.brand|default:"—" }}</div>
+            <div class="equipment-field">规格：{{ part.specification|default:"—" }}</div>
+            <div class="equipment-field">型号：{{ part.model_number|default:"—" }}</div>
+        </div>
+    </div>
+{% endblock content %}

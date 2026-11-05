@@ -601,11 +601,13 @@ class LocalPrintTests(TestCase):
         pages = PdfReader(io.BytesIO(service.read_pdf(job))).pages
         self.assertEqual(len(pages), 7)
         for page in pages[:2]:
-            self.assertIn(detail.contract.number, page.extract_text())
-            self.assertIn(detail.project, page.extract_text())
+            self.assertIn(detail.part.name, page.extract_text())
+            self.assertIn('品牌：', page.extract_text())  # noqa: RUF001
+            self.assertIn('规格：', page.extract_text())  # noqa: RUF001
+            self.assertIn('型号：', page.extract_text())  # noqa: RUF001
             self.assertNotIn('标签版本', page.extract_text())
         for page in pages[2:]:
-            self.assertIn(basic_part.IPN, page.extract_text())
+            self.assertIn(basic_part.name, page.extract_text())
             self.assertNotIn(detail.contract.number, page.extract_text())
         audit = WmsBusinessChange.objects.get(detail=detail, action='label_print')
         self.assertEqual(

@@ -485,7 +485,7 @@ class LabelTest(InvenTreeAPITestCase):
                     name=report_models.PRODUCT_IPN_LABEL_NAME, model_type=model_type
                 )
                 html = template.render_as_string(item)
-                match = re.search(r"class='product-qr'[^>]+src='([^']+)'", html)
+                match = re.search(r"class='equipment-qr product-qr'[^>]+src='([^']+)'", html)
 
                 self.assertIsNotNone(match)
                 self.assertEqual(match.group(1), expected_qr)
@@ -493,8 +493,10 @@ class LabelTest(InvenTreeAPITestCase):
                     match.group(1), qrcode(item.barcode, border=4, error_correction='M')
                 )
                 self.assertIn(part.name, html)
-                self.assertIn(ipn, html)
-                self.assertIn('IPN:', html)
+                self.assertIn('品牌：', html)  # noqa: RUF001
+                self.assertIn('规格：', html)  # noqa: RUF001
+                self.assertIn('型号：', html)  # noqa: RUF001
+                self.assertNotIn('IPN:', html)
                 self.assertIn('广州南沙智慧城市大数据有限公司', html)
                 self.assertNotIn('not a stock item code', html)
                 self.assertNotIn('内部零件号', html)

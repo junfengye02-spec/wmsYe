@@ -137,7 +137,7 @@ def validate_items(user, model_type, item_ids, copies, item_copies=None):
             raise ValidationError('Items must exist, be unique and match the template')
         if model_type == 'wmsreceiptdetail':
             for item in items:
-                if item.receipt.cancelled:
+                if item.receipt.cancelled or item.cancelled:
                     raise ValidationError('Cancelled preparation cannot be printed')
         template.validate_print_request(items, copies=copies)
         return template
@@ -224,7 +224,8 @@ def create_job(user, values, original=None):
                         'Selected label items changed; select them again'
                     )
                 if any(
-                    detail and detail.receipt.cancelled for _, _, detail, _ in sources
+                    detail and (detail.receipt.cancelled or detail.cancelled)
+                    for _, _, detail, _ in sources
                 ):
                     raise ValidationError('Cancelled preparation cannot be printed')
                 job.item_versions = {str(pk): code for pk, _, _, code in sources}

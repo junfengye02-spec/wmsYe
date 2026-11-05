@@ -129,3 +129,60 @@ class LocalPrintTemplateTests(TestCase):
         with self.assertRaisesMessage(CommandError, 'booleans'):
             self.run_command(apply=True, restore=self.backup)
         self.assertEqual(before, self.flags())
+
+    def test_refresh_equipment_labels_preserves_original_files_and_rolls_back(self):
+        """New layouts reach stored templates without destroying a custom original."""
+        template = resolve_local_print_template('part')
+        template.template.save('previous-equipment.html', ContentFile(b'old layout'))
+        original = template.template.name
+        call_command('refresh_equipment_labels', stdout=StringIO())
+        template.refresh_from_db()
+        self.assertEqual(template.template.name, original)
+        call_command(
+            'refresh_equipment_labels',
+            apply=True,
+            backup=self.backup,
+            stdout=StringIO(),
+        )
+        template.refresh_from_db()
+        self.assertNotEqual(template.template.name, original)
+        self.assertTrue(template.template.storage.exists(original))
+        self.assertIn(b'block equipment_qr', template.template.read())
+        call_command(
+            'refresh_equipment_labels',
+            apply=True,
+            restore=self.backup,
+            stdout=StringIO(),
+        )
+        template.refresh_from_db()
+        self.assertEqual(template.template.name, original)
+        self.assertEqual(template.template.read(), b'old layout')
+
+    def test_refresh_requires_new_backup_and_protects_later_edits(self):
+        """A later user edit cannot be overwritten by stale rollback data."""
+        with self.assertRaises(CommandError):
+            call_command('refresh_equipment_labels', apply=True, stdout=StringIO())
+        call_command(
+            'refresh_equipment_labels',
+            apply=True,
+            backup=self.backup,
+            stdout=StringIO(),
+        )
+        with self.assertRaises(CommandError):
+            call_command(
+                'refresh_equipment_labels',
+                apply=True,
+                backup=self.backup,
+                stdout=StringIO(),
+            )
+        template = resolve_local_print_template('part')
+        template.template.save('later-edit.html', ContentFile(b'later user edit'))
+        with self.assertRaises(CommandError):
+            call_command(
+                'refresh_equipment_labels',
+                apply=True,
+                restore=self.backup,
+                stdout=StringIO(),
+            )
+        template.refresh_from_db()
+        self.assertEqual(template.template.read(), b'later user edit')

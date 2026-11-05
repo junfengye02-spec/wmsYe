@@ -256,7 +256,12 @@ function NavTabs() {
   const navigate = useNavigate();
   const match = useMatch(':tabName/*');
   const scanMatch = useMatch('/stock/scan/*');
-  const tabValue = scanMatch ? 'stock/scan/inbound/' : match?.params.tabName;
+  const statisticsMatch = useMatch('/stock/statistics/*');
+  const tabValue = statisticsMatch
+    ? 'stock/statistics/'
+    : scanMatch
+      ? 'stock/scan/inbound/'
+      : match?.params.tabName;
   const navTabs = getNavTabs(user);
   const userSettings = useUserSettingsState();
 

@@ -57,7 +57,7 @@ import {
   stockAvailableQuantity,
   stockFrozenQuantity
 } from '../../functions/stock';
-import { wmsAccess } from '../../functions/wms';
+import { canViewStockHistory, wmsAccess } from '../../functions/wms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -83,6 +83,7 @@ export default function StockDetail() {
   const user = useUserState();
 
   const globalSettings = useGlobalSettingsState();
+  const canViewHistory = canViewStockHistory(user.user);
   const restricted = wmsAccess(
     user.user,
     globalSettings.isSet('SCAN_APPROVAL_ENABLED')
@@ -201,7 +202,8 @@ export default function StockDetail() {
       },
       {
         name: 'tracking',
-        label: t`Stock Tracking`,
+        label: t`库存流水`,
+        hidden: !canViewHistory,
         icon: <IconHistory />,
         content: stockitem.pk ? (
           <StockTrackingTable itemId={stockitem.pk} />
@@ -334,7 +336,8 @@ export default function StockDetail() {
     stockitem,
     id,
     user,
-    restricted
+    restricted,
+    canViewHistory
   ]);
 
   const breadcrumbs = useMemo(

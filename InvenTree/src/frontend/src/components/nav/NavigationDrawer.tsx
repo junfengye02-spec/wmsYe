@@ -72,14 +72,14 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
       },
       {
         id: 'parts',
-        title: t`Parts`,
+        title: t`基础资料`,
         hidden: !user.hasViewPermission(ModelType.part),
         link: '/part',
         icon: 'part'
       },
       {
         id: 'stock',
-        title: t`Stock`,
+        title: t`库存设备`,
         link: '/stock',
         hidden: !user.hasViewPermission(ModelType.stockitem),
         icon: 'stock'
@@ -97,6 +97,13 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
             user.getUser()?.permissions?.scanstockapprovalrequest
         }),
         icon: 'barcode'
+      },
+      {
+        id: 'statistics',
+        title: t`统计查询`,
+        link: '/stock/statistics/',
+        hidden: !user.hasViewPermission(ModelType.stockitem),
+        icon: 'dashboard'
       },
       {
         id: 'build',
@@ -134,7 +141,7 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
     ].filter(
       (item) =>
         !warehouse.restricted ||
-        ['parts', 'stock', 'scan-stock'].includes(item.id)
+        ['parts', 'stock', 'scan-stock', 'statistics'].includes(item.id)
     );
   }, [user, globalSettings]);
 

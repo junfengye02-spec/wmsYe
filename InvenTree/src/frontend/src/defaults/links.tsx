@@ -1,4 +1,5 @@
 import { StylishText } from '@lib/components/StylishText';
+import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import type { SettingsStateProps } from '@lib/types/Settings';
 import type { UserStateProps } from '@lib/types/User';
@@ -40,7 +41,7 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
     },
     {
       name: 'part',
-      title: t`Parts`,
+      title: t`基础资料`,
       icon: <IconBox />,
       visible:
         user.hasViewRole(UserRoles.part) ||
@@ -48,7 +49,7 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
     },
     {
       name: 'stock',
-      title: t`Stock`,
+      title: t`库存设备`,
       icon: <IconPackages />,
       visible:
         user.hasViewRole(UserRoles.stock) ||
@@ -79,6 +80,13 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
     }
   ];
 
+  navTabs.push({
+    name: 'stock/statistics/',
+    title: t`统计查询`,
+    icon: <IconDashboard />,
+    visible: user.hasViewPermission(ModelType.stockitem)
+  });
+
   if (warehouse.restricted && (warehouse.canOperate || warehouse.canApprove)) {
     navTabs.unshift({
       name: 'stock/scan/inbound/',
@@ -90,7 +98,9 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
     return (
       tab.visible !== false &&
       (!warehouse.restricted ||
-        ['part', 'stock', 'stock/scan/inbound/'].includes(tab.name))
+        ['part', 'stock', 'stock/scan/inbound/', 'stock/statistics/'].includes(
+          tab.name
+        ))
     );
   });
 }

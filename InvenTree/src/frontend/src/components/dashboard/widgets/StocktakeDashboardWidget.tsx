@@ -3,6 +3,7 @@ import { t } from '@lingui/core/macro';
 import { Button, Stack } from '@mantine/core';
 import { IconClipboardList } from '@tabler/icons-react';
 import { useState } from 'react';
+import { canViewStockHistory } from '../../../functions/wms';
 import useDataOutput from '../../../hooks/UseDataOutput';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useUserState } from '../../../states/UserState';
@@ -67,6 +68,6 @@ export default function StocktakeDashboardWidget(): DashboardWidgetProps {
     minWidth: 2,
     render: () => <StocktakeWidget />,
     icon: 'stocktake',
-    enabled: user.hasAddRole(UserRoles.part)
+    enabled: canViewStockHistory(user.user) && user.hasAddRole(UserRoles.part)
   };
 }

@@ -10,11 +10,13 @@ import { t } from '@lingui/core/macro';
 import { type ChartTooltipProps, LineChart } from '@mantine/charts';
 import {
   Accordion,
+  Alert,
   Center,
   Divider,
   Loader,
   Paper,
   SimpleGrid,
+  Stack,
   Text
 } from '@mantine/core';
 import dayjs from 'dayjs';
@@ -32,6 +34,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
+import { canViewStockHistory } from '../../functions/wms';
 import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 
 /*
@@ -70,7 +73,10 @@ function ChartTooltip({ label, payload }: Readonly<ChartTooltipProps>) {
   );
 }
 
-export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
+export function PartStocktakePanel({
+  partId,
+  units
+}: Readonly<{ partId: number; units?: string }>) {
   const user = useUserState();
   const table = useTable('part-stocktake');
 
@@ -117,13 +123,13 @@ export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
       DateColumn({}),
       DecimalColumn({
         accessor: 'item_count',
-        title: t`Stock Items`,
+        title: t`库存明细条数`,
         switchable: true,
         sortable: false
       }),
       DecimalColumn({
         accessor: 'quantity',
-        title: t`Stock Quantity`,
+        title: units ? t`实物库存数量（${units}）` : t`实物库存数量`,
         sortable: false,
         switchable: false
       }),
@@ -138,7 +144,7 @@ export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
         }
       }
     ];
-  }, []);
+  }, [units]);
 
   const rowActions = useCallback(
     (record: any) => {
@@ -167,7 +173,7 @@ export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
       table.records?.map((record: any) => {
         return {
           date: new Date(record.date).valueOf(),
-          quantity: record.quantity,
+          quantity: Number(record.quantity),
           value_min: Number.parseFloat(record.cost_min),
           value_max: Number.parseFloat(record.cost_max)
         };
@@ -175,7 +181,7 @@ export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
 
     // Sort records to ensure correct date order
     return records.sort((a, b) => {
-      return a < b ? -1 : 1;
+      return a.date - b.date;
     });
   }, [table.records]);
 
@@ -236,12 +242,13 @@ export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
         ) : (
           <LineChart
             data={chartData}
+            h={350}
             mah={'500px'}
             dataKey='date'
             withLegend
             withYAxis
             withRightYAxis
-            yAxisLabel={t`Quantity`}
+            yAxisLabel={units ? t`实物量（${units}）` : t`实物量`}
             rightYAxisLabel={t`Stock Value`}
             tooltipProps={{
               content: ({ label, payload }) => (
@@ -249,6 +256,7 @@ export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
               )
             }}
             yAxisProps={{
+              yAxisId: 'left',
               allowDataOverflow: false
             }}
             rightYAxisProps={{
@@ -265,7 +273,7 @@ export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
             series={[
               {
                 name: 'quantity',
-                label: t`Quantity`,
+                label: t`实物库存数量`,
                 color: 'blue.6',
                 yAxisId: 'left'
               },
@@ -290,26 +298,32 @@ export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
 }
 
 export default function PartStockHistoryDetail({
-  partId
-}: Readonly<{ partId: number }>) {
+  partId,
+  units
+}: Readonly<{ partId: number; units?: string }>) {
+  const user = useUserState();
+  if (!canViewStockHistory(user.user)) return null;
   return (
-    <Accordion multiple defaultValue={['stocktake']}>
-      <Accordion.Item value='tracking'>
-        <Accordion.Control>
-          <StylishText size='lg'>{t`Stock Tracking`}</StylishText>
-        </Accordion.Control>
-        <Accordion.Panel>
-          <StockTrackingTable partId={partId} />
-        </Accordion.Panel>
-      </Accordion.Item>
-      <Accordion.Item value='stocktake'>
-        <Accordion.Control>
-          <StylishText size='lg'>{t`Stocktake Entries`}</StylishText>
-        </Accordion.Control>
-        <Accordion.Panel>
-          <PartStocktakePanel partId={partId} />
-        </Accordion.Panel>
-      </Accordion.Item>
-    </Accordion>
+    <Stack>
+      <Alert color='blue'>{t`此处展示该设备跨项目、合同及库位的实物库存快照，包含变体设备；不扣除冻结数量，不代表可用库存，也不是期间出入库数量。历史快照从启用后开始积累，不自动补算过去余额。库存价值为原生估算值，未维护价格时可能为零。`}</Alert>
+      <Accordion multiple defaultValue={['stocktake']}>
+        <Accordion.Item value='tracking'>
+          <Accordion.Control>
+            <StylishText size='lg'>{t`库存流水`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <StockTrackingTable partId={partId} />
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value='stocktake'>
+          <Accordion.Control>
+            <StylishText size='lg'>{t`库存历史快照`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <PartStocktakePanel partId={partId} units={units} />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    </Stack>
   );
 }

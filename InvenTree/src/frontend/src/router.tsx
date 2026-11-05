@@ -56,6 +56,14 @@ export const StockDetail = Loadable(
   lazy(() => import('./pages/stock/StockDetail'))
 );
 
+export const WmsBatchDetail = Loadable(
+  lazy(() => import('./pages/stock/WmsBatchDetailPage'))
+);
+
+export const WmsStatistics = Loadable(
+  lazy(() => import('./pages/stock/WmsStatisticsPage'))
+);
+
 export const ScanStock = Loadable(
   lazy(() => import('./pages/stock/ScanStockPage'))
 );
@@ -188,6 +196,11 @@ export const routes = (
         <Route
           path='scan-inbound/'
           element={<Navigate replace to='/stock/scan/inbound/' />}
+        />
+        <Route path='statistics/' element={<WmsStatistics />} />
+        <Route
+          path='statistics/batch/:requestId/'
+          element={<WmsBatchDetail />}
         />
         <Route path='scan/inbound/' element={<ScanStock />} />
         <Route path='scan/outbound/' element={<ScanStock />} />

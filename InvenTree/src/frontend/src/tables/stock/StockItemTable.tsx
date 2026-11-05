@@ -11,8 +11,8 @@ import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { Alert, Button, Menu, Modal } from '@mantine/core';
 import { IconDots, IconUpload } from '@tabler/icons-react';
-import { useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   DateColumn,
   DescriptionColumn,
@@ -27,8 +27,8 @@ import {
   CreatedAfterFilter,
   CreatedBeforeFilter,
   HasBatchCodeFilter,
-  InStockFilter,
   IncludeVariantsFilter,
+  InStockFilter,
   IsSerializedFilter,
   ManufacturerFilter,
   SerialFilter,
@@ -56,14 +56,15 @@ import {
 import { wmsAccess } from '../../functions/wms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
-import { WmsContractEditor } from '../../pages/stock/WmsContractEditor';
+import { WmsContractManager } from '../../pages/stock/WmsContractManager';
 import { WmsImportPanel, wmsError } from '../../pages/stock/WmsInventoryPanel';
 import {
+  nativeInventoryDownload,
   WmsNativeResource,
-  WmsSubtotal,
-  nativeInventoryDownload
+  WmsSubtotal
 } from '../../pages/stock/WmsNativeTools';
 import { WmsProjectManager } from '../../pages/stock/WmsProjectSelect';
+import { WmsReceiptManager } from '../../pages/stock/WmsReceiptManager';
 import { WmsReceiptWorkbench } from '../../pages/stock/WmsReceiptWorkbench';
 import { WmsStockAttribution } from '../../pages/stock/WmsStockAttribution';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
@@ -412,11 +413,12 @@ export function StockItemTable({
   const [statistics, setStatistics] = useState<any>();
   const [scope, setScope] = useState<Record<string, any>>({});
   const navigation = useLocation();
-  const [tool, setTool] = useState<string | null>(
-    nativeInventory && navigation.state?.wmsTool === 'records'
-      ? 'records'
-      : null
-  );
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (nativeInventory && navigation.state?.wmsTool === 'records')
+      navigate('/stock/statistics/', { replace: true });
+  }, [nativeInventory, navigation.state, navigate]);
+  const [tool, setTool] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [contractManagementOpen, setContractManagementOpen] = useState(false);
   const user = useUserState();
@@ -656,12 +658,17 @@ export function StockItemTable({
       </Modal>
       {nativeInventory && (
         <>
-          <WmsContractEditor
+          <Modal
             opened={contractManagementOpen}
-            contract={null}
-            onClose={() => setContractManagementOpen(false)}
-            onSaved={() => table.refreshTable()}
-          />
+            onClose={() => {
+              setContractManagementOpen(false);
+              table.refreshTable();
+            }}
+            title={t`合同管理`}
+            size='xl'
+          >
+            <WmsContractManager />
+          </Modal>
           {error && <Alert color='red'>{error}</Alert>}
           <WmsSubtotal data={statistics} />
           <Modal
@@ -671,24 +678,28 @@ export function StockItemTable({
               table.refreshTable();
             }}
             title={
-              tool === 'inbound'
-                ? t`入库填单与打印`
-                : tool === 'projects'
-                  ? t`项目管理`
-                  : tool === 'inventory'
-                    ? t`按设备汇总`
-                    : tool === 'records'
-                      ? t`期间入出库记录`
-                      : tool === 'parts'
-                        ? t`设备资料`
-                        : tool === 'import-parts'
-                          ? t`设备资料导入`
-                          : t`库存盘点导入`
+              tool === 'receipts'
+                ? t`入库单管理`
+                : tool === 'inbound'
+                  ? t`入库填单与打印`
+                  : tool === 'projects'
+                    ? t`项目管理`
+                    : tool === 'inventory'
+                      ? t`按设备汇总`
+                      : tool === 'records'
+                        ? t`期间入出库记录`
+                        : tool === 'parts'
+                          ? t`设备资料`
+                          : tool === 'import-parts'
+                            ? t`设备资料导入`
+                            : t`库存盘点导入`
             }
             size='90%'
             keepMounted={false}
           >
-            {tool === 'inbound' ? (
+            {tool === 'receipts' ? (
+              <WmsReceiptManager />
+            ) : tool === 'inbound' ? (
               <WmsReceiptWorkbench />
             ) : tool === 'projects' ? (
               <WmsProjectManager />
@@ -766,6 +777,25 @@ export function StockItemTable({
           tableFilters: tableFilters,
           tableActions: [
             ...tableActions,
+            ...(nativeInventory && user.hasChangePermission(ModelType.stockitem)
+              ? [
+                  <Button
+                    key='projects'
+                    variant='light'
+                    onClick={() => setTool('projects')}
+                  >{t`项目管理`}</Button>,
+                  <Button
+                    key='contracts'
+                    variant='light'
+                    onClick={() => setContractManagementOpen(true)}
+                  >{t`合同管理`}</Button>,
+                  <Button
+                    key='receipts'
+                    variant='light'
+                    onClick={() => setTool('receipts')}
+                  >{t`入库单管理`}</Button>
+                ]
+              : []),
             ...(nativeInventory
               ? [
                   <Menu key='wms-tools' position='bottom-end'>
@@ -795,7 +825,7 @@ export function StockItemTable({
                         onClick={() => setTool('inventory')}
                       >{t`按设备汇总`}</Menu.Item>
                       <Menu.Item
-                        onClick={() => setTool('records')}
+                        onClick={() => navigate('/stock/statistics/')}
                       >{t`期间入出库记录`}</Menu.Item>
                       <Menu.Item
                         onClick={() => setTool('parts')}

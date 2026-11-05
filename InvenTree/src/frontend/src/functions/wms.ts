@@ -1,5 +1,15 @@
 import type { UserProps } from '../../lib/types/User';
 
+export function canViewStockHistory(user: UserProps | undefined): boolean {
+  return (
+    !!user &&
+    (!!(user.is_staff || user.is_superuser) ||
+      (user.permissions?.stockitem?.includes('view') === true &&
+        user.permissions?.scanstockapprovalrequest?.includes('approve') ===
+          true))
+  );
+}
+
 export function wmsAccess(
   user: UserProps | undefined,
   approvalEnabled: boolean
@@ -26,7 +36,7 @@ export function wmsAccess(
 }
 
 export function isWmsBusinessPath(path: string): boolean {
-  return /^\/(part(?:\/|$)|stock(?:\/(?:scan|scan-inbound|location|item)(?:\/|$)|\/?$)|notifications(?:\/|$)|settings\/user(?:\/|$))/.test(
+  return /^\/(part(?:\/|$)|stock(?:\/(?:scan|scan-inbound|statistics|location|item)(?:\/|$)|\/?$)|notifications(?:\/|$)|settings\/user(?:\/|$))/.test(
     path
   );
 }

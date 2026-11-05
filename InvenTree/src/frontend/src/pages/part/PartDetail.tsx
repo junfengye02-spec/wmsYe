@@ -71,7 +71,7 @@ import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
-import { wmsAccess } from '../../functions/wms';
+import { canViewStockHistory, wmsAccess } from '../../functions/wms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -152,6 +152,7 @@ export default function PartDetail() {
   const [treeOpen, setTreeOpen] = useState(false);
 
   const globalSettings = useGlobalSettingsState();
+  const canViewHistory = canViewStockHistory(user.user);
   const restricted = wmsAccess(
     user.user,
     globalSettings.isSet('SCAN_APPROVAL_ENABLED')
@@ -435,16 +436,17 @@ export default function PartDetail() {
       },
       {
         name: 'stocktake',
-        label: t`Stock History`,
+        label: t`库存历史`,
         icon: <IconClipboardList />,
         content: part ? (
-          <PartStockHistoryDetail partId={part.pk} />
+          <PartStockHistoryDetail partId={part.pk} units={part.units} />
         ) : (
           <Skeleton />
         ),
         hidden:
           part.virtual ||
           !user.hasViewRole(UserRoles.stock) ||
+          !canViewHistory ||
           !globalSettings.isSet('STOCKTAKE_ENABLE') ||
           !userSettings.isSet('DISPLAY_STOCKTAKE_TAB')
       },
@@ -517,6 +519,7 @@ export default function PartDetail() {
     ].filter(
       (panel) =>
         !restricted ||
+        (panel.name === 'stocktake' && canViewHistory) ||
         ['details', 'stock', 'parameters', 'attachments', 'notes'].includes(
           panel.name
         )
@@ -527,6 +530,8 @@ export default function PartDetail() {
     user,
     globalSettings,
     userSettings,
+    canViewHistory,
+    restricted,
     bomInformation,
     revisionSelector,
     refreshInstance

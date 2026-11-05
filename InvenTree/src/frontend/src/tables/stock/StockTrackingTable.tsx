@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Group, Table, Text } from '@mantine/core';
+import { Alert, Group, Stack, Table, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -39,6 +39,8 @@ import {
   UserFilter
 } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { canViewStockHistory } from '../../functions/wms';
+import { useUserState } from '../../states/UserState';
 
 type StockTrackingEntry = {
   label: string;
@@ -58,6 +60,7 @@ export function StockTrackingTable({
   scope?: StockTrackingScope;
 }>) {
   const navigate = useNavigate();
+  const user = useUserState();
   const resolvedScope: StockTrackingScope =
     scope ?? (itemId ? 'item' : partId ? 'part' : 'global');
   const table = useTable(
@@ -72,6 +75,11 @@ export function StockTrackingTable({
   const renderDetails = useCallback(
     (record: any) => {
       const deltas: any = record?.deltas ?? {};
+      const context = record.wms_context;
+      const quantityText = (value: unknown) =>
+        value == null
+          ? '-'
+          : `${formatDecimal(Number(value))} ${context?.units ?? ''}`;
       const destination = deltas.location_detail
         ? RenderStockLocation({
             instance: deltas.location_detail,
@@ -103,6 +111,63 @@ export function StockTrackingTable({
           : t`Quantity`;
 
       const entries: StockTrackingEntry[] = [
+        ...(context
+          ? [
+              {
+                label: t`设备编号 / 名称（落账时）`,
+                key: 'wms_part',
+                details: `${context.part_ipn} / ${context.part_name}`
+              },
+              {
+                label: t`项目`,
+                key: 'wms_project',
+                details: context.project || '-'
+              },
+              {
+                label: t`合同号`,
+                key: 'wms_contract',
+                details: context.contract_number || '-'
+              },
+              {
+                label: t`来源明细标识`,
+                key: 'wms_detail',
+                details: context.detail_uid || '-'
+              },
+              {
+                label: t`实际入出库数量`,
+                key: 'wms_quantity',
+                details: `${context.operation === 'INBOUND' ? '+' : '-'}${quantityText(context.applied_quantity)}`
+              },
+              {
+                label: t`库存项实物量（操作前 → 后）`,
+                key: 'wms_balance',
+                details: `${quantityText(context.quantity_before)} → ${quantityText(context.quantity_after)}`
+              },
+              {
+                label: t`实际库位（落账时）`,
+                key: 'wms_location',
+                details:
+                  (context.operation === 'INBOUND'
+                    ? context.destination_location
+                    : context.source_location) || '-'
+              },
+              {
+                label: t`申请人`,
+                key: 'wms_applicant',
+                details: context.applicant || '-'
+              },
+              {
+                label: t`审批人`,
+                key: 'wms_approver',
+                details: context.approver || '-'
+              },
+              {
+                label: t`出库用途`,
+                key: 'wms_purpose',
+                details: context.purpose
+              }
+            ]
+          : []),
         {
           label: t`Stock Item`,
           key: 'stockitem',
@@ -254,7 +319,10 @@ export function StockTrackingTable({
           <Table.Tbody>
             {entries.map(
               (entry) =>
-                entry.details && (
+                entry.details !== null &&
+                entry.details !== undefined &&
+                entry.details !== false &&
+                entry.details !== '' && (
                   <Table.Tr key={entry.key}>
                     <Table.Td>
                       <Text>{entry.label}</Text>
@@ -286,10 +354,11 @@ export function StockTrackingTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       DateColumn({
-        switchable: false
+        switchable: false,
+        extra: { showTime: true }
       }),
       PartColumn({
-        title: t`Part`,
+        title: t`设备`,
         part: 'part_detail',
         switchable: true,
         hidden: resolvedScope === 'item'
@@ -299,7 +368,7 @@ export function StockTrackingTable({
         hidden: resolvedScope === 'item'
       }),
       StockColumn({
-        title: t`Stock Item`,
+        title: t`库存项（当前）`,
         accessor: 'item_detail',
         nullMessage: (
           <Text size='sm' c='red'>{t`Stock item no longer exists`}</Text>
@@ -309,7 +378,13 @@ export function StockTrackingTable({
         hidden: resolvedScope === 'item'
       }),
       DescriptionColumn({
-        accessor: 'label'
+        accessor: 'label',
+        render: (record: any) =>
+          record.wms_context
+            ? record.wms_context.operation === 'INBOUND'
+              ? t`扫码入库（已落账）`
+              : t`扫码出库（已落账）`
+            : record.label
       }),
       {
         accessor: 'details',
@@ -325,7 +400,7 @@ export function StockTrackingTable({
       },
       {
         accessor: 'user',
-        title: t`Operator`,
+        title: t`落账操作人`,
         render: (record: any) => {
           if (record.user_detail) {
             return RenderUser({ instance: record.user_detail });
@@ -356,24 +431,29 @@ export function StockTrackingTable({
     ];
   }, [renderDetails, resolvedScope]);
 
+  if (!canViewStockHistory(user.user)) return null;
+
   return (
-    <InvenTreeTable
-      tableState={table}
-      url={apiUrl(ApiEndpoints.stock_tracking_list)}
-      columns={tableColumns}
-      props={{
-        params: {
-          item: itemId,
-          part: partId,
-          part_detail: resolvedScope === 'item' ? undefined : true,
-          item_detail: resolvedScope === 'item' ? undefined : true,
-          user_detail: true
-        },
-        enableDownload: true,
-        tableFilters: filters,
-        modelType: resolvedScope === 'item' ? undefined : ModelType.stockitem,
-        modelField: 'item'
-      }}
-    />
+    <Stack>
+      <Alert color='blue'>{t`库存流水记录实际库存操作。扫码记录中的项目、合同、库位和人员使用落账时快照；未关联扫码的原生记录不补填当前业务字段。申请人、审批人与落账操作人分别显示。`}</Alert>
+      <InvenTreeTable
+        tableState={table}
+        url={apiUrl(ApiEndpoints.stock_tracking_list)}
+        columns={tableColumns}
+        props={{
+          params: {
+            item: itemId,
+            part: partId,
+            part_detail: resolvedScope === 'item' ? undefined : true,
+            item_detail: resolvedScope === 'item' ? undefined : true,
+            user_detail: true
+          },
+          enableDownload: true,
+          tableFilters: filters,
+          modelType: resolvedScope === 'item' ? undefined : ModelType.stockitem,
+          modelField: 'item'
+        }}
+      />
+    </Stack>
   );
 }
